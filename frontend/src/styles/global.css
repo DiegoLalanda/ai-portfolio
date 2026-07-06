@@ -1,0 +1,329 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :root {
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 263 90% 85%;
+    --muted: 260 12% 15%;
+    --muted-foreground: 258 8% 65%;
+    --accent: 258 11% 17%;
+    --accent-foreground: 260 24% 92%;
+    --destructive: 5 100% 84%;
+    --destructive-foreground: 0 0% 26%;
+    --card: 249 15% 11%;
+    --card-foreground: 260 24% 92%;
+    --popover: 255 13% 13%;
+    --popover-foreground: 260 24% 92%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-on-background;
+    overflow-x: hidden;
+    font-family: "Manrope", sans-serif;
+  }
+}
+
+/* Google Material Symbols: sin esto, los íconos se muestran como texto plano. */
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+/* --- "Quantum AI Portfolio" design system (Stitch) --- */
+
+.glass-panel {
+  background: rgba(21, 18, 27, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    0 0 40px rgba(208, 188, 255, 0.05);
+}
+
+.glass-input-container {
+  background: rgba(21, 18, 27, 0.6);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 40px rgba(208, 188, 255, 0.1);
+  position: relative;
+}
+
+.glass-input-container::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 9999px;
+  padding: 1px;
+  background: linear-gradient(90deg, #d0bcff, #4cd7f6, #d0bcff);
+  background-size: 200% auto;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  animation: shine 3s linear infinite;
+  pointer-events: none;
+}
+
+.glass-input-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    rgba(231, 224, 237, 0.5) 0%,
+    rgba(208, 188, 255, 1) 50%,
+    rgba(231, 224, 237, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.typing-effect {
+  overflow: hidden;
+  border-right: 2px solid #d0bcff;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  animation:
+    typing 2.5s steps(30, end),
+    blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #d0bcff;
+  }
+}
+
+.progress-line {
+  height: 2px;
+  background: linear-gradient(90deg, #d0bcff, #4cd7f6);
+  width: 0%;
+  transition: width 10s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(208, 188, 255, 0.5);
+}
+
+.message-fade-in {
+  animation: messageFadeIn 0.5s ease-out forwards;
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(10px);
+}
+
+@keyframes messageFadeIn {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.gradient-text-primary {
+  display: inline-block;
+  background: linear-gradient(135deg, #e7e0ed 0%, #d0bcff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Evita que descenders (p. ej. la "g") se recorten con background-clip. */
+  line-height: 1.2;
+  padding-bottom: 0.08em;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(208, 188, 255, 0.1);
+  border: 1px solid rgba(208, 188, 255, 0.2);
+  color: #d0bcff;
+  font-family: "Geist", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.glass-card {
+  background: rgba(21, 18, 27, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(21, 18, 27, 0.5);
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #6d3bd7 0%, #4cd7f6 100%);
+  box-shadow: 0 4px 20px rgba(109, 59, 215, 0.3);
+  transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+  box-shadow: 0 8px 30px rgba(109, 59, 215, 0.5);
+  transform: translateY(-2px);
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.roadmap-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(208, 188, 255, 0.5) 50%, transparent 100%);
+  height: 2px;
+}
+
+.node-diagram {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.floating-capsule {
+  background: rgba(21, 18, 27, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.floating-capsule:hover {
+  background: rgba(208, 188, 255, 0.1);
+  border-color: rgba(208, 188, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(208, 188, 255, 0.15);
+}
+
+.float-anim-1 {
+  animation: float 6s ease-in-out infinite;
+}
+.float-anim-2 {
+  animation: float 7s ease-in-out infinite 1s;
+}
+.float-anim-3 {
+  animation: float 8s ease-in-out infinite 2s;
+}
+.float-anim-4 {
+  animation: float 6.5s ease-in-out infinite 0.5s;
+}
+.float-anim-5 {
+  animation: float 7.5s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

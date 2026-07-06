@@ -1,0 +1,56 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HeroIntro from "@/components/sections/HeroIntro.astro";
+import SubmittedPrompt from "@/components/sections/SubmittedPrompt.astro";
+import LoadingPanel from "@/components/sections/LoadingPanel.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
+
+const loadingMessages = [
+  "Analyzing your question...",
+  "Searching Diego's experience...",
+  "Finding relevant projects...",
+  "Preparing visual dashboard...",
+  "Creating interactive widgets...",
+  "Adding final touches...",
+  "Almost ready...",
+];
+---
+
+<Layout title="Diego - AI Engineer & Physics Professor">
+  <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <canvas id="aurora-shader-canvas" class="block h-full w-full"></canvas>
+    </div>
+    <div id="aurora-particles-container" class="absolute inset-0 z-10"></div>
+  </div>
+
+  <main class="relative z-20 flex min-h-screen flex-grow items-center justify-center px-margin-edge pb-24 pt-32">
+    <div id="parallax-container" class="flex w-full max-w-container-max flex-col items-center text-center">
+      <HeroIntro receded />
+      <SubmittedPrompt question="What is your AI experience?" />
+      <LoadingPanel messages={loadingMessages} />
+    </div>
+  </main>
+
+  <SiteFooter class="z-20" />
+</Layout>
+
+<script>
+  import { initAuroraShader } from "@/lib/aurora-shader";
+  import { initAuroraParticles } from "@/lib/aurora-particles";
+
+  const canvas = document.getElementById("aurora-shader-canvas");
+  if (canvas instanceof HTMLCanvasElement) initAuroraShader(canvas);
+
+  const particlesContainer = document.getElementById("aurora-particles-container");
+  if (particlesContainer) initAuroraParticles(particlesContainer);
+
+  document.addEventListener("mousemove", (event) => {
+    const x = (event.clientX / window.innerWidth - 0.5) * 15;
+    const y = (event.clientY / window.innerHeight - 0.5) * 15;
+    const parallax = document.getElementById("parallax-container");
+    if (parallax) {
+      parallax.style.transform = `translate(${x}px, ${y}px)`;
+    }
+  });
+</script>

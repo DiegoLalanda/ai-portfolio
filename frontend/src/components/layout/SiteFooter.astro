@@ -1,0 +1,32 @@
+---
+interface Props {
+  class?: string;
+  /** Menos padding vertical para layouts que deben caber en un solo viewport. */
+  compact?: boolean;
+}
+
+const { class: className, compact = false } = Astro.props;
+---
+
+<footer
+  class:list={[
+    "relative w-full border-t border-white/5 bg-transparent font-label-sm text-label-sm text-secondary",
+    compact ? "py-4 md:py-5" : "py-12",
+    className,
+  ]}
+>
+  <div class="mx-auto flex max-w-container-max flex-col items-center justify-between gap-6 px-margin-edge md:flex-row">
+    <div class="font-label-md text-label-md uppercase tracking-widest text-on-surface">DIEGO</div>
+    <div class="text-center text-outline-variant">© 2024 Diego. Built at the intersection of Silicon and Symmetry.</div>
+    <div class="flex items-center gap-6">
+      <a class="text-outline-variant transition-colors hover:text-primary" href="#">GitHub</a>
+      <a class="text-outline-variant transition-colors hover:text-primary" href="#">LinkedIn</a>
+      <a
+        class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-primary shadow-[0_0_15px_rgba(208,188,255,0.2)] transition-all duration-300 hover:bg-primary hover:text-on-primary hover:shadow-[0_0_25px_rgba(208,188,255,0.4)]"
+        href="#"
+      >
+        Get in Touch
+      </a>
+    </div>
+  </div>
+</footer>

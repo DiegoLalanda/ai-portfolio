@@ -1,0 +1,77 @@
+---
+interface Props {
+  /** Mensajes que se van revelando secuencialmente mientras "procesa" la consulta. */
+  messages: string[];
+  /** Etiqueta superior del panel. */
+  label?: string;
+  /**
+   * Si es `false`, la secuencia no arranca sola al montar el componente: espera
+   * el evento `loading:start` disparado por quien orquesta el flujo (p. ej. tras
+   * enviar una pregunta). Por defecto arranca sola, como en la pantalla standalone.
+   */
+  autostart?: boolean;
+}
+
+const { messages, label = "System Architecting", autostart = true } = Astro.props;
+---
+
+<div class="mx-auto w-full max-w-xl">
+  <div class="glass-panel relative flex flex-col gap-6 overflow-hidden rounded-xl p-8 text-left fade-in-up delay-300">
+    <div class="mb-2 flex items-center gap-3">
+      <div class="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
+      <span class="font-label-md text-label-md uppercase tracking-widest text-primary">{label}</span>
+    </div>
+    <div id="loading-messages" class="min-h-[180px] space-y-4"></div>
+    <div class="absolute bottom-0 left-0 h-[2px] w-full bg-white/5">
+      <div id="global-progress" class="progress-line"></div>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ messages, autostart }}>
+  // @ts-nocheck -- `messages`/`autostart` se inyectan en runtime vía `define:vars`.
+  const container = document.getElementById("loading-messages");
+  const progressLine = document.getElementById("global-progress");
+  let currentMessage = 0;
+  let pendingTimeoutId;
+
+  function showNextMessage() {
+    if (!container || !progressLine) return;
+
+    if (currentMessage >= messages.length) {
+      window.dispatchEvent(new CustomEvent("loading:complete"));
+      return;
+    }
+
+    const messageEl = document.createElement("div");
+    messageEl.className = "message-fade-in flex items-center gap-3";
+
+    const icon = document.createElement("span");
+    icon.className = "material-symbols-outlined text-[18px] text-outline-variant";
+    icon.innerText = "blur_on";
+
+    const text = document.createElement("span");
+    text.className = "font-body-md text-body-md text-on-surface shimmer-text typing-effect";
+    text.innerText = messages[currentMessage];
+
+    messageEl.appendChild(icon);
+    messageEl.appendChild(text);
+    container.appendChild(messageEl);
+
+    currentMessage += 1;
+    progressLine.style.width = `${(currentMessage / messages.length) * 100}%`;
+
+    pendingTimeoutId = window.setTimeout(showNextMessage, 1500 + Math.random() * 1000);
+  }
+
+  function runSequence() {
+    window.clearTimeout(pendingTimeoutId);
+    currentMessage = 0;
+    if (container) container.innerHTML = "";
+    if (progressLine) progressLine.style.width = "0%";
+    showNextMessage();
+  }
+
+  if (autostart) window.setTimeout(runSequence, 800);
+  window.addEventListener("loading:start", runSequence);
+</script>

@@ -1,0 +1,60 @@
+---
+interface Props {
+  /** Estado "receded" (atenuado/escalado) usado en la pantalla de loading. */
+  receded?: boolean;
+  /** Tagline opcional, mostrada solo en el estado normal (Home). */
+  tagline?: string;
+  /** Espaciado más compacto para caber en un solo viewport. */
+  compact?: boolean;
+}
+
+const { receded = false, tagline, compact = false } = Astro.props;
+---
+
+{
+  receded ? (
+    <div class="mb-8 scale-95 pt-2 opacity-60 transition-all duration-1000 md:pt-3">
+      <div class="mb-2 fade-in-up delay-100">
+        <span class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant">Hi 👋</span>
+      </div>
+      <h1 class="font-display-xl text-display-xl mb-3 gradient-text-primary fade-in-up delay-200">I'm Diego</h1>
+      <p class="font-headline-md text-headline-md max-w-2xl text-on-surface-variant fade-in-up delay-300">
+        Software Engineer <span class="mx-2 text-outline-variant">•</span> AI Engineer{" "}
+        <span class="mx-2 text-outline-variant">•</span> Physics Professor
+      </p>
+    </div>
+  ) : (
+    <Fragment>
+      <div class:list={["fade-in-up delay-100", compact ? "mb-1" : "mb-4"]}>
+        <span class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant">Hi 👋</span>
+      </div>
+      <h1
+        class:list={[
+          "gradient-text-primary fade-in-up delay-200 font-display-xl",
+          compact ? "mb-2 text-[clamp(2.25rem,6vw,4.5rem)]" : "mb-4 text-display-xl",
+        ]}
+      >
+        I'm Diego
+      </h1>
+      <p
+        class:list={[
+          "max-w-2xl text-on-surface-variant fade-in-up delay-300",
+          compact ? "mb-3 text-base md:text-headline-md" : "mb-8 font-headline-md text-headline-md",
+        ]}
+      >
+        Software Engineer <span class="mx-2 text-outline-variant">•</span> AI Engineer{" "}
+        <span class="mx-2 text-outline-variant">•</span> Physics Professor
+      </p>
+      {tagline && (
+        <p
+          class:list={[
+            "italic text-outline fade-in-up delay-400",
+            compact ? "mb-4 text-sm md:mb-5 md:text-body-lg" : "mb-12 font-body-lg text-body-lg",
+          ]}
+        >
+          {tagline}
+        </p>
+      )}
+    </Fragment>
+  )
+}

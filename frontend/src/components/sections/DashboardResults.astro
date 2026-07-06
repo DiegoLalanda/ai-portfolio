@@ -1,0 +1,183 @@
+---
+/**
+ * Resultado mockeado del "chat" de la Home: dashboard estático con datos de
+ * ejemplo, replicando pixel-perfect el diseño exportado de Stitch. Sin lógica
+ * de negocio real todavía; los datos son fijos hasta integrar el backend.
+ */
+
+interface ExpertiseItem {
+  label: string;
+  level: string;
+  colorClass: string;
+}
+
+const expertise: ExpertiseItem[] = [
+  { label: "PyTorch & JAX", level: "CORE", colorClass: "text-primary" },
+  { label: "LLM Fine-tuning", level: "EXPERT", colorClass: "text-secondary" },
+  { label: "Distributed Training", level: "LEAD", colorClass: "text-tertiary" },
+  { label: "Vector Databases", level: "SENIOR", colorClass: "text-outline" },
+];
+
+interface RoadmapStep {
+  title: string;
+  description: string;
+  dotColorClass: string;
+}
+
+const roadmap: RoadmapStep[] = [
+  {
+    title: "Foundations",
+    description: "Masters in Physics, focused on Computational Symmetry and Fluid Dynamics.",
+    dotColorClass: "bg-primary",
+  },
+  {
+    title: "The Shift",
+    description: "Architecting large-scale ETL pipelines for predictive climate modeling.",
+    dotColorClass: "bg-secondary",
+  },
+  {
+    title: "Current Orbit",
+    description: "Leading AI Engineering teams to deploy private LLM clusters in finance.",
+    dotColorClass: "bg-tertiary",
+  },
+];
+---
+
+<div class="mx-auto max-w-container-max space-y-gutter">
+  <div class="grid grid-cols-1 gap-gutter lg:grid-cols-12">
+    <div class="group relative flex flex-col justify-between overflow-hidden rounded-xl glass-panel p-8 lg:col-span-7">
+      <div>
+        <div class="section-label mb-6">
+          <span class="material-symbols-outlined text-[14px]">memory</span>
+          Compute & Contribution
+        </div>
+        <div class="mb-8 flex items-baseline gap-2">
+          <span class="font-display-lg text-display-lg text-primary">2.4k+</span>
+          <span class="font-label-md uppercase tracking-wider text-on-surface-variant">GitHub Commits</span>
+        </div>
+        <div class="space-y-6">
+          <div class="rounded-lg border border-white/5 bg-white/5 p-4 transition-colors hover:border-primary/20">
+            <h4 class="font-label-md mb-2 text-on-surface">GPU Orchestration Engine</h4>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+              <div class="h-full rounded-full bg-primary" style="width: 85%"></div>
+            </div>
+          </div>
+          <div class="rounded-lg border border-white/5 bg-white/5 p-4 transition-colors hover:border-secondary/20">
+            <h4 class="font-label-md mb-2 text-on-surface">Neural Architecture Search</h4>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+              <div class="h-full rounded-full bg-secondary" style="width: 72%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pointer-events-none absolute -bottom-12 -right-12 opacity-5 transition-opacity group-hover:opacity-10">
+        <span class="material-symbols-outlined text-[320px]">architecture</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col rounded-xl glass-panel p-8 lg:col-span-5">
+      <div class="section-label mb-6">
+        <span class="material-symbols-outlined text-[14px]">layers</span>
+        Expertise Stack
+      </div>
+      <div class="space-y-3">
+        {
+          expertise.map((item) => (
+            <div class="flex items-center justify-between rounded-lg border border-white/5 bg-surface-container-low p-3 transition-colors hover:bg-surface-container">
+              <span class="font-body-md text-on-surface">{item.label}</span>
+              <span class:list={["font-label-sm", item.colorClass]}>{item.level}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="relative overflow-hidden rounded-xl glass-panel p-8">
+    <div class="section-label mb-8">
+      <span class="material-symbols-outlined text-[14px]">timeline</span>
+      Strategic Roadmap
+    </div>
+    <div class="relative grid grid-cols-1 gap-12 md:grid-cols-3">
+      <div class="absolute left-0 top-1/2 hidden h-[1px] w-full bg-white/5 md:block"></div>
+      {
+        roadmap.map((step) => (
+          <div class="relative z-10 space-y-4">
+            <div class:list={["mb-2 h-4 w-4 rounded-full border-4 border-background", step.dotColorClass]} />
+            <h3 class="font-headline-md text-on-surface">{step.title}</h3>
+            <p class="font-body-md text-on-surface-variant">{step.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div
+    id="open-project-detail"
+    class="group cursor-pointer overflow-hidden rounded-xl glass-panel"
+    role="button"
+    tabindex="0"
+    aria-label="View NeuralSync Architecture case study"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      <div class="flex flex-col justify-center p-8 md:p-12">
+        <div class="section-label mb-6">
+          <span class="material-symbols-outlined text-[14px]">science</span>
+          Featured Case Study
+        </div>
+        <h2 class="font-display-lg text-headline-lg mb-4 text-primary">NeuralSync Architecture</h2>
+        <p class="font-body-lg mb-8 text-on-surface-variant">
+          "Diego spearheaded the development of our real-time anomaly detection system, reducing system latency by
+          40% while increasing accuracy through novel transformers."
+        </p>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-surface-container-high">
+              <span class="material-symbols-outlined text-secondary">verified_user</span>
+            </div>
+            <div>
+              <p class="font-label-md text-on-surface">CTO, Paradigm Shift Corp</p>
+              <p class="font-label-sm text-outline-variant">Enterprise AI Client</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-6 py-3 font-label-md text-primary transition-all hover:bg-primary/20">
+            View Case Study
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </span>
+        </div>
+      </div>
+      <div class="relative flex min-h-[300px] items-center justify-center overflow-hidden bg-surface-container-highest p-8">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent opacity-20 transition-transform duration-1000 group-hover:scale-110">
+        </div>
+        <div class="relative z-10 grid grid-cols-3 gap-2">
+          <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-primary">
+            <span class="material-symbols-outlined">hub</span>
+          </div>
+          <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-secondary">
+            <span class="material-symbols-outlined">webhook</span>
+          </div>
+          <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-tertiary">
+            <span class="material-symbols-outlined">data_object</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Solo hay un proyecto mockeado ("NeuralSync Architecture") hasta integrar datos reales.
+  const openTrigger = document.getElementById("open-project-detail");
+
+  function openProjectDetail() {
+    window.dispatchEvent(new CustomEvent("project-detail:open", { detail: { projectId: "neuralsync-architecture" } }));
+  }
+
+  openTrigger?.addEventListener("click", openProjectDetail);
+  openTrigger?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openProjectDetail();
+    }
+  });
+</script>

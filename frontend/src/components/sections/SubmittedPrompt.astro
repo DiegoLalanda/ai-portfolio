@@ -1,0 +1,30 @@
+---
+interface Props {
+  /** Texto inicial mostrado antes de que el flujo mockeado lo reemplace en runtime. */
+  question?: string;
+}
+
+const { question = "" } = Astro.props;
+---
+
+<div class="relative mx-auto mb-12 w-full max-w-2xl fade-in-up">
+  <div class="glass-input-container z-10 flex w-full items-center rounded-full px-6 py-4">
+    <span class="material-symbols-outlined mr-4 text-primary" style="font-variation-settings: 'FILL' 1;">
+      auto_awesome
+    </span>
+    <input
+      id="submitted-question"
+      type="text"
+      autocomplete="off"
+      readonly
+      value={question}
+      class="w-full border-none bg-transparent font-body-md text-body-md text-on-surface focus:outline-none focus:ring-0"
+    />
+    <button
+      type="button"
+      class="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary transition-colors"
+    >
+      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span>
+    </button>
+  </div>
+</div>

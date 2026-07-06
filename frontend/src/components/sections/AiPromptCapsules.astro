@@ -1,0 +1,130 @@
+---
+interface Suggestion {
+  label: string;
+  position: string;
+  anim: string;
+  hiddenOnMobile?: boolean;
+  /** Pregunta que se coloca en el input al elegir esta sugerencia. */
+  question: string;
+}
+
+const suggestions: Suggestion[] = [
+  {
+    label: "Frontend",
+    position: "top-0 left-[10%]",
+    anim: "float-anim-1",
+    question: "Tell me about your experience with Frontend...",
+  },
+  {
+    label: "Artificial Intelligence",
+    position: "top-0 right-0",
+    anim: "float-anim-2",
+    question: "What is your AI experience?",
+  },
+  {
+    label: "Physics",
+    position: "bottom-0 left-[5%]",
+    anim: "float-anim-3",
+    question: "Tell me about your experience with Physics...",
+  },
+  {
+    label: "Architecture",
+    position: "bottom-0 right-[5%]",
+    anim: "float-anim-4",
+    question: "Tell me about your experience with Architecture...",
+  },
+  {
+    label: "Teaching",
+    position: "top-[15%] left-[-6%]",
+    anim: "float-anim-5",
+    question: "Tell me about your experience with Teaching...",
+    hiddenOnMobile: true,
+  },
+  {
+    label: "Career",
+    position: "bottom-[15%] right-[-6%]",
+    anim: "float-anim-1",
+    question: "Tell me about your experience with Career...",
+    hiddenOnMobile: true,
+  },
+];
+---
+
+<div class="relative mx-auto flex h-[min(320px,32dvh)] w-full max-w-2xl items-center justify-center fade-in-up delay-500 md:h-[min(340px,34dvh)]">
+  {
+    suggestions.map((suggestion) => (
+      <button
+        type="button"
+        data-question={suggestion.question}
+        class:list={[
+          "floating-capsule absolute cursor-pointer rounded-full px-4 py-2 font-label-sm text-label-sm text-on-surface",
+          suggestion.position,
+          suggestion.anim,
+          { hidden: suggestion.hiddenOnMobile, "md:block": suggestion.hiddenOnMobile },
+        ]}
+      >
+        {suggestion.label}
+      </button>
+    ))
+  }
+
+  <div class="glass-input-container relative z-20 flex w-full items-center rounded-full px-6 py-4">
+    <span class="material-symbols-outlined mr-4 text-primary" style="font-variation-settings: 'FILL' 1;">
+      auto_awesome
+    </span>
+    <input
+      id="ai-input"
+      type="text"
+      autocomplete="off"
+      placeholder="Ask me anything..."
+      class="w-full border-none bg-transparent font-body-md text-body-md text-on-surface placeholder-outline-variant focus:outline-none focus:ring-0"
+    />
+    <button
+      type="button"
+      id="ai-input-submit"
+      disabled
+      aria-label="Send"
+      class="ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface transition-colors hover:bg-primary hover:text-on-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Todavía no hay backend real: cualquier pregunta (tipeada o elegida de una
+  // sugerencia) dispara el mismo flujo mockeado de loading + dashboard.
+  const suggestionButtons = document.querySelectorAll<HTMLButtonElement>("[data-question]");
+  const input = document.getElementById("ai-input") as HTMLInputElement | null;
+  const submitButton = document.getElementById("ai-input-submit") as HTMLButtonElement | null;
+
+  function updateSubmitState() {
+    if (submitButton) submitButton.disabled = !input?.value.trim();
+  }
+
+  suggestionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const question = button.dataset.question;
+      if (!input || !question) return;
+      input.value = question;
+      input.focus();
+      updateSubmitState();
+    });
+  });
+
+  input?.addEventListener("input", updateSubmitState);
+
+  input?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && submitButton && !submitButton.disabled) {
+      submitButton.click();
+    }
+  });
+
+  submitButton?.addEventListener("click", () => {
+    const question = input?.value.trim();
+    if (!question) return;
+    window.dispatchEvent(new CustomEvent("mock-chat:submit", { detail: { question } }));
+  });
+
+  updateSubmitState();
+</script>
