@@ -1,0 +1,250 @@
+[
+  {
+    "id": "proj-cachibache-app",
+    "name": "CachiBache — App móvil de reportes urbanos",
+    "type": "academic",
+    "role": "Full-Stack Developer",
+    "summary": "App móvil para reportar baches con fotos, geolocalización y panel administrativo en tiempo real.",
+    "description": "Proyecto Final de la Tecnicatura Universitaria en Desarrollo Web (UNER). App móvil para que los ciudadanos reporten baches desde su celular, con seguimiento en tiempo real mediante un backend robusto y escalable desplegado en producción.",
+    "problem": "Varias funcionalidades nativas (Google Auth, notificaciones push, mapas) no funcionaban en el entorno estándar de Expo, impidiendo obtener una build real conectada al backend en producción.",
+    "solution": "Se configuró EAS Build desde cero y se generaron credenciales en Google Cloud (OAuth, Cloudinary, Firebase Cloud Messaging) para obtener una APK funcional conectada al backend en Railway.",
+    "result": "Aplicación móvil completa con autenticación, roles, reportes con fotos y voz, panel admin, notificaciones push y generación de PDF, entregada como proyecto final universitario.",
+    "highlights": [
+      "Registro/login con verificación por email y login con Google.",
+      "Gestión de roles (usuario/administrador) con panel administrativo y filtros.",
+      "Reporte de baches con fotos, ubicación y dictado por voz.",
+      "Notificaciones push y generación de PDF de reportes.",
+      "Autenticación JWT + Refresh Token persistidos."
+    ],
+    "stack": [
+      "skill-react-native-expo",
+      "skill-nestjs",
+      "skill-typeorm",
+      "skill-postgresql",
+      "skill-typescript",
+      "skill-eas-build",
+      "skill-railway"
+    ],
+    "team": [
+      { "name": "Diego Lalanda", "role": "Full-Stack Developer", "url": "https://github.com/DiegoLalanda" },
+      { "name": "Enrique Alejandro Pierotti Castillo", "role": "Team Member", "url": null },
+      { "name": "Fernanda Elola", "role": "Team Member", "url": null }
+    ],
+    "links": [
+      {
+        "label": "Repositorio",
+        "url": "https://lnkd.in/dEYt3T5h",
+        "type": "repo"
+      }
+    ],
+    "media": [],
+    "startDate": "2025-01",
+    "endDate": "2025-11",
+    "current": false,
+    "tags": ["mobile", "react-native", "expo", "nestjs", "university", "featured"],
+    "featured": true,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "proj-cachibache-game",
+    "name": "CachiBache — Videojuego arcade (GDevelop)",
+    "type": "game",
+    "role": "Game Developer",
+    "summary": "Juego arcade 2D estilo cartoon jugable en navegador vía Itch.io.",
+    "description": "Juego arcade 2D desarrollado con GDevelop. Acompañás a Juan Carlos, un empleado administrativo que debe abrirse paso entre baches, autos, vacas y caos urbano para llegar al hospital a tiempo para el nacimiento de su hijo.",
+    "problem": "Crear una experiencia arcade divertida y accesible que complemente la identidad del proyecto CachiBache con una narrativa latinoamericana.",
+    "solution": "Diseño de mecánicas simples con obstáculos procedurales, dificultad progresiva y publicación web en Itch.io para máxima accesibilidad.",
+    "result": "Juego jugable en navegador con sistema de puntos, vidas limitadas y arte 2D estilo cartoon.",
+    "highlights": [
+      "Obstáculos generados proceduralmente con dificultad progresiva.",
+      "Controles simples e intuitivos con sistema de puntos y monedas.",
+      "Arte 2D estilo cartoon, jugable directamente en navegador vía Itch.io."
+    ],
+    "stack": [],
+    "team": [
+      { "name": "Fernanda Elola", "role": "Team Member", "url": null },
+      { "name": "Diego Lalanda", "role": "Game Developer", "url": "https://github.com/DiegoLalanda" },
+      { "name": "Manuel Alejandro García", "role": "Team Member", "url": null },
+      { "name": "Enrique Alejandro Pierotti Castillo", "role": "Team Member", "url": null }
+    ],
+    "links": [
+      {
+        "label": "Jugar en Itch.io",
+        "url": "https://lnkd.in/dNYrj8QV",
+        "type": "demo"
+      }
+    ],
+    "media": [],
+    "startDate": "2025-03",
+    "endDate": "2025-11",
+    "current": false,
+    "tags": ["game", "gdevelop", "arcade", "2d"],
+    "featured": true,
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "proj-easy-survey",
+    "name": "Easy Survey",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "Plataforma de encuestas anónimas con diseño UI/UX y despliegue completo.",
+    "description": "Plataforma de encuestas anónimas. Responsable del diseño UI/UX (Figma), desarrollo frontend (Angular) y despliegue completo.",
+    "problem": "Necesidad de una plataforma simple para crear y responder encuestas anónimas con una experiencia de usuario clara.",
+    "solution": "Desarrollo full-stack con NestJS y Angular, base de datos PostgreSQL y despliegue en Render y Neon.",
+    "result": "Plataforma funcional desplegada en producción con flujo completo de encuestas anónimas.",
+    "highlights": [
+      "Diseño UI/UX completo en Figma.",
+      "Frontend en Angular y backend en NestJS con TypeORM.",
+      "Despliegue en Render y Neon."
+    ],
+    "stack": [
+      "skill-nestjs",
+      "skill-typeorm",
+      "skill-angular",
+      "skill-postgresql",
+      "skill-figma",
+      "skill-render",
+      "skill-neon"
+    ],
+    "team": [],
+    "links": [],
+    "media": [],
+    "startDate": "2025-01",
+    "endDate": "2025-06",
+    "current": false,
+    "tags": ["freelance", "surveys", "angular", "nestjs"],
+    "featured": false,
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "proj-tu-seguro-online",
+    "name": "Tu Seguro Online",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "Plataforma full-stack de gestión de clientes para un asesor de seguros.",
+    "description": "Plataforma full-stack de gestión de clientes para un asesor de seguros, con integración de APIs externas de aseguradoras (Río Uruguay Seguros) para cotizar vehículos.",
+    "problem": "Un asesor de seguros necesitaba centralizar la gestión de clientes e integrar cotizaciones de aseguradoras externas.",
+    "solution": "Desarrollo de plataforma NestJS + Angular con integración de APIs de Río Uruguay Seguros y despliegue en Render y Neon.",
+    "result": "Sistema de gestión de clientes con cotización de vehículos integrada a APIs de aseguradoras.",
+    "highlights": [
+      "Integración con APIs externas de aseguradoras (Río Uruguay Seguros).",
+      "Gestión de clientes y cotización de vehículos.",
+      "Stack NestJS, Angular, PostgreSQL, TypeORM, Render y Neon."
+    ],
+    "stack": [
+      "skill-nestjs",
+      "skill-angular",
+      "skill-postgresql",
+      "skill-typeorm",
+      "skill-render",
+      "skill-neon"
+    ],
+    "team": [],
+    "links": [],
+    "media": [],
+    "startDate": "2025-03",
+    "endDate": "2025-08",
+    "current": false,
+    "tags": ["freelance", "insurance", "api-integration"],
+    "featured": false,
+    "order": 4,
+    "visible": true
+  },
+  {
+    "id": "proj-en-un-toke",
+    "name": "En un Toke",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "E-commerce con WordPress, WooCommerce, Mercado Pago y optimización publicitaria.",
+    "description": "E-commerce con WordPress y WooCommerce, integrando pasarela de pagos (Mercado Pago) y envíos (Correo Argentino). Implementación de Meta Pixel y API de Conversiones para optimización de campañas publicitarias.",
+    "problem": "Un negocio necesitaba una tienda online con pagos, envíos y tracking de conversiones para campañas de marketing digital.",
+    "solution": "Implementación de WooCommerce con Mercado Pago, Correo Argentino y Meta Pixel con API de Conversiones.",
+    "result": "E-commerce operativo con pagos, envíos y optimización de campañas publicitarias.",
+    "highlights": [
+      "Integración de Mercado Pago y Correo Argentino.",
+      "Meta Pixel y API de Conversiones para optimización de campañas.",
+      "WordPress + WooCommerce con enfoque en marketing digital."
+    ],
+    "stack": [
+      "skill-wordpress",
+      "skill-woocommerce"
+    ],
+    "team": [],
+    "links": [],
+    "media": [],
+    "startDate": "2024-01",
+    "endDate": "2024-06",
+    "current": false,
+    "tags": ["ecommerce", "wordpress", "marketing"],
+    "featured": false,
+    "order": 5,
+    "visible": true
+  },
+  {
+    "id": "proj-claims-api",
+    "name": "API de Gestión de Reclamos",
+    "type": "professional",
+    "role": "Backend Developer",
+    "summary": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos.",
+    "description": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos, con arquitectura moderna y documentación Swagger.",
+    "problem": "Una concesionaria necesitaba un backend confiable para gestionar reclamos de clientes.",
+    "solution": "API REST con Node.js, Express, PostgreSQL, Sequelize, autenticación JWT y documentación Swagger.",
+    "result": "API funcional con arquitectura moderna y documentación para integración con frontend.",
+    "highlights": [
+      "Arquitectura REST con autenticación JWT.",
+      "PostgreSQL con Sequelize ORM.",
+      "Documentación Swagger para integración."
+    ],
+    "stack": [
+      "skill-nodejs",
+      "skill-express",
+      "skill-postgresql",
+      "skill-sequelize"
+    ],
+    "team": [],
+    "links": [],
+    "media": [],
+    "startDate": "2024-03",
+    "endDate": "2024-08",
+    "current": false,
+    "tags": ["api", "backend", "automotive"],
+    "featured": false,
+    "order": 6,
+    "visible": true
+  },
+  {
+    "id": "proj-verde-nido",
+    "name": "Verde Nido",
+    "type": "academic",
+    "role": "Frontend Developer",
+    "summary": "Plataforma de alojamientos de hotel con catálogo interactivo, filtros y CRUD admin.",
+    "description": "Plataforma de alojamientos de hotel. Diseño UI/UX (Figma). Uso de API externa con catálogo interactivo, filtros avanzados y CRUD para administrador.",
+    "problem": "Crear una plataforma de reservas de hotel con catálogo interactivo y panel administrativo.",
+    "solution": "Frontend en React consumiendo API externa, con filtros avanzados y CRUD de administrador. Diseño UI/UX en Figma.",
+    "result": "Plataforma frontend funcional con catálogo interactivo y gestión administrativa.",
+    "highlights": [
+      "Diseño UI/UX completo en Figma.",
+      "Catálogo interactivo con filtros avanzados.",
+      "CRUD de administrador sobre API externa."
+    ],
+    "stack": [
+      "skill-react",
+      "skill-nodejs",
+      "skill-mysql",
+      "skill-figma"
+    ],
+    "team": [],
+    "links": [],
+    "media": [],
+    "startDate": "2024-01",
+    "endDate": "2024-06",
+    "current": false,
+    "tags": ["frontend", "hospitality", "react"],
+    "featured": false,
+    "order": 7,
+    "visible": true
+  }
+]

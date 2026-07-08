@@ -1,0 +1,80 @@
+---
+import { localePath } from "@/i18n";
+import type { Locale } from "@/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="lang-switcher" role="group" aria-label={locale === "es" ? "Seleccionar idioma" : "Select language"}>
+  <a
+    href={localePath("es", Astro.url.pathname)}
+    class:list={["lang-switcher__btn", locale === "es" && "is-active"]}
+    data-locale-choice="es"
+    aria-current={locale === "es" ? "true" : undefined}
+  >
+    ES
+  </a>
+  <span class="lang-switcher__sep" aria-hidden="true">|</span>
+  <a
+    href={localePath("en", Astro.url.pathname)}
+    class:list={["lang-switcher__btn", locale === "en" && "is-active"]}
+    data-locale-choice="en"
+    aria-current={locale === "en" ? "true" : undefined}
+  >
+    EN
+  </a>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("[data-locale-choice]").forEach((link) => {
+    link.addEventListener("click", () => {
+      const locale = link.dataset.localeChoice;
+      if (!locale) return;
+      try {
+        localStorage.setItem("portfolio-locale", locale);
+        localStorage.setItem("portfolio-locale-chosen", "true");
+      } catch {
+        /* ignore */
+      }
+    });
+  });
+</script>
+
+<style>
+  .lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .lang-switcher__btn {
+    font-family: "Geist", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(202, 196, 208, 0.75);
+    transition: color 0.2s ease;
+  }
+
+  .lang-switcher__btn:hover {
+    color: #d0bcff;
+  }
+
+  .lang-switcher__btn.is-active {
+    color: #d0bcff;
+  }
+
+  .lang-switcher__sep {
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 10px;
+  }
+</style>

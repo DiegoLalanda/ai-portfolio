@@ -1,0 +1,166 @@
+---
+interface Props {
+  text: string;
+  as?: "h1" | "h2" | "p" | "span";
+  /** magnetic: letras reaccionan al cursor. liquid: distorsión SVG tipo aurora. */
+  effect?: "magnetic" | "liquid";
+  splitBy?: "char" | "word";
+  class?: string;
+}
+
+const { text, as: Tag = "span", effect = "magnetic", splitBy = "char", class: className } = Astro.props;
+
+const units: string[] =
+  splitBy === "word"
+    ? text.split(/(\s+)/).filter((part: string) => part.length > 0)
+    : [...text];
+---
+
+<Tag
+  class:list={["warp-text", `warp-text--${effect}`, className]}
+  data-warp-text
+  data-warp-effect={effect}
+>
+  {
+    splitBy === "char"
+      ? units.map((char: string) => (
+          <span class="warp-text__unit" data-warp-unit>
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))
+      : units.map((part: string) =>
+          part.trim() ? (
+            <span class="warp-text__unit warp-text__unit--word" data-warp-unit>
+              {part}
+            </span>
+          ) : (
+            <span class="warp-text__space" data-warp-space aria-hidden="true">
+              {part}
+            </span>
+          )
+        )
+  }
+</Tag>
+
+<script>
+  interface WarpTextRoot extends HTMLElement {
+    dataset: DOMStringMap & {
+      warpEffect?: "magnetic" | "liquid";
+      warpReady?: string;
+    };
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function initWarpText(root: WarpTextRoot) {
+    if (root.dataset.warpReady === "true") return;
+    root.dataset.warpReady = "true";
+
+    if (prefersReducedMotion()) return;
+
+    const effect = root.dataset.warpEffect ?? "magnetic";
+    const units = Array.from(root.querySelectorAll<HTMLElement>("[data-warp-unit]"));
+    if (units.length === 0) return;
+
+    const turbulence = document.getElementById("text-liquid-turbulence");
+    const displacement = document.getElementById("text-liquid-displacement");
+
+    let rafId = 0;
+    let hovering = false;
+    let warpScale = 0;
+    let targetWarpScale = 0;
+    let time = 0;
+
+    function resetUnits() {
+      units.forEach((unit) => {
+        unit.style.transform = "";
+        unit.style.filter = "";
+        unit.style.textShadow = "";
+      });
+    }
+
+    function tick() {
+      time += 0.016;
+      warpScale += (targetWarpScale - warpScale) * 0.14;
+
+      if (effect === "liquid" && displacement instanceof SVGFEDisplacementMapElement && turbulence instanceof SVGFETurbulenceElement) {
+        displacement.setAttribute("scale", warpScale.toFixed(2));
+        const wave = 0.012 + Math.sin(time * 1.6) * 0.004;
+        turbulence.setAttribute("baseFrequency", `${wave.toFixed(4)} ${(wave * 1.25).toFixed(4)}`);
+      }
+
+      const stillAnimating = hovering || Math.abs(targetWarpScale - warpScale) > 0.15;
+      if (stillAnimating) {
+        rafId = window.requestAnimationFrame(tick);
+      } else {
+        rafId = 0;
+        if (effect === "liquid" && displacement instanceof SVGFEDisplacementMapElement) {
+          displacement.setAttribute("scale", "0");
+        }
+      }
+    }
+
+    function ensureTick() {
+      if (!rafId) rafId = window.requestAnimationFrame(tick);
+    }
+
+    root.addEventListener("mouseenter", () => {
+      hovering = true;
+      targetWarpScale = effect === "liquid" ? 16 : 0;
+      root.classList.add("is-hover");
+      ensureTick();
+    });
+
+    root.addEventListener("mouseleave", () => {
+      hovering = false;
+      targetWarpScale = 0;
+      root.classList.remove("is-hover");
+      resetUnits();
+      ensureTick();
+    });
+
+    if (effect === "magnetic") {
+      root.addEventListener("mousemove", (event) => {
+        const bounds = root.getBoundingClientRect();
+        const radius = Math.min(170, Math.max(110, bounds.width * 0.42));
+        const mx = event.clientX;
+        const my = event.clientY;
+
+        units.forEach((unit) => {
+          const rect = unit.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = mx - cx;
+          const dy = my - cy;
+          const dist = Math.hypot(dx, dy);
+          const t = Math.max(0, 1 - dist / radius);
+          const eased = t * t * (3 - 2 * t);
+
+          unit.style.transform = [
+            `translate(${dx * eased * 0.24}px, ${dy * eased * 0.16}px)`,
+            `rotate(${dx * eased * 0.07}deg)`,
+            `scale(${1 + eased * 0.1})`,
+          ].join(" ");
+
+          if (eased > 0.12) {
+            const aberration = dx * eased * 0.05;
+            unit.style.textShadow = `${aberration}px 0 rgba(76, 215, 246, 0.4), ${-aberration}px 0 rgba(208, 188, 255, 0.38)`;
+            unit.style.filter = `blur(${eased * 0.35}px)`;
+          } else {
+            unit.style.textShadow = "";
+            unit.style.filter = "";
+          }
+        });
+      });
+    }
+  }
+
+  function initAllWarpText() {
+    document.querySelectorAll<WarpTextRoot>("[data-warp-text]:not([data-warp-ready])").forEach(initWarpText);
+  }
+
+  initAllWarpText();
+  document.addEventListener("astro:page-load", initAllWarpText);
+</script>

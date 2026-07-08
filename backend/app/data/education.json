@@ -1,0 +1,42 @@
+[
+  {
+    "id": "edu-uner-web-development",
+    "institution": "Universidad Nacional de Entre Ríos",
+    "institutionUrl": "https://www.uner.edu.ar",
+    "degree": "Tecnicatura Universitaria en Desarrollo Web",
+    "fieldOfStudy": "Desarrollo Web",
+    "location": "Concordia, Entre Ríos, Argentina",
+    "startDate": "2023-03",
+    "endDate": "2025-11",
+    "status": "completed",
+    "gpa": 9.35,
+    "highlights": [
+      "Título obtenido en noviembre de 2025.",
+      "Proyecto final: CachiBache — app móvil de reportes urbanos con backend escalable y despliegue en producción."
+    ],
+    "tags": ["education", "web-development", "uner"],
+    "featured": true,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "edu-isdica-physics-teaching",
+    "institution": "ISDICA",
+    "institutionUrl": null,
+    "degree": "Profesorado de Educación Secundaria en Física",
+    "fieldOfStudy": "Física",
+    "location": "Concordia, Entre Ríos, Argentina",
+    "startDate": "2019-03",
+    "endDate": "2022-12",
+    "status": "completed",
+    "gpa": 9.46,
+    "highlights": [
+      "Formación docente en Física para nivel secundario.",
+      "Promedio general de 9.46."
+    ],
+    "tags": ["education", "physics", "teaching"],
+    "featured": true,
+    "order": 2,
+    "visible": true
+  }
+]

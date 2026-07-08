@@ -1,0 +1,48 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HeroIntro from "@/components/sections/HeroIntro.astro";
+import SubmittedPrompt from "@/components/sections/SubmittedPrompt.astro";
+import LoadingPanel from "@/components/sections/LoadingPanel.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
+import { getTranslations, type Locale } from "@/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<Layout title={t.meta.title} locale={locale}>
+  <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <canvas id="aurora-shader-canvas" class="block h-full w-full"></canvas>
+    </div>
+    <div class="absolute inset-0 z-10" id="aurora-particles-layer"></div>
+  </div>
+
+  <main class="relative z-20 flex min-h-screen flex-grow items-center justify-center px-margin-edge pb-24 pt-32">
+    <div id="parallax-container" class="flex w-full max-w-container-max flex-col items-center text-center">
+      <HeroIntro locale={locale} receded />
+      <SubmittedPrompt question="" />
+      <LoadingPanel messages={t.loading.messages} label={t.loading.label} />
+    </div>
+  </main>
+
+  <SiteFooter locale={locale} class="z-20" />
+
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
+  <script is:inline src="/ambient-background.js"></script>
+</Layout>
+
+<script>
+  document.addEventListener("mousemove", (event) => {
+    const x = (event.clientX / window.innerWidth - 0.5) * 15;
+    const y = (event.clientY / window.innerHeight - 0.5) * 15;
+    const parallax = document.getElementById("parallax-container");
+    if (parallax) {
+      parallax.style.transform = `translate(${x}px, ${y}px)`;
+    }
+  });
+</script>

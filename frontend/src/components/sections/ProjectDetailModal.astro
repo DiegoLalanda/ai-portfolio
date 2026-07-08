@@ -13,7 +13,7 @@ const architectureNodes = [
     icon: "hub",
     title: "Central Hub",
     subtitle: "Rust Engine",
-    position: "top-[120px] left-[380px]",
+    position: "top-[20%] left-[32%]",
     colorClass: "border-primary/40 bg-primary/10 text-primary",
     pulse: true,
   },
@@ -21,21 +21,21 @@ const architectureNodes = [
     icon: "cloud_done",
     title: "Edge Node A",
     subtitle: "In-Transit",
-    position: "top-[280px] left-[180px]",
+    position: "top-[47%] left-[15%]",
     colorClass: "border-secondary/40 bg-secondary/10 text-secondary",
   },
   {
     icon: "memory",
     title: "GPU Cluster",
     subtitle: "WebGPU Kernels",
-    position: "top-[430px] left-[580px]",
+    position: "top-[72%] left-[48%]",
     colorClass: "border-tertiary/40 bg-tertiary/10 text-tertiary",
   },
   {
     icon: "monitor_heart",
     title: "Observer",
     subtitle: "Telemetry",
-    position: "top-[280px] left-[980px]",
+    position: "top-[47%] left-[82%]",
     colorClass: "border-on-surface-variant/40 bg-surface-container text-on-surface-variant",
   },
 ];
@@ -111,7 +111,7 @@ const roadmap = [
       aria-label="Close project detail"
       class="secondary-btn flex h-11 w-11 items-center justify-center rounded-full text-on-surface"
     >
-      <span class="material-symbols-outlined">close</span>
+      <span class="material-symbols-outlined" aria-hidden="true">close</span>
     </button>
   </div>
 
@@ -133,11 +133,11 @@ const roadmap = [
       </p>
       <div class="flex flex-wrap justify-center gap-4">
         <button type="button" class="primary-btn flex items-center gap-2 rounded-xl px-8 py-4 font-label-md text-white">
-          <span class="material-symbols-outlined text-[20px]">play_circle</span>
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">play_circle</span>
           Live Demo
         </button>
         <button type="button" class="secondary-btn flex items-center gap-2 rounded-xl px-8 py-4 font-label-md text-on-surface">
-          <span class="material-symbols-outlined text-[20px]">terminal</span>
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">terminal</span>
           View on GitHub
         </button>
       </div>
@@ -151,7 +151,7 @@ const roadmap = [
       <div class="glass-card flex flex-col justify-between p-10 md:col-span-7">
         <div>
           <div class="mb-4 flex items-center gap-2 text-secondary">
-            <span class="material-symbols-outlined">psychology</span>
+            <span class="material-symbols-outlined" aria-hidden="true">psychology</span>
             <span class="font-label-md">The Challenge</span>
           </div>
           <p class="font-headline-md text-headline-md leading-snug text-white">
@@ -167,7 +167,7 @@ const roadmap = [
 
       <div class="glass-card bg-gradient-to-br from-primary/10 to-transparent p-10 md:col-span-5">
         <div class="mb-4 flex items-center gap-2 text-primary">
-          <span class="material-symbols-outlined">rocket_launch</span>
+          <span class="material-symbols-outlined" aria-hidden="true">rocket_launch</span>
           <span class="font-label-md">The Results</span>
         </div>
         <div class="mb-2 text-[64px] font-bold leading-none text-white">45%</div>
@@ -180,7 +180,7 @@ const roadmap = [
 
       <div class="glass-card p-8 md:col-span-4">
         <div class="mb-4 flex items-center gap-2 text-tertiary">
-          <span class="material-symbols-outlined">lightbulb</span>
+          <span class="material-symbols-outlined" aria-hidden="true">lightbulb</span>
           <span class="font-label-md">Solution</span>
         </div>
         <p class="font-body-md text-on-surface-variant">
@@ -190,11 +190,11 @@ const roadmap = [
 
       <div class="glass-card flex items-center gap-8 p-8 md:col-span-8">
         <div class="flex aspect-square w-1/3 items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-surface-container-high">
-          <span class="material-symbols-outlined text-[64px] text-outline-variant">analytics</span>
+          <span class="material-symbols-outlined text-[64px] text-outline-variant" aria-hidden="true">analytics</span>
         </div>
         <div class="flex-1">
           <div class="mb-4 flex items-center gap-2 text-outline">
-            <span class="material-symbols-outlined">auto_stories</span>
+            <span class="material-symbols-outlined" aria-hidden="true">auto_stories</span>
             <span class="font-label-md">Lessons Learned</span>
           </div>
           <p class="font-body-md text-on-surface-variant">
@@ -212,7 +212,7 @@ const roadmap = [
           <p class="font-body-md text-on-surface-variant">Low-level system topology and data flow visualization.</p>
         </div>
         <button type="button" class="secondary-btn flex items-center gap-2 rounded-full px-6 py-3 font-label-md text-on-surface">
-          <span class="material-symbols-outlined">fullscreen</span>
+          <span class="material-symbols-outlined" aria-hidden="true">fullscreen</span>
           Expand Blueprint
         </button>
       </div>
@@ -232,7 +232,7 @@ const roadmap = [
                 { "animate-pulse": node.pulse },
               ]}
             >
-              <span class="material-symbols-outlined">{node.icon}</span>
+              <span class="material-symbols-outlined" aria-hidden="true">{node.icon}</span>
               <div>
                 <div class="font-label-md text-white">{node.title}</div>
                 <div class="text-[10px] uppercase opacity-80">{node.subtitle}</div>
@@ -241,7 +241,7 @@ const roadmap = [
           ))
         }
         <div class="absolute bottom-8 right-8 flex items-center gap-2 text-outline-variant">
-          <span class="material-symbols-outlined text-[16px]">info</span>
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">info</span>
           <span class="font-label-sm">Interactive Diagram — Hover to Inspect Nodes</span>
         </div>
       </div>
@@ -258,9 +258,12 @@ const roadmap = [
                 item.hoverColorClass,
               ]}
             >
-              <div
-                class="aspect-video bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={`background-image: url('${item.image}')`}
+              <img
+                src={item.image}
+                alt={`${item.title}: ${item.description}`}
+                loading="lazy"
+                decoding="async"
+                class="aspect-video w-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
               <div class="absolute bottom-0 left-0 w-full translate-y-2 p-6 transition-transform group-hover:translate-y-0">
@@ -305,7 +308,7 @@ const roadmap = [
         id="return-to-dashboard"
         class="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-10 py-4 font-label-md text-primary shadow-[0_0_15px_rgba(208,188,255,0.1)] transition-all duration-300 hover:bg-primary hover:text-on-primary"
       >
-        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
         Return to Portfolio
       </button>
     </section>
@@ -317,28 +320,64 @@ const roadmap = [
   const closeButton = document.getElementById("close-project-detail");
   const returnButton = document.getElementById("return-to-dashboard");
   const scrollableArea = modal?.querySelector("main");
+  let previousFocus: HTMLElement | null = null;
+
+  function getFocusableElements(): HTMLElement[] {
+    if (!modal) return [];
+    return Array.from(
+      modal.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null);
+  }
 
   function openModal() {
     if (!modal) return;
+    previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
     if (scrollableArea) scrollableArea.scrollTop = 0;
-    requestAnimationFrame(() => modal.classList.remove("opacity-0"));
+    requestAnimationFrame(() => {
+      modal.classList.remove("opacity-0");
+      modal.classList.add("modal-open");
+    });
     closeButton?.focus();
   }
 
   function closeModal() {
     if (!modal) return;
     modal.classList.add("opacity-0");
+    modal.classList.remove("modal-open");
     modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
-    window.setTimeout(() => modal.classList.add("hidden"), 500);
+    window.setTimeout(() => {
+      modal.classList.add("hidden");
+      previousFocus?.focus();
+    }, 500);
   }
 
   window.addEventListener("project-detail:open", openModal);
   closeButton?.addEventListener("click", closeModal);
   returnButton?.addEventListener("click", closeModal);
+
+  modal?.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab" || modal.classList.contains("hidden")) return;
+
+    const focusable = getFocusableElements();
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && modal && !modal.classList.contains("hidden")) closeModal();

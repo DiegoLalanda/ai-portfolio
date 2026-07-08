@@ -6,6 +6,7 @@
 import * as THREE from "three";
 
 const PARTICLES_COUNT = 1500;
+const MAX_PIXEL_RATIO = 2;
 
 export function initAuroraParticles(container: HTMLElement): void {
   const width = container.clientWidth || window.innerWidth;
@@ -17,7 +18,7 @@ export function initAuroraParticles(container: HTMLElement): void {
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(width, height);
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
   container.appendChild(renderer.domElement);
 
   const positions = new Float32Array(PARTICLES_COUNT * 3);
@@ -48,6 +49,8 @@ export function initAuroraParticles(container: HTMLElement): void {
   scene.add(points);
 
   const mouse = new THREE.Vector2(-999, -999);
+  let animationFrameId = 0;
+  let isRunning = true;
 
   window.addEventListener("mousemove", (event) => {
     const rect = container.getBoundingClientRect();
@@ -56,7 +59,7 @@ export function initAuroraParticles(container: HTMLElement): void {
   });
 
   function animate() {
-    requestAnimationFrame(animate);
+    if (!isRunning) return;
 
     const array = geometry.attributes.position.array as Float32Array;
 
@@ -88,8 +91,26 @@ export function initAuroraParticles(container: HTMLElement): void {
     geometry.attributes.position.needsUpdate = true;
     points.rotation.y += 0.0002;
     renderer.render(scene, camera);
+    animationFrameId = requestAnimationFrame(animate);
   }
-  animate();
+
+  function startLoop() {
+    if (isRunning) return;
+    isRunning = true;
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  function stopLoop() {
+    isRunning = false;
+    cancelAnimationFrame(animationFrameId);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopLoop();
+    else startLoop();
+  });
+
+  startLoop();
 
   window.addEventListener("resize", () => {
     const newWidth = container.clientWidth || window.innerWidth;
@@ -97,5 +118,6 @@ export function initAuroraParticles(container: HTMLElement): void {
     camera.aspect = newWidth / newHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(newWidth, newHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
   });
 }

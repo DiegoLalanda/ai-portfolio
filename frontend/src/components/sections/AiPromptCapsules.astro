@@ -1,118 +1,311 @@
 ---
-interface Suggestion {
-  label: string;
-  position: string;
-  anim: string;
-  hiddenOnMobile?: boolean;
-  /** Pregunta que se coloca en el input al elegir esta sugerencia. */
-  question: string;
+import PromptPill from "@/components/sections/PromptPill.astro";
+import { getTranslations, type Locale } from "@/i18n";
+
+interface Props {
+  locale: Locale;
 }
 
-const suggestions: Suggestion[] = [
-  {
-    label: "Frontend",
-    position: "top-0 left-[10%]",
-    anim: "float-anim-1",
-    question: "Tell me about your experience with Frontend...",
-  },
-  {
-    label: "Artificial Intelligence",
-    position: "top-0 right-0",
-    anim: "float-anim-2",
-    question: "What is your AI experience?",
-  },
-  {
-    label: "Physics",
-    position: "bottom-0 left-[5%]",
-    anim: "float-anim-3",
-    question: "Tell me about your experience with Physics...",
-  },
-  {
-    label: "Architecture",
-    position: "bottom-0 right-[5%]",
-    anim: "float-anim-4",
-    question: "Tell me about your experience with Architecture...",
-  },
-  {
-    label: "Teaching",
-    position: "top-[15%] left-[-6%]",
-    anim: "float-anim-5",
-    question: "Tell me about your experience with Teaching...",
-    hiddenOnMobile: true,
-  },
-  {
-    label: "Career",
-    position: "bottom-[15%] right-[-6%]",
-    anim: "float-anim-1",
-    question: "Tell me about your experience with Career...",
-    hiddenOnMobile: true,
-  },
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+const suggestionPool = t.suggestions;
+
+const capsuleSlots = [
+  { position: "top-[6%] left-[8%]", anim: "float-anim-1", desktopOnly: false },
+  { position: "top-[6%] right-[2%]", anim: "float-anim-2", desktopOnly: false },
+  { position: "bottom-0 left-[2%]", anim: "float-anim-3", desktopOnly: false },
+  { position: "bottom-0 right-[8%]", anim: "float-anim-4", desktopOnly: false },
+  { position: "top-[14%] left-[-8%]", anim: "float-anim-5", desktopOnly: true },
+  { position: "top-[14%] right-[-8%]", anim: "float-anim-2", desktopOnly: true },
+  { position: "bottom-[14%] left-[-6%]", anim: "float-anim-3", desktopOnly: true },
+  { position: "bottom-[14%] right-[-6%]", anim: "float-anim-4", desktopOnly: true },
 ];
 ---
 
-<div class="relative mx-auto flex h-[min(320px,32dvh)] w-full max-w-2xl items-center justify-center fade-in-up delay-500 md:h-[min(340px,34dvh)]">
-  {
-    suggestions.map((suggestion) => (
-      <button
-        type="button"
-        data-question={suggestion.question}
-        class:list={[
-          "floating-capsule absolute cursor-pointer rounded-full px-4 py-2 font-label-sm text-label-sm text-on-surface",
-          suggestion.position,
-          suggestion.anim,
-          { hidden: suggestion.hiddenOnMobile, "md:block": suggestion.hiddenOnMobile },
-        ]}
-      >
-        {suggestion.label}
-      </button>
-    ))
-  }
+<div
+  id="suggestion-capsules-root"
+  class="relative mx-auto mt-8 flex h-[min(320px,32dvh)] w-full max-w-2xl items-center justify-center fade-in-up delay-500 md:mt-12 md:h-[min(400px,40dvh)]"
+  data-suggestions={JSON.stringify(suggestionPool)}
+  data-slots={JSON.stringify(capsuleSlots)}
+>
+  <div id="suggestion-capsules-layer" class="pointer-events-none absolute inset-0" aria-live="polite"></div>
 
-  <div class="glass-input-container relative z-20 flex w-full items-center rounded-full px-6 py-4">
-    <span class="material-symbols-outlined mr-4 text-primary" style="font-variation-settings: 'FILL' 1;">
-      auto_awesome
-    </span>
-    <input
-      id="ai-input"
-      type="text"
-      autocomplete="off"
-      placeholder="Ask me anything..."
-      class="w-full border-none bg-transparent font-body-md text-body-md text-on-surface placeholder-outline-variant focus:outline-none focus:ring-0"
-    />
-    <button
-      type="button"
-      id="ai-input-submit"
-      disabled
-      aria-label="Send"
-      class="ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface transition-colors hover:bg-primary hover:text-on-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40"
-    >
-      <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
-    </button>
-  </div>
+  <PromptPill
+    mode="editable"
+    inputId="ai-input"
+    class="relative z-20"
+    placeholders={t.prompts.placeholders}
+    sendAriaLabel={t.prompts.sendAriaLabel}
+  />
 </div>
 
 <script>
-  // Todavía no hay backend real: cualquier pregunta (tipeada o elegida de una
-  // sugerencia) dispara el mismo flujo mockeado de loading + dashboard.
-  const suggestionButtons = document.querySelectorAll<HTMLButtonElement>("[data-question]");
+  interface Suggestion {
+    id: string;
+    label: string;
+    question: string;
+  }
+
+  interface CapsuleSlot {
+    position: string;
+    anim: string;
+    desktopOnly: boolean;
+  }
+
+  interface VisibleCapsule {
+    suggestion: Suggestion;
+    slotIndex: number;
+    element: HTMLButtonElement;
+  }
+
+  const root = document.getElementById("suggestion-capsules-root");
+  const layer = document.getElementById("suggestion-capsules-layer");
   const input = document.getElementById("ai-input") as HTMLInputElement | null;
   const submitButton = document.getElementById("ai-input-submit") as HTMLButtonElement | null;
+  const inputContainer = input?.closest(".glass-input-container");
+  const landingPhase = document.getElementById("phase-landing");
+
+  if (!root || !layer) {
+    // Solo existe en landing
+  } else {
+  const capsulesLayer = layer;
+  const pool: Suggestion[] = JSON.parse(root.dataset.suggestions ?? "[]");
+  const slots: CapsuleSlot[] = JSON.parse(root.dataset.slots ?? "[]");
+
+  let visibleCapsules: VisibleCapsule[] = [];
+  let cycleTimerId: number | undefined;
+  let stopped = false;
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function isDesktop() {
+    return window.matchMedia("(min-width: 768px)").matches;
+  }
+
+  function activeSlots() {
+    return slots.map((slot, index) => ({ slot, index })).filter(({ slot }) => !slot.desktopOnly || isDesktop());
+  }
+
+  function visibleCount() {
+    return isDesktop() ? 8 : 4;
+  }
+
+  function shuffle<T>(items: T[]) {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function pickRandom<T>(items: T[]) {
+    return items[Math.floor(Math.random() * items.length)];
+  }
 
   function updateSubmitState() {
     if (submitButton) submitButton.disabled = !input?.value.trim();
   }
 
-  suggestionButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const question = button.dataset.question;
-      if (!input || !question) return;
-      input.value = question;
-      input.focus();
-      updateSubmitState();
+  function flashInput() {
+    if (!inputContainer) return;
+    inputContainer.classList.add("input-flash");
+    window.setTimeout(() => inputContainer.classList.remove("input-flash"), 450);
+  }
+
+  function pulseCapsule(button: HTMLButtonElement) {
+    if (prefersReducedMotion()) return;
+    button.classList.remove("capsule-pulse");
+    void button.offsetWidth;
+    button.classList.add("capsule-pulse");
+    window.setTimeout(() => button.classList.remove("capsule-pulse"), 450);
+  }
+
+  function shouldStopCycle() {
+    if (stopped) return true;
+    if (document.activeElement === input) return true;
+    if (input?.value.trim()) return true;
+    if (landingPhase?.classList.contains("hidden")) return true;
+    return false;
+  }
+
+  function stopCycle() {
+    stopped = true;
+    if (cycleTimerId !== undefined) window.clearInterval(cycleTimerId);
+  }
+
+  function createCapsule(suggestion: Suggestion, slot: CapsuleSlot): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.suggestionId = suggestion.id;
+    button.dataset.question = suggestion.question;
+    button.className = [
+      "floating-capsule",
+      "pointer-events-auto",
+      "absolute",
+      "cursor-pointer",
+      "rounded-full",
+      "px-4 py-2",
+      "font-label-sm",
+      "text-label-sm",
+      "text-on-surface",
+      slot.position,
+      slot.anim,
+    ].join(" ");
+    button.textContent = suggestion.label;
+    return button;
+  }
+
+  function showCapsule(button: HTMLButtonElement, animate: boolean) {
+    button.classList.remove("is-hidden");
+    if (!animate || prefersReducedMotion()) return;
+    button.classList.add("is-appearing");
+    window.setTimeout(() => button.classList.remove("is-appearing"), 450);
+  }
+
+  function hideCapsule(button: HTMLButtonElement): Promise<void> {
+    if (prefersReducedMotion()) {
+      button.classList.add("is-hidden");
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      button.classList.add("is-hidden");
+      const onTransitionEnd = (event: TransitionEvent) => {
+        if (event.propertyName !== "opacity") return;
+        button.removeEventListener("transitionend", onTransitionEnd);
+        resolve();
+      };
+      button.addEventListener("transitionend", onTransitionEnd);
+      window.setTimeout(resolve, 500);
     });
+  }
+
+  function renderInitial() {
+    capsulesLayer.innerHTML = "";
+    visibleCapsules = [];
+
+    const availableSlots = activeSlots();
+    const initialSuggestions = shuffle(pool).slice(0, Math.min(visibleCount(), pool.length));
+
+    initialSuggestions.forEach((suggestion, index) => {
+      const slotEntry = availableSlots[index % availableSlots.length];
+      if (!slotEntry) return;
+
+      const element = createCapsule(suggestion, slotEntry.slot);
+      capsulesLayer.appendChild(element);
+      visibleCapsules.push({ suggestion, slotIndex: slotEntry.index, element });
+
+      if (prefersReducedMotion()) {
+        showCapsule(element, false);
+      } else {
+        element.classList.add("is-hidden");
+        window.setTimeout(() => showCapsule(element, true), 80 + index * 90);
+      }
+    });
+  }
+
+  function getAvailableSuggestions() {
+    const visibleIds = new Set(visibleCapsules.map((entry) => entry.suggestion.id));
+    return pool.filter((suggestion) => !visibleIds.has(suggestion.id));
+  }
+
+  function getOccupiedSlotIndexes(excludeEntryIndex?: number) {
+    return new Set(
+      visibleCapsules
+        .filter((_, index) => index !== excludeEntryIndex)
+        .map((entry) => entry.slotIndex)
+    );
+  }
+
+  function getAvailableSlots(excludeEntryIndex?: number) {
+    const occupied = getOccupiedSlotIndexes(excludeEntryIndex);
+    const open = activeSlots().filter(({ index }) => !occupied.has(index));
+    return open.length > 0 ? open : activeSlots();
+  }
+
+  async function swapOneCapsule() {
+    if (shouldStopCycle()) {
+      stopCycle();
+      return;
+    }
+
+    if (visibleCapsules.length === 0 || pool.length <= visibleCount()) return;
+
+    const availableSuggestions = getAvailableSuggestions();
+    if (availableSuggestions.length === 0) return;
+
+    const entryIndex = Math.floor(Math.random() * visibleCapsules.length);
+    const current = visibleCapsules[entryIndex];
+    if (!current) return;
+
+    const nextSuggestion = pickRandom(availableSuggestions);
+    const nextSlotEntry = pickRandom(getAvailableSlots(entryIndex));
+    if (!nextSlotEntry) return;
+
+    await hideCapsule(current.element);
+
+    if (shouldStopCycle()) {
+      stopCycle();
+      return;
+    }
+
+    current.element.remove();
+    visibleCapsules.splice(entryIndex, 1);
+
+    const nextElement = createCapsule(nextSuggestion, nextSlotEntry.slot);
+    nextElement.classList.add("is-hidden");
+    capsulesLayer.appendChild(nextElement);
+    visibleCapsules.push({
+      suggestion: nextSuggestion,
+      slotIndex: nextSlotEntry.index,
+      element: nextElement,
+    });
+
+    showCapsule(nextElement, true);
+  }
+
+  async function rotateCapsules() {
+    if (shouldStopCycle()) {
+      stopCycle();
+      return;
+    }
+
+    const swaps = prefersReducedMotion() ? 1 : Math.random() > 0.45 ? 2 : 1;
+    for (let i = 0; i < swaps; i += 1) {
+      await swapOneCapsule();
+      if (shouldStopCycle()) break;
+    }
+  }
+
+  function startCycle() {
+    if (prefersReducedMotion()) return;
+
+    cycleTimerId = window.setInterval(() => {
+      void rotateCapsules();
+    }, 4200);
+  }
+
+  capsulesLayer.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement) || !target.dataset.question) return;
+
+    if (!input) return;
+    input.value = target.dataset.question;
+    input.focus();
+    updateSubmitState();
+    pulseCapsule(target);
+    flashInput();
+    stopCycle();
   });
 
-  input?.addEventListener("input", updateSubmitState);
+  input?.addEventListener("focus", stopCycle);
+  input?.addEventListener("input", () => {
+    updateSubmitState();
+    if (input.value.trim()) stopCycle();
+  });
 
   input?.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && submitButton && !submitButton.disabled) {
@@ -123,8 +316,22 @@ const suggestions: Suggestion[] = [
   submitButton?.addEventListener("click", () => {
     const question = input?.value.trim();
     if (!question) return;
+    stopCycle();
     window.dispatchEvent(new CustomEvent("mock-chat:submit", { detail: { question } }));
   });
 
+  window.addEventListener("mock-chat:submit", stopCycle);
+
+  window.addEventListener("resize", () => {
+    if (shouldStopCycle()) return;
+    if (cycleTimerId !== undefined) window.clearInterval(cycleTimerId);
+    stopped = false;
+    renderInitial();
+    startCycle();
+  });
+
+  renderInitial();
   updateSubmitState();
+  startCycle();
+  }
 </script>

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/projects.schema.json",
+  "title": "Projects",
+  "description": "Portfolio projects: professional, academic, personal, freelance or game projects. Meant to be consumed by AI tools such as `get_projects` / `get_project_by_id`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "name": { "type": "string" },
+      "type": {
+        "type": "string",
+        "enum": ["professional", "academic", "personal", "freelance", "game"]
+      },
+      "role": { "type": "string", "description": "Diego's role in the project, e.g. \"Full-Stack Developer\"." },
+      "summary": { "type": "string", "description": "Short one-liner for cards/lists." },
+      "description": { "type": "string", "description": "Longer explanation used in the project detail view." },
+      "problem": { "type": "string", "description": "Problem/challenge statement, for case-study style answers." },
+      "solution": { "type": "string" },
+      "result": { "type": "string" },
+      "highlights": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Key features or bullet points."
+      },
+      "stack": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Ids of related entries in skills.json."
+      },
+      "team": {
+        "type": "array",
+        "items": { "$ref": "_common.schema.json#/$defs/teamMember" }
+      },
+      "links": {
+        "type": "array",
+        "items": { "$ref": "_common.schema.json#/$defs/link" }
+      },
+      "media": {
+        "type": "array",
+        "items": { "$ref": "_common.schema.json#/$defs/media" }
+      },
+      "startDate": { "$ref": "_common.schema.json#/$defs/yearMonth" },
+      "endDate": {
+        "oneOf": [{ "$ref": "_common.schema.json#/$defs/yearMonth" }, { "type": "null" }],
+        "description": "Null while `current` is true."
+      },
+      "current": { "type": "boolean" },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "featured": { "type": "boolean", "description": "Highlight this project (e.g. in the dashboard case study)." },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the project without deleting it." }
+    },
+    "required": [
+      "id", "name", "type", "role", "summary", "description", "problem",
+      "solution", "result", "highlights", "stack", "team", "links", "media",
+      "startDate", "endDate", "current", "tags", "featured", "order", "visible"
+    ],
+    "additionalProperties": false
+  }
+}

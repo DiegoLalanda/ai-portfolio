@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/experience.schema.json",
+  "title": "Experience",
+  "description": "Professional experience entries: jobs, freelance work and teaching positions. Meant to be consumed by AI tools such as `get_experience` / `get_experience_by_id`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "role": { "type": "string", "description": "Job title, e.g. \"AI Developer\"." },
+      "company": { "type": "string" },
+      "companyUrl": { "type": ["string", "null"], "format": "uri" },
+      "location": { "type": "string" },
+      "employmentType": {
+        "type": "string",
+        "enum": ["full-time", "part-time", "freelance", "internship", "volunteer"]
+      },
+      "workMode": { "type": "string", "enum": ["remote", "hybrid", "onsite"] },
+      "startDate": { "$ref": "_common.schema.json#/$defs/yearMonth" },
+      "endDate": {
+        "oneOf": [{ "$ref": "_common.schema.json#/$defs/yearMonth" }, { "type": "null" }],
+        "description": "Null while `current` is true."
+      },
+      "current": { "type": "boolean", "description": "True when this is Diego's present position." },
+      "summary": { "type": "string", "description": "One or two sentence overview, ideal for short AI answers." },
+      "highlights": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Bullet points describing responsibilities and achievements."
+      },
+      "stack": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Ids of related entries in skills.json (e.g. \"skill-python\")."
+      },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "featured": { "type": "boolean", "description": "Highlight this entry in summaries/dashboards." },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the entry without deleting it." }
+    },
+    "required": [
+      "id", "role", "company", "companyUrl", "location", "employmentType", "workMode",
+      "startDate", "endDate", "current", "summary", "highlights", "stack",
+      "tags", "featured", "order", "visible"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -60,9 +60,9 @@ const FRAGMENT_SHADER = `
     float n2 = snoise(distortedUv * 3.0 - vec2(t * 0.2, n1 * 0.5));
     float n3 = snoise(distortedUv * 5.0 + vec2(n2 * 0.4, t * 0.1));
 
-    vec3 color1 = vec3(0.1, 0.0, 0.3);
-    vec3 color2 = vec3(0.0, 0.4, 0.4);
-    vec3 color3 = vec3(0.05, 0.05, 0.1);
+    vec3 color1 = vec3(0.08, 0.0, 0.25);
+    vec3 color2 = vec3(0.0, 0.3, 0.3);
+    vec3 color3 = vec3(0.03, 0.03, 0.06);
 
     float intensity = smoothstep(-0.5, 1.0, n1 * n2 + n3 * 0.5);
     vec3 finalColor = mix(color3, color1, intensity);
@@ -119,6 +119,8 @@ export function initAuroraShader(canvas: HTMLCanvasElement): void {
   const mouseLocation = gl.getUniformLocation(program, "u_mouse");
 
   const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  let animationFrameId = 0;
+  let isRunning = true;
 
   window.addEventListener("mousemove", (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -131,13 +133,31 @@ export function initAuroraShader(canvas: HTMLCanvasElement): void {
   });
 
   function render(time: number) {
+    if (!isRunning) return;
     if (typeof ResizeObserver === "undefined") syncSize();
     gl!.viewport(0, 0, canvas.width, canvas.height);
     if (timeLocation) gl!.uniform1f(timeLocation, time * 0.001);
     if (resolutionLocation) gl!.uniform2f(resolutionLocation, canvas.width, canvas.height);
     if (mouseLocation) gl!.uniform2f(mouseLocation, mouse.x, mouse.y);
     gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(render);
+    animationFrameId = requestAnimationFrame(render);
   }
-  requestAnimationFrame(render);
+
+  function startLoop() {
+    if (isRunning) return;
+    isRunning = true;
+    animationFrameId = requestAnimationFrame(render);
+  }
+
+  function stopLoop() {
+    isRunning = false;
+    cancelAnimationFrame(animationFrameId);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopLoop();
+    else startLoop();
+  });
+
+  startLoop();
 }

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "lang-spanish",
+    "name": "Español",
+    "code": "es",
+    "proficiency": "native",
+    "proficiencyPercent": 100,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "lang-english",
+    "name": "Inglés",
+    "code": "en",
+    "proficiency": "A2",
+    "proficiencyPercent": 50,
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "lang-portuguese",
+    "name": "Portugués",
+    "code": "pt",
+    "proficiency": "B1",
+    "proficiencyPercent": 70,
+    "order": 3,
+    "visible": true
+  }
+]

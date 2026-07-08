@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/skills.schema.json",
+  "title": "Skills",
+  "description": "Flat list of technical skills grouped by category, mirroring the CV's skill groups. Referenced by id from experience.json, projects.json and certifications.json. Meant to be consumed by AI tools such as `get_skills` / `get_skills_by_category`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "name": { "type": "string" },
+      "category": {
+        "type": "string",
+        "enum": ["ai", "cloud-devops", "frontend", "backend-data", "design-cms-other"],
+        "description": "High-level grouping used to render skill sections."
+      },
+      "proficiency": {
+        "type": ["integer", "null"],
+        "minimum": 1,
+        "maximum": 5,
+        "description": "Self-rated proficiency, 1 (basic) to 5 (expert). Optional."
+      },
+      "yearsOfExperience": { "type": ["number", "null"] },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "featured": { "type": "boolean", "description": "Highlight this skill (e.g. top skills widget)." },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the skill without deleting it." }
+    },
+    "required": [
+      "id", "name", "category", "proficiency", "yearsOfExperience",
+      "tags", "featured", "order", "visible"
+    ],
+    "additionalProperties": false
+  }
+}

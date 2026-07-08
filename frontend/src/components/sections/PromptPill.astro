@@ -1,0 +1,146 @@
+---
+interface Props {
+  /** `editable`: input activo + botón enviar. `readonly`: pregunta enviada + indicador de check. */
+  mode?: "editable" | "readonly";
+  inputId: string;
+  value?: string;
+  placeholder?: string;
+  placeholders?: string[];
+  sendAriaLabel?: string;
+  class?: string;
+}
+
+const {
+  mode = "editable",
+  inputId,
+  value = "",
+  placeholder,
+  placeholders = [],
+  sendAriaLabel = "Send",
+  class: className,
+} = Astro.props;
+const placeholderCycle = placeholders.length > 0 ? placeholders : ["..."];
+const initialPlaceholder = placeholder ?? placeholderCycle[0];
+const isReadonly = mode === "readonly";
+---
+
+<div class:list={["glass-input-container z-10 flex w-full items-center rounded-full px-6 py-4", className]}>
+  <span
+    class="material-symbols-outlined mr-4 text-primary"
+    aria-hidden="true"
+    style="font-variation-settings: 'FILL' 1;"
+  >
+    auto_awesome
+  </span>
+  <input
+    id={inputId}
+    type="text"
+    autocomplete="off"
+    readonly={isReadonly || undefined}
+    value={isReadonly ? value : undefined}
+    placeholder={!isReadonly ? initialPlaceholder : undefined}
+    data-placeholder-cycle={!isReadonly ? JSON.stringify(placeholderCycle) : undefined}
+    class="w-full border-none bg-transparent font-body-md text-body-md text-on-surface placeholder-outline-variant focus:outline-none focus:ring-0"
+  />
+  {
+    isReadonly ? (
+      <span
+        class="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary"
+        aria-hidden="true"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">
+          check
+        </span>
+      </span>
+    ) : (
+      <button
+        type="button"
+        id="ai-input-submit"
+        disabled
+        aria-label={sendAriaLabel}
+        class="ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface transition-colors hover:bg-primary hover:text-on-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 0;">
+          arrow_forward
+        </span>
+      </button>
+    )
+  }
+</div>
+
+{
+  !isReadonly && (
+    <script>
+      function prefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
+      function initPlaceholderCycle(input: HTMLInputElement) {
+        const raw = input.dataset.placeholderCycle;
+        if (!raw) return;
+
+        const phrases: string[] = JSON.parse(raw);
+        if (phrases.length === 0) return;
+
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+        let stopped = false;
+        let timeoutId: number | undefined;
+
+        function clearTimer() {
+          if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+        }
+
+        function stopCycle() {
+          stopped = true;
+          clearTimer();
+        }
+
+        function tick() {
+          if (stopped || document.activeElement === input || input.value.trim()) return;
+
+          const phrase = phrases[phraseIndex] ?? "";
+
+          if (!deleting) {
+            charIndex += 1;
+            input.placeholder = phrase.slice(0, charIndex);
+
+            if (charIndex >= phrase.length) {
+              deleting = true;
+              timeoutId = window.setTimeout(tick, 1800);
+              return;
+            }
+
+            timeoutId = window.setTimeout(tick, 45 + Math.random() * 25);
+            return;
+          }
+
+          charIndex -= 1;
+          input.placeholder = phrase.slice(0, charIndex);
+
+          if (charIndex <= 0) {
+            deleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            timeoutId = window.setTimeout(tick, 350);
+            return;
+          }
+
+          timeoutId = window.setTimeout(tick, 28);
+        }
+
+        input.addEventListener("focus", stopCycle);
+        input.addEventListener("input", stopCycle);
+
+        if (prefersReducedMotion()) {
+          input.placeholder = phrases[0] ?? input.placeholder;
+          return;
+        }
+
+        timeoutId = window.setTimeout(tick, 900);
+      }
+
+      document.querySelectorAll<HTMLInputElement>("[data-placeholder-cycle]").forEach(initPlaceholderCycle);
+    </script>
+  )
+}

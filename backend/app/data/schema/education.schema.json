@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/education.schema.json",
+  "title": "Education",
+  "description": "Formal education entries: degrees and technical programs. Meant to be consumed by AI tools such as `get_education`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "institution": { "type": "string" },
+      "institutionUrl": { "type": ["string", "null"], "format": "uri" },
+      "degree": { "type": "string" },
+      "fieldOfStudy": { "type": "string" },
+      "location": { "type": "string" },
+      "startDate": { "$ref": "_common.schema.json#/$defs/yearMonth" },
+      "endDate": {
+        "oneOf": [{ "$ref": "_common.schema.json#/$defs/yearMonth" }, { "type": "null" }],
+        "description": "Null while `status` is \"in-progress\"."
+      },
+      "status": { "type": "string", "enum": ["in-progress", "completed", "paused"] },
+      "gpa": { "type": ["number", "null"], "description": "Grade point average on a 1-10 scale, if applicable." },
+      "highlights": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Notable achievements, thesis, final project, etc."
+      },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "featured": { "type": "boolean" },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the entry without deleting it." }
+    },
+    "required": [
+      "id", "institution", "institutionUrl", "degree", "fieldOfStudy", "location",
+      "startDate", "endDate", "status", "gpa", "highlights", "tags", "featured", "order", "visible"
+    ],
+    "additionalProperties": false
+  }
+}

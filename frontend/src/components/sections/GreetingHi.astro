@@ -1,0 +1,18 @@
+---
+interface Props {
+  greeting: string;
+  subtle?: boolean;
+}
+
+const { greeting, subtle = false } = Astro.props;
+---
+
+<span
+  class:list={[
+    "hero-greeting font-label-md text-label-md uppercase tracking-widest text-on-surface-variant",
+    subtle && "hero-greeting--subtle",
+  ]}
+>
+  <span class="hero-greeting__hi">{greeting}</span>
+  <span class="hero-greeting__wave" aria-hidden="true">👋</span>
+</span>

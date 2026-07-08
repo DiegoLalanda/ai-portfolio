@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/softskills.schema.json",
+  "title": "Soft skills",
+  "description": "Interpersonal/transferable skills. Meant to be consumed by AI tools such as `get_soft_skills`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "name": { "type": "string" },
+      "description": {
+        "type": ["string", "null"],
+        "description": "Optional short explanation of how this skill shows up in practice."
+      },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the entry without deleting it." }
+    },
+    "required": ["id", "name", "description", "tags", "order", "visible"],
+    "additionalProperties": false
+  }
+}

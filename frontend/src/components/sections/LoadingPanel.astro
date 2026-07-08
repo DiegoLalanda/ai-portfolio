@@ -16,7 +16,12 @@ const { messages, label = "System Architecting", autostart = true } = Astro.prop
 ---
 
 <div class="mx-auto w-full max-w-xl">
-  <div class="glass-panel relative flex flex-col gap-6 overflow-hidden rounded-xl p-8 text-left fade-in-up delay-300">
+  <div
+    id="loading-panel"
+    class="glass-panel relative flex flex-col gap-6 overflow-hidden rounded-xl p-8 text-left fade-in-up delay-300"
+    data-messages={JSON.stringify(messages)}
+    data-autostart={String(autostart)}
+  >
     <div class="mb-2 flex items-center gap-3">
       <div class="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
       <span class="font-label-md text-label-md uppercase tracking-widest text-primary">{label}</span>
@@ -28,12 +33,16 @@ const { messages, label = "System Architecting", autostart = true } = Astro.prop
   </div>
 </div>
 
-<script is:inline define:vars={{ messages, autostart }}>
-  // @ts-nocheck -- `messages`/`autostart` se inyectan en runtime vía `define:vars`.
+<script>
+  const panel = document.getElementById("loading-panel");
   const container = document.getElementById("loading-messages");
   const progressLine = document.getElementById("global-progress");
+
+  const messages: string[] = panel?.dataset.messages ? JSON.parse(panel.dataset.messages) : [];
+  const autostart = panel?.dataset.autostart === "true";
+
   let currentMessage = 0;
-  let pendingTimeoutId;
+  let pendingTimeoutId: number | undefined;
 
   function showNextMessage() {
     if (!container || !progressLine) return;
@@ -43,16 +52,22 @@ const { messages, label = "System Architecting", autostart = true } = Astro.prop
       return;
     }
 
+    container.querySelectorAll(".loading-message-active").forEach((element) => {
+      element.classList.remove("loading-message-active");
+      element.classList.add("loading-message-past");
+    });
+
     const messageEl = document.createElement("div");
-    messageEl.className = "message-fade-in flex items-center gap-3";
+    messageEl.className = "message-fade-in loading-message-active flex items-center gap-3";
 
     const icon = document.createElement("span");
-    icon.className = "material-symbols-outlined text-[18px] text-outline-variant";
+    icon.className = "loading-message-icon material-symbols-outlined text-[18px] text-outline-variant";
+    icon.setAttribute("aria-hidden", "true");
     icon.innerText = "blur_on";
 
     const text = document.createElement("span");
     text.className = "font-body-md text-body-md text-on-surface shimmer-text typing-effect";
-    text.innerText = messages[currentMessage];
+    text.innerText = messages[currentMessage] ?? "";
 
     messageEl.appendChild(icon);
     messageEl.appendChild(text);
@@ -65,7 +80,7 @@ const { messages, label = "System Architecting", autostart = true } = Astro.prop
   }
 
   function runSequence() {
-    window.clearTimeout(pendingTimeoutId);
+    if (pendingTimeoutId !== undefined) window.clearTimeout(pendingTimeoutId);
     currentMessage = 0;
     if (container) container.innerHTML = "";
     if (progressLine) progressLine.style.width = "0%";

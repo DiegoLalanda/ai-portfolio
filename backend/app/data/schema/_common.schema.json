@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/_common.schema.json",
+  "title": "Common definitions",
+  "description": "Shared building blocks reused across every portfolio data schema (experience, projects, education, certifications, etc). Centralizing them here avoids redefining the same shape in multiple files and keeps every collection consistent.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable, unique, kebab-case identifier, conventionally prefixed by type (e.g. \"exp-finnegans-ai-developer\", \"skill-python\", \"proj-cachibache-app\"). Other files and AI tools reference entries by this id."
+    },
+    "yearMonth": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}$",
+      "description": "Partial ISO-8601 date with year and month only, e.g. \"2025-03\"."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Free-form lowercase keywords used for search/filtering by AI tools (e.g. [\"ai\", \"backend\", \"aws\"])."
+    },
+    "link": {
+      "type": "object",
+      "description": "A single outbound link (repo, live demo, article, social profile, etc).",
+      "properties": {
+        "label": { "type": "string", "description": "Human readable label, e.g. \"Repository\" or \"Live demo\"." },
+        "url": { "type": "string", "format": "uri" },
+        "type": {
+          "type": "string",
+          "enum": ["repo", "live", "demo", "article", "video", "store", "linkedin", "github", "portfolio", "certificate", "other"]
+        }
+      },
+      "required": ["label", "url", "type"],
+      "additionalProperties": false
+    },
+    "media": {
+      "type": "object",
+      "description": "A single image/video/gif asset associated with an entry.",
+      "properties": {
+        "type": { "type": "string", "enum": ["image", "video", "gif"] },
+        "url": { "type": "string" },
+        "alt": { "type": "string", "description": "Accessible description of the asset." }
+      },
+      "required": ["type", "url", "alt"],
+      "additionalProperties": false
+    },
+    "teamMember": {
+      "type": "object",
+      "description": "A collaborator credited on a shared project.",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "url": { "type": ["string", "null"], "description": "Optional profile link (GitHub, LinkedIn, etc)." }
+      },
+      "required": ["name", "role", "url"],
+      "additionalProperties": false
+    }
+  }
+}

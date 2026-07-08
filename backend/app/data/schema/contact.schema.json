@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/contact.schema.json",
+  "title": "Contact",
+  "description": "Single object with identity, contact details and social links. Unlike the other files this is not a collection. Meant to be consumed by AI tools such as `get_contact_info`.",
+  "type": "object",
+  "properties": {
+    "fullName": { "type": "string" },
+    "headline": {
+      "type": "string",
+      "description": "Short professional tagline, e.g. \"Full-Stack Developer | AI Engineer | Teacher\"."
+    },
+    "email": { "type": "string", "format": "email" },
+    "phone": { "type": ["string", "null"] },
+    "location": {
+      "type": "object",
+      "properties": {
+        "city": { "type": "string" },
+        "region": { "type": "string" },
+        "country": { "type": "string" },
+        "timezone": { "type": "string", "description": "IANA timezone, e.g. \"America/Argentina/Buenos_Aires\"." }
+      },
+      "required": ["city", "region", "country", "timezone"],
+      "additionalProperties": false
+    },
+    "availability": {
+      "type": "string",
+      "enum": ["open-to-work", "open-to-freelance", "not-available"]
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "_common.schema.json#/$defs/link" }
+    },
+    "preferredContactMethod": {
+      "type": "string",
+      "enum": ["email", "phone", "linkedin", "contact-form"]
+    },
+    "resumeUrl": { "type": ["string", "null"] }
+  },
+  "required": [
+    "fullName", "headline", "email", "phone", "location",
+    "availability", "links", "preferredContactMethod", "resumeUrl"
+  ],
+  "additionalProperties": false
+}

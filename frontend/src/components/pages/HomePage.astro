@@ -1,0 +1,168 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HeroIntro from "@/components/sections/HeroIntro.astro";
+import AiPromptCapsules from "@/components/sections/AiPromptCapsules.astro";
+import SubmittedPrompt from "@/components/sections/SubmittedPrompt.astro";
+import LoadingPanel from "@/components/sections/LoadingPanel.astro";
+import DashboardResults from "@/components/sections/DashboardResults.astro";
+import ProjectDetailModal from "@/components/sections/ProjectDetailModal.astro";
+import SiteFooter from "@/components/layout/SiteFooter.astro";
+import AgentResponseIsland from "@/components/react/AgentResponseIsland";
+import { getTranslations, type Locale } from "@/i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+---
+
+<Layout title={t.meta.title} locale={locale}>
+  <div
+    id="page-root"
+    class="flex h-dvh flex-col overflow-hidden"
+    data-error-title={t.errors.connectionTitle}
+    data-error-summary={t.errors.connectionSummary}
+  >
+    <div id="ambient-background" class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div id="aurora-shader-layer" class="absolute inset-0 z-0">
+        <canvas id="aurora-shader-canvas" class="block h-full w-full"></canvas>
+      </div>
+      <div id="aurora-particles-layer" class="absolute inset-0 z-10"></div>
+    </div>
+
+    <main
+      id="parallax-container"
+      class="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-margin-edge pb-4 pt-6 md:pt-8"
+    >
+      <div id="phase-landing" class="flex w-full max-w-container-max flex-col items-center text-center">
+        <HeroIntro locale={locale} compact />
+        <AiPromptCapsules locale={locale} />
+      </div>
+
+      <div id="phase-processing" class="hidden flex w-full max-w-container-max flex-col items-center text-center">
+        <HeroIntro locale={locale} receded />
+        <SubmittedPrompt question="" />
+        <LoadingPanel messages={t.loading.messages} autostart={false} label={t.loading.label} />
+      </div>
+    </main>
+
+    <section
+      id="phase-dashboard"
+      class="relative z-10 hidden shrink-0 translate-y-10 px-margin-edge py-section-gap-desktop opacity-0 transition-all duration-1000 ease-out"
+    >
+      <div id="agent-response-container" class="mx-auto mb-gutter max-w-container-max">
+        <AgentResponseIsland client:idle />
+      </div>
+
+      <DashboardResults />
+    </section>
+
+    <SiteFooter locale={locale} compact class="z-10 shrink-0 transition-all duration-500" />
+  </div>
+
+  <ProjectDetailModal />
+
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
+  <script is:inline src="/ambient-background.js"></script>
+</Layout>
+
+<script>
+  document.addEventListener("mousemove", (event) => {
+    const x = (event.clientX / window.innerWidth - 0.5) * 20;
+    const y = (event.clientY / window.innerHeight - 0.5) * 20;
+    const parallax = document.getElementById("parallax-container");
+    if (parallax) {
+      parallax.style.transform = `translate(${x}px, ${y}px)`;
+    }
+  });
+</script>
+
+<script>
+  import { sendChatMessage } from "@/lib/api";
+  import type { AgentResponse } from "@/types/agent-response";
+
+  const pageRoot = document.getElementById("page-root");
+  const main = document.getElementById("parallax-container");
+  const landingPhase = document.getElementById("phase-landing");
+  const processingPhase = document.getElementById("phase-processing");
+  const dashboardPhase = document.getElementById("phase-dashboard");
+
+  let loadingAnimationDone = false;
+  let agentResponse: AgentResponse | null = null;
+
+  function revealDashboard() {
+    if (!dashboardPhase || !pageRoot || !main) return;
+
+    pageRoot.classList.remove("h-dvh", "overflow-hidden");
+    pageRoot.classList.add("min-h-dvh");
+
+    main.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center");
+    main.classList.add("shrink-0");
+
+    dashboardPhase.classList.remove("hidden");
+    dashboardPhase.classList.add("is-revealed");
+    requestAnimationFrame(() => {
+      dashboardPhase.classList.remove("opacity-0", "translate-y-10");
+      dashboardPhase.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function maybeRevealDashboard() {
+    if (loadingAnimationDone && agentResponse !== null) revealDashboard();
+  }
+
+  window.addEventListener("mock-chat:submit", (event) => {
+    if (!landingPhase || !processingPhase) return;
+
+    const question = (event as CustomEvent<{ question: string }>).detail?.question ?? "";
+    const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
+    if (submittedQuestion) submittedQuestion.value = question;
+
+    loadingAnimationDone = false;
+    agentResponse = null;
+
+    pageRoot?.classList.add("is-thinking");
+
+    landingPhase.classList.add("phase-exiting");
+    window.setTimeout(() => {
+      landingPhase.classList.add("hidden");
+      landingPhase.classList.remove("phase-exiting");
+      processingPhase.classList.remove("hidden");
+      processingPhase.classList.add("phase-entering");
+      requestAnimationFrame(() => processingPhase.classList.remove("phase-entering"));
+    }, 200);
+
+    main?.classList.remove("justify-center");
+    main?.classList.add("justify-start");
+    window.dispatchEvent(new CustomEvent("loading:start"));
+
+    sendChatMessage(question)
+      .then((data) => {
+        agentResponse = data;
+        window.dispatchEvent(new CustomEvent("agent-response:ready", { detail: data }));
+        maybeRevealDashboard();
+      })
+      .catch((error) => {
+        console.error("Error al llamar al backend:", error);
+        const fallback: AgentResponse = {
+          title: pageRoot?.dataset.errorTitle ?? "Connection issue",
+          summary:
+            pageRoot?.dataset.errorSummary ??
+            "Couldn't reach the backend right now. Please make sure the API is running.",
+          widgets: [],
+          suggested_actions: [],
+        };
+        agentResponse = fallback;
+        window.dispatchEvent(new CustomEvent("agent-response:ready", { detail: fallback }));
+        maybeRevealDashboard();
+      });
+  });
+
+  window.addEventListener("loading:complete", () => {
+    loadingAnimationDone = true;
+    pageRoot?.classList.remove("is-thinking");
+    maybeRevealDashboard();
+  });
+</script>

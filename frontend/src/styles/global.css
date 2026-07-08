@@ -105,6 +105,20 @@
   z-index: 1;
 }
 
+.glass-input-container:focus-within {
+  border-color: rgba(208, 188, 255, 0.45);
+  box-shadow:
+    0 0 40px rgba(208, 188, 255, 0.2),
+    0 0 0 2px rgba(208, 188, 255, 0.25);
+}
+
+.interactive-card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(208, 188, 255, 0.5),
+    0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 @keyframes shine {
   to {
     background-position: 200% center;
@@ -196,6 +210,137 @@
   padding-bottom: 0.08em;
 }
 
+.gradient-text-primary.warp-text {
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: inherit;
+}
+
+.gradient-text-primary.warp-text .warp-text__unit {
+  display: inline-block;
+  background: linear-gradient(135deg, #e7e0ed 0%, #d0bcff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  will-change: transform, filter;
+}
+
+.warp-text {
+  cursor: default;
+}
+
+.warp-text__unit {
+  display: inline-block;
+  transition: transform 0.08s linear, filter 0.12s ease, text-shadow 0.12s ease;
+  will-change: transform, filter;
+}
+
+.warp-text--liquid {
+  transition: filter 0.35s ease;
+}
+
+.warp-text--liquid.is-hover {
+  filter: url(#text-liquid-warp);
+}
+
+.warp-text--liquid .warp-text__unit {
+  transition: none;
+}
+
+.warp-text__space {
+  white-space: pre;
+}
+
+.hero-role {
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+.hero-role:hover {
+  color: #cac4d0;
+}
+
+.hero-tagline {
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.hero-tagline:hover {
+  color: #938f99;
+  opacity: 1;
+}
+
+.hero-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.hero-greeting__hi {
+  display: inline-block;
+  animation: greeting-hi 2.8s ease-in-out infinite;
+  animation-delay: 0.65s;
+}
+
+.hero-greeting__wave {
+  display: inline-block;
+  font-size: 1.15em;
+  line-height: 1;
+  transform-origin: 70% 75%;
+  animation: greeting-wave 2.8s ease-in-out infinite;
+  animation-delay: 0.65s;
+}
+
+.hero-greeting--subtle .hero-greeting__hi,
+.hero-greeting--subtle .hero-greeting__wave {
+  animation-duration: 3.6s;
+}
+
+@keyframes greeting-wave {
+  0%,
+  52%,
+  100% {
+    transform: rotate(0deg);
+  }
+  8% {
+    transform: rotate(18deg);
+  }
+  16% {
+    transform: rotate(-8deg);
+  }
+  24% {
+    transform: rotate(16deg);
+  }
+  32% {
+    transform: rotate(-6deg);
+  }
+  40% {
+    transform: rotate(12deg);
+  }
+  48% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes greeting-hi {
+  0%,
+  52%,
+  100% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-3px);
+  }
+  20% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-2px);
+  }
+  40% {
+    transform: translateY(0);
+  }
+}
+
 .section-label {
   display: inline-flex;
   align-items: center;
@@ -263,7 +408,24 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.45s ease,
+    visibility 0.45s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.floating-capsule.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.floating-capsule.is-appearing {
+  filter: brightness(1.08);
 }
 
 .floating-capsule:hover {
@@ -325,5 +487,225 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* --- UX premium: landing, chat, thinking, dashboard --- */
+
+.capsule-enter {
+  opacity: 0;
+  animation: capsuleEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.capsule-enter-delay-0 { animation-delay: 500ms; }
+.capsule-enter-delay-1 { animation-delay: 580ms; }
+.capsule-enter-delay-2 { animation-delay: 660ms; }
+.capsule-enter-delay-3 { animation-delay: 740ms; }
+.capsule-enter-delay-4 { animation-delay: 820ms; }
+.capsule-enter-delay-5 { animation-delay: 900ms; }
+
+@keyframes capsuleEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.capsule-pulse {
+  animation: capsulePulse 0.45s ease-out;
+}
+
+@keyframes capsulePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow: 0 0 22px rgba(208, 188, 255, 0.35);
+  }
+}
+
+.glass-input-container.input-flash {
+  border-color: rgba(208, 188, 255, 0.55);
+  box-shadow:
+    0 0 48px rgba(208, 188, 255, 0.28),
+    0 0 0 2px rgba(208, 188, 255, 0.28);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.phase-exiting {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+  pointer-events: none;
+}
+
+.phase-entering {
+  animation: phaseEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes phaseEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.aurora-layer {
+  transition: opacity 0.7s ease;
+}
+
+#page-root.is-thinking #ambient-background {
+  opacity: 1.08;
+  filter: brightness(1.12);
+}
+
+#page-root.is-thinking #aurora-shader-layer,
+#page-root.is-thinking #aurora-particles-layer {
+  transition: opacity 0.7s ease, filter 0.7s ease;
+}
+
+.loading-message-past {
+  opacity: 0.42;
+  transition: opacity 0.35s ease;
+}
+
+.loading-message-active .loading-message-icon {
+  color: #d0bcff;
+  animation: loadingIconPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes loadingIconPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+.dashboard-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+#phase-dashboard.is-revealed .dashboard-reveal {
+  animation: fadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dashboard-reveal-delay-1 { animation-delay: 0.06s; }
+.dashboard-reveal-delay-2 { animation-delay: 0.14s; }
+.dashboard-reveal-delay-3 { animation-delay: 0.22s; }
+.dashboard-reveal-delay-4 { animation-delay: 0.3s; }
+
+.progress-bar-fill {
+  width: 0;
+  transition: width 1.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#project-detail-modal {
+  transform: scale(0.97);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#project-detail-modal.modal-open {
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .floating-capsule.is-hidden {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .floating-capsule.is-appearing {
+    filter: none !important;
+  }
+
+  .warp-text--liquid.is-hover,
+  .warp-text__unit {
+    filter: none !important;
+    transform: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+  }
+
+  .hero-greeting__hi,
+  .hero-greeting__wave {
+    animation: none !important;
+  }
+
+  .float-anim-1,
+  .float-anim-2,
+  .float-anim-3,
+  .float-anim-4,
+  .float-anim-5,
+  .capsule-enter,
+  .capsule-pulse,
+  .phase-entering,
+  .loading-message-active .loading-message-icon,
+  .dashboard-reveal,
+  #phase-dashboard.is-revealed .dashboard-reveal,
+  .shimmer-text,
+  .typing-effect,
+  .fade-in-up,
+  .message-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    border-right-color: transparent !important;
+    white-space: normal !important;
+    width: auto !important;
+  }
+
+  #page-root.is-thinking #ambient-background {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  #project-detail-modal,
+  #project-detail-modal.modal-open {
+    transform: none !important;
+  }
+
+  .progress-bar-fill {
+    transition: none !important;
+  }
+
+  .glass-input-container.input-flash {
+    box-shadow: none;
+  }
+
+  .glass-input-container::before {
+    animation: none !important;
+  }
+
+  .progress-line {
+    transition: none !important;
   }
 }

@@ -1,0 +1,104 @@
+[
+  {
+    "id": "cert-argentina-programa-fullstack-jr",
+    "name": "Desarrollador Web Full Stack Jr",
+    "issuer": "Argentina Programa",
+    "issuerUrl": null,
+    "issueDate": "2023-12",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [
+      "skill-javascript",
+      "skill-html5",
+      "skill-css3",
+      "skill-nodejs",
+      "skill-react"
+    ],
+    "tags": ["course", "full-stack", "argentina-programa"],
+    "featured": false,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "cert-argentina-programa-game-dev",
+    "name": "Desarrollador de videojuegos avanzado",
+    "issuer": "Argentina Programa",
+    "issuerUrl": null,
+    "issueDate": "2023-12",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [],
+    "tags": ["course", "game-development", "argentina-programa"],
+    "featured": false,
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "cert-utn-robotics-diploma",
+    "name": "Diplomatura Universitaria en Robótica Educativa",
+    "issuer": "UTN Concordia",
+    "issuerUrl": null,
+    "issueDate": "2024-12",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [],
+    "tags": ["diploma", "robotics", "education", "utn"],
+    "featured": false,
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "cert-odoo-developer",
+    "name": "Consultor y Desarrollador Odoo",
+    "issuer": "Formación profesional",
+    "issuerUrl": null,
+    "issueDate": "2024-06",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [],
+    "tags": ["course", "odoo", "erp"],
+    "featured": false,
+    "order": 4,
+    "visible": true
+  },
+  {
+    "id": "cert-server-deploy",
+    "name": "Profesional de deploy en servidores",
+    "issuer": "Formación profesional",
+    "issuerUrl": null,
+    "issueDate": "2024-06",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [
+      "skill-nginx",
+      "skill-pm2",
+      "skill-docker"
+    ],
+    "tags": ["course", "devops", "deployment"],
+    "featured": false,
+    "order": 5,
+    "visible": true
+  },
+  {
+    "id": "cert-docker-professional",
+    "name": "Profesional de Docker",
+    "issuer": "Formación profesional",
+    "issuerUrl": null,
+    "issueDate": "2024-12",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": null,
+    "skills": [
+      "skill-docker"
+    ],
+    "tags": ["course", "docker", "devops"],
+    "featured": false,
+    "order": 6,
+    "visible": true
+  }
+]

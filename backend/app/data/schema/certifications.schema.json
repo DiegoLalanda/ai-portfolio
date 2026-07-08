@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diegolalanda.dev/schema/certifications.schema.json",
+  "title": "Certifications",
+  "description": "Courses, diplomas and certifications. Meant to be consumed by AI tools such as `get_certifications`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "_common.schema.json#/$defs/id" },
+      "name": { "type": "string" },
+      "issuer": { "type": "string" },
+      "issuerUrl": { "type": ["string", "null"], "format": "uri" },
+      "issueDate": { "$ref": "_common.schema.json#/$defs/yearMonth" },
+      "expirationDate": {
+        "oneOf": [{ "$ref": "_common.schema.json#/$defs/yearMonth" }, { "type": "null" }],
+        "description": "Null when the certification does not expire."
+      },
+      "credentialId": { "type": ["string", "null"] },
+      "credentialUrl": { "type": ["string", "null"], "format": "uri" },
+      "skills": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Ids of related entries in skills.json."
+      },
+      "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "featured": { "type": "boolean" },
+      "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
+      "visible": { "type": "boolean", "description": "Toggle to hide the entry without deleting it." }
+    },
+    "required": [
+      "id", "name", "issuer", "issuerUrl", "issueDate", "expirationDate",
+      "credentialId", "credentialUrl", "skills", "tags", "featured", "order", "visible"
+    ],
+    "additionalProperties": false
+  }
+}

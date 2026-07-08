@@ -1,4 +1,5 @@
-"""Endpoint de chat. Responde usando Gemini (todavía solo texto plano)."""
+"""Endpoint de chat. Responde con el contrato estructurado `ChatResponse`
+(título, resumen, widgets, acciones sugeridas) generado por Gemini."""
 
 import logging
 
@@ -16,8 +17,8 @@ router = APIRouter()
 async def chat(payload: ChatRequest) -> ChatResponse:
     logger.info("POST /chat question=%r", payload.question)
     try:
-        answer = await get_answer(payload.question)
+        agent_response = await get_answer(payload.question)
     except ChatServiceError as error:
         logger.error("Error al generar respuesta con Gemini: %s", error)
         raise HTTPException(status_code=502, detail="Failed to get a response from the AI provider.") from error
-    return ChatResponse(answer=answer)
+    return ChatResponse(**agent_response.model_dump())

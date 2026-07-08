@@ -1,0 +1,82 @@
+[
+  {
+    "id": "soft-strategic-planning",
+    "name": "Planificación estratégica",
+    "description": "Diseño de planes de estudio anuales y planificación de proyectos técnicos con visión a mediano plazo.",
+    "tags": ["planning", "strategy"],
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "soft-creativity-innovation",
+    "name": "Creatividad e innovación",
+    "description": "Enfoque creativo para resolver problemas técnicos y de producto con soluciones originales.",
+    "tags": ["creativity", "innovation"],
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "soft-research",
+    "name": "Investigación",
+    "description": "Práctica constante en investigación de fuentes, síntesis de información y aprendizaje autodidacta.",
+    "tags": ["research", "analysis"],
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "soft-empathy-adaptability",
+    "name": "Empatía y adaptabilidad",
+    "description": "Capacidad para adaptarse a distintos contextos, equipos y audiencias.",
+    "tags": ["empathy", "adaptability"],
+    "order": 4,
+    "visible": true
+  },
+  {
+    "id": "soft-proactivity",
+    "name": "Proactividad",
+    "description": "Iniciativa para proponer mejoras, investigar nuevas tecnologías y avanzar sin supervisión constante.",
+    "tags": ["proactivity"],
+    "order": 5,
+    "visible": true
+  },
+  {
+    "id": "soft-leadership",
+    "name": "Liderazgo y gestión de grupos",
+    "description": "Conducción y motivación de equipos en ambientes colaborativos orientados a metas.",
+    "tags": ["leadership", "management"],
+    "order": 6,
+    "visible": true
+  },
+  {
+    "id": "soft-project-management",
+    "name": "Gestión de proyectos",
+    "description": "Coordinación de entregables, plazos y comunicación con stakeholders en proyectos full-stack.",
+    "tags": ["project-management"],
+    "order": 7,
+    "visible": true
+  },
+  {
+    "id": "soft-communication",
+    "name": "Comunicación efectiva",
+    "description": "Habilidad para desglosar temas abstractos y técnicos en explicaciones claras para distintas audiencias.",
+    "tags": ["communication", "teaching"],
+    "order": 8,
+    "visible": true
+  },
+  {
+    "id": "soft-problem-solving",
+    "name": "Resolución de problemas",
+    "description": "Enfoque analítico para diagnosticar y resolver problemas técnicos complejos.",
+    "tags": ["problem-solving"],
+    "order": 9,
+    "visible": true
+  },
+  {
+    "id": "soft-teamwork",
+    "name": "Trabajo en equipo",
+    "description": "Colaboración efectiva en equipos multidisciplinarios de desarrollo y docencia.",
+    "tags": ["teamwork", "collaboration"],
+    "order": 10,
+    "visible": true
+  }
+]

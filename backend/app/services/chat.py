@@ -1,29 +1,27 @@
 """Servicio de chat: genera la respuesta a la pregunta del usuario con Gemini.
 
-Todavía responde únicamente texto plano. Más adelante esta respuesta se
-transformará en datos estructurados para alimentar dashboards interactivos.
+El modelo responde consultando sus tools (function calling automático) y
+devuelve un `AgentResponse` estructurado (título, resumen, widgets, acciones
+sugeridas) en vez de texto plano — ver `app/ai/gemini.py` y
+`app/schemas/agent_response.py` para el detalle de cada pieza.
 """
 
+import pydantic
 from google.genai import errors as genai_errors
 
 from app.ai.gemini import generate_async
-
-SYSTEM_PROMPT = (
-    "You are the AI assistant embedded in Diego's personal portfolio website. "
-    "Diego is a Software Engineer, AI Engineer and Physics Professor. "
-    "Answer the visitor's question as if you were presenting Diego's experience "
-    "and skills. Keep the answer concise (2-4 sentences) and in plain text, "
-    "since it will be displayed directly in the UI."
-)
+from app.prompts import SYSTEM_PROMPT
+from app.schemas.agent_response import AgentResponse
 
 
 class ChatServiceError(Exception):
     """Error al obtener una respuesta del proveedor de IA."""
 
 
-async def get_answer(question: str) -> str:
-    prompt = f"{SYSTEM_PROMPT}\n\nVisitor's question: {question}"
+async def get_answer(question: str) -> AgentResponse:
     try:
-        return await generate_async(prompt)
+        return await generate_async(question, system_instruction=SYSTEM_PROMPT)
     except genai_errors.APIError as error:
         raise ChatServiceError(f"Gemini API error: {error}") from error
+    except pydantic.ValidationError as error:
+        raise ChatServiceError(f"Gemini devolvió una respuesta que no cumple el schema esperado: {error}") from error

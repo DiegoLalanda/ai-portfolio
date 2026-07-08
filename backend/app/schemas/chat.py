@@ -2,10 +2,12 @@
 
 from pydantic import BaseModel, Field
 
+from app.schemas.agent_response import AgentResponse
+
 
 class ChatRequest(BaseModel):
     question: str = Field(..., min_length=1, description="Pregunta enviada por el usuario.")
 
 
-class ChatResponse(BaseModel):
-    answer: str = Field(..., description="Respuesta generada para la pregunta recibida.")
+class ChatResponse(AgentResponse):
+    """Respuesta de POST /chat. Mismo contrato que `AgentResponse` (ver agent_response.py)."""

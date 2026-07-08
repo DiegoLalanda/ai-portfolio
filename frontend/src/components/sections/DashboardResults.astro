@@ -45,39 +45,42 @@ const roadmap: RoadmapStep[] = [
 
 <div class="mx-auto max-w-container-max space-y-gutter">
   <div class="grid grid-cols-1 gap-gutter lg:grid-cols-12">
-    <div class="group relative flex flex-col justify-between overflow-hidden rounded-xl glass-panel p-8 lg:col-span-7">
+    <div
+      id="dashboard-stats-card"
+      class="dashboard-reveal dashboard-reveal-delay-1 group relative flex flex-col justify-between overflow-hidden rounded-xl glass-panel p-8 lg:col-span-7"
+    >
       <div>
         <div class="section-label mb-6">
-          <span class="material-symbols-outlined text-[14px]">memory</span>
+          <span class="material-symbols-outlined text-[14px]" aria-hidden="true">memory</span>
           Compute & Contribution
         </div>
         <div class="mb-8 flex items-baseline gap-2">
-          <span class="font-display-lg text-display-lg text-primary">2.4k+</span>
+          <span id="commit-count" data-target="2400" class="font-display-lg text-display-lg text-primary">0</span>
           <span class="font-label-md uppercase tracking-wider text-on-surface-variant">GitHub Commits</span>
         </div>
         <div class="space-y-6">
           <div class="rounded-lg border border-white/5 bg-white/5 p-4 transition-colors hover:border-primary/20">
             <h4 class="font-label-md mb-2 text-on-surface">GPU Orchestration Engine</h4>
             <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-              <div class="h-full rounded-full bg-primary" style="width: 85%"></div>
+              <div class="progress-bar-fill h-full rounded-full bg-primary" data-target-width="85"></div>
             </div>
           </div>
           <div class="rounded-lg border border-white/5 bg-white/5 p-4 transition-colors hover:border-secondary/20">
             <h4 class="font-label-md mb-2 text-on-surface">Neural Architecture Search</h4>
             <div class="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-              <div class="h-full rounded-full bg-secondary" style="width: 72%"></div>
+              <div class="progress-bar-fill h-full rounded-full bg-secondary" data-target-width="72"></div>
             </div>
           </div>
         </div>
       </div>
       <div class="pointer-events-none absolute -bottom-12 -right-12 opacity-5 transition-opacity group-hover:opacity-10">
-        <span class="material-symbols-outlined text-[320px]">architecture</span>
+        <span class="material-symbols-outlined text-[320px]" aria-hidden="true">architecture</span>
       </div>
     </div>
 
-    <div class="flex flex-col rounded-xl glass-panel p-8 lg:col-span-5">
+    <div class="dashboard-reveal dashboard-reveal-delay-2 flex flex-col rounded-xl glass-panel p-8 lg:col-span-5">
       <div class="section-label mb-6">
-        <span class="material-symbols-outlined text-[14px]">layers</span>
+        <span class="material-symbols-outlined text-[14px]" aria-hidden="true">layers</span>
         Expertise Stack
       </div>
       <div class="space-y-3">
@@ -93,9 +96,9 @@ const roadmap: RoadmapStep[] = [
     </div>
   </div>
 
-  <div class="relative overflow-hidden rounded-xl glass-panel p-8">
+  <div class="dashboard-reveal dashboard-reveal-delay-3 relative overflow-hidden rounded-xl glass-panel p-8">
     <div class="section-label mb-8">
-      <span class="material-symbols-outlined text-[14px]">timeline</span>
+      <span class="material-symbols-outlined text-[14px]" aria-hidden="true">timeline</span>
       Strategic Roadmap
     </div>
     <div class="relative grid grid-cols-1 gap-12 md:grid-cols-3">
@@ -114,7 +117,7 @@ const roadmap: RoadmapStep[] = [
 
   <div
     id="open-project-detail"
-    class="group cursor-pointer overflow-hidden rounded-xl glass-panel"
+    class="dashboard-reveal dashboard-reveal-delay-4 interactive-card group cursor-pointer overflow-hidden rounded-xl glass-panel"
     role="button"
     tabindex="0"
     aria-label="View NeuralSync Architecture case study"
@@ -122,7 +125,7 @@ const roadmap: RoadmapStep[] = [
     <div class="grid grid-cols-1 md:grid-cols-2">
       <div class="flex flex-col justify-center p-8 md:p-12">
         <div class="section-label mb-6">
-          <span class="material-symbols-outlined text-[14px]">science</span>
+          <span class="material-symbols-outlined text-[14px]" aria-hidden="true">science</span>
           Featured Case Study
         </div>
         <h2 class="font-display-lg text-headline-lg mb-4 text-primary">NeuralSync Architecture</h2>
@@ -133,7 +136,7 @@ const roadmap: RoadmapStep[] = [
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-4">
             <div class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-surface-container-high">
-              <span class="material-symbols-outlined text-secondary">verified_user</span>
+              <span class="material-symbols-outlined text-secondary" aria-hidden="true">verified_user</span>
             </div>
             <div>
               <p class="font-label-md text-on-surface">CTO, Paradigm Shift Corp</p>
@@ -142,7 +145,7 @@ const roadmap: RoadmapStep[] = [
           </div>
           <span class="flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-6 py-3 font-label-md text-primary transition-all hover:bg-primary/20">
             View Case Study
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
           </span>
         </div>
       </div>
@@ -151,13 +154,13 @@ const roadmap: RoadmapStep[] = [
         </div>
         <div class="relative z-10 grid grid-cols-3 gap-2">
           <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-primary">
-            <span class="material-symbols-outlined">hub</span>
+            <span class="material-symbols-outlined" aria-hidden="true">hub</span>
           </div>
           <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-secondary">
-            <span class="material-symbols-outlined">webhook</span>
+            <span class="material-symbols-outlined" aria-hidden="true">webhook</span>
           </div>
           <div class="flex h-16 w-16 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-tertiary">
-            <span class="material-symbols-outlined">data_object</span>
+            <span class="material-symbols-outlined" aria-hidden="true">data_object</span>
           </div>
         </div>
       </div>
@@ -166,6 +169,73 @@ const roadmap: RoadmapStep[] = [
 </div>
 
 <script>
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function formatCommitCount(value: number) {
+    if (value >= 1000) {
+      const thousands = value / 1000;
+      const formatted = Number.isInteger(thousands) ? `${thousands}` : `${thousands.toFixed(1)}`;
+      return `${formatted}k+`;
+    }
+    return `${Math.round(value)}+`;
+  }
+
+  function animateCommitCount(element: HTMLElement, target: number) {
+    if (prefersReducedMotion()) {
+      element.textContent = formatCommitCount(target);
+      return;
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+
+    function frame(now: number) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      element.textContent = formatCommitCount(target * eased);
+      if (progress < 1) requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function animateProgressBars(root: HTMLElement) {
+    root.querySelectorAll<HTMLElement>(".progress-bar-fill").forEach((bar) => {
+      const target = Number(bar.dataset.targetWidth ?? "0");
+      if (prefersReducedMotion()) {
+        bar.style.width = `${target}%`;
+        return;
+      }
+      requestAnimationFrame(() => {
+        bar.style.width = `${target}%`;
+      });
+    });
+  }
+
+  const statsCard = document.getElementById("dashboard-stats-card");
+  const commitCount = document.getElementById("commit-count");
+
+  if (statsCard && commitCount) {
+    const target = Number(commitCount.dataset.target ?? "2400");
+    let animated = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting || animated) return;
+        animated = true;
+        animateCommitCount(commitCount, target);
+        animateProgressBars(statsCard);
+        observer.disconnect();
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(statsCard);
+  }
+
   // Solo hay un proyecto mockeado ("NeuralSync Architecture") hasta integrar datos reales.
   const openTrigger = document.getElementById("open-project-detail");
 
