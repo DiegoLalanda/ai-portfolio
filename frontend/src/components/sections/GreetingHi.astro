@@ -9,7 +9,7 @@ const { greeting, subtle = false } = Astro.props;
 
 <span
   class:list={[
-    "hero-greeting font-label-md text-label-md uppercase tracking-widest text-on-surface-variant",
+    "hero-greeting text-base font-label-md uppercase tracking-widest text-on-surface-variant md:text-label-md",
     subtle && "hero-greeting--subtle",
   ]}
 >

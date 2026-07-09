@@ -144,7 +144,7 @@ export const es: Translations = {
       "No pudimos conectar con el backend en este momento. Verificá que la API esté en ejecución.",
   },
   footer: {
-    tagline: "© 2024 Diego. Construido en la intersección de Silicon y Symmetry.",
+    tagline: "© Diego Lalanda · Hecho con amor, mates e inteligencia (artificial).",
     getInTouch: "Contacto",
   },
   langSwitcher: {

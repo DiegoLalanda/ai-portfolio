@@ -143,7 +143,7 @@ export const en: Translations = {
     connectionSummary: "Couldn't reach the backend right now. Please make sure the API is running.",
   },
   footer: {
-    tagline: "© 2024 Diego. Built at the intersection of Silicon and Symmetry.",
+    tagline: "© Diego Lalanda · Made with love, mates, and artificial intelligence.",
     getInTouch: "Get in Touch",
   },
   langSwitcher: {

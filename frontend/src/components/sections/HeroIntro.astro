@@ -45,13 +45,13 @@ const [roleOne, roleTwo, roleThree] = t.hero.roles;
         effect="magnetic"
         class:list={[
           "gradient-text-primary fade-in-up delay-200 font-display-xl",
-          compact ? "mb-2 text-[clamp(2.25rem,6vw,4.5rem)]" : "mb-4 text-display-xl",
+          compact ? "mb-2 text-[clamp(2.75rem,8.5vw,4.5rem)]" : "mb-4 text-display-xl",
         ]}
       />
       <p
         class:list={[
           "max-w-2xl text-on-surface-variant fade-in-up delay-300",
-          compact ? "mb-3 text-base md:text-headline-md" : "mb-8 font-headline-md text-headline-md",
+          compact ? "mb-3 text-lg leading-snug md:text-headline-md" : "mb-8 font-headline-md text-headline-md",
         ]}
       >
         <span class="hero-role">{roleOne}</span>
@@ -63,7 +63,7 @@ const [roleOne, roleTwo, roleThree] = t.hero.roles;
       <p
         class:list={[
           "hero-tagline italic text-outline fade-in-up delay-400",
-          compact ? "mb-6 text-sm md:mb-8 md:text-body-lg" : "mb-12 font-body-lg text-body-lg",
+          compact ? "mb-6 text-base md:mb-8 md:text-body-lg" : "mb-12 font-body-lg text-body-lg",
         ]}
       >
         {t.hero.tagline}

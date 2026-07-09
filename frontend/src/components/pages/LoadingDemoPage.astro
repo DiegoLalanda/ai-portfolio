@@ -37,12 +37,7 @@ const t = getTranslations(locale);
 </Layout>
 
 <script>
-  document.addEventListener("mousemove", (event) => {
-    const x = (event.clientX / window.innerWidth - 0.5) * 15;
-    const y = (event.clientY / window.innerHeight - 0.5) * 15;
-    const parallax = document.getElementById("parallax-container");
-    if (parallax) {
-      parallax.style.transform = `translate(${x}px, ${y}px)`;
-    }
-  });
+  import { initCursorParallax } from "@/lib/cursor-parallax";
+
+  initCursorParallax(15);
 </script>

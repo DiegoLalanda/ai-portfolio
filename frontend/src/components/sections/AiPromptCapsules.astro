@@ -11,12 +11,12 @@ const t = getTranslations(locale);
 const suggestionPool = t.suggestions;
 
 const capsuleSlots = [
-  { position: "top-[6%] left-[8%]", anim: "float-anim-1", desktopOnly: false },
-  { position: "top-[6%] right-[2%]", anim: "float-anim-2", desktopOnly: false },
+  { position: "top-[4%] left-[6%]", anim: "float-anim-1", desktopOnly: false },
+  { position: "top-[4%] right-[0%]", anim: "float-anim-2", desktopOnly: false },
   { position: "bottom-0 left-[2%]", anim: "float-anim-3", desktopOnly: false },
   { position: "bottom-0 right-[8%]", anim: "float-anim-4", desktopOnly: false },
-  { position: "top-[14%] left-[-8%]", anim: "float-anim-5", desktopOnly: true },
-  { position: "top-[14%] right-[-8%]", anim: "float-anim-2", desktopOnly: true },
+  { position: "top-[18%] left-[-12%]", anim: "float-anim-5", desktopOnly: true },
+  { position: "top-[18%] right-[-12%]", anim: "float-anim-2", desktopOnly: true },
   { position: "bottom-[14%] left-[-6%]", anim: "float-anim-3", desktopOnly: true },
   { position: "bottom-[14%] right-[-6%]", anim: "float-anim-4", desktopOnly: true },
 ];
@@ -75,6 +75,9 @@ const capsuleSlots = [
   let visibleCapsules: VisibleCapsule[] = [];
   let cycleTimerId: number | undefined;
   let stopped = false;
+  let isRotating = false;
+
+  const ROTATION_INTERVAL_MS = 4200;
 
   function prefersReducedMotion() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -131,9 +134,25 @@ const capsuleSlots = [
     return false;
   }
 
+  function clearCycleTimer() {
+    if (cycleTimerId !== undefined) {
+      window.clearTimeout(cycleTimerId);
+      cycleTimerId = undefined;
+    }
+  }
+
   function stopCycle() {
     stopped = true;
-    if (cycleTimerId !== undefined) window.clearInterval(cycleTimerId);
+    isRotating = false;
+    clearCycleTimer();
+  }
+
+  /** Elimina píldoras huérfanas si el DOM y el estado interno se desincronizan. */
+  function reconcileCapsuleLayer() {
+    const tracked = new Set(visibleCapsules.map((entry) => entry.element));
+    capsulesLayer.querySelectorAll<HTMLButtonElement>("[data-suggestion-id]").forEach((button) => {
+      if (!tracked.has(button)) button.remove();
+    });
   }
 
   function createCapsule(suggestion: Suggestion, slot: CapsuleSlot): HTMLButtonElement {
@@ -233,6 +252,10 @@ const capsuleSlots = [
     }
 
     if (visibleCapsules.length === 0 || pool.length <= visibleCount()) return;
+    if (visibleCapsules.length !== visibleCount()) {
+      reconcileCapsuleLayer();
+      return;
+    }
 
     const availableSuggestions = getAvailableSuggestions();
     if (availableSuggestions.length === 0) return;
@@ -252,6 +275,14 @@ const capsuleSlots = [
       return;
     }
 
+    // Revalidar: otro swap concurrente pudo modificar el estado mientras hacíamos fade-out.
+    const stillPresent = visibleCapsules[entryIndex]?.element === current.element;
+    if (!stillPresent) {
+      if (current.element.isConnected) current.element.remove();
+      reconcileCapsuleLayer();
+      return;
+    }
+
     current.element.remove();
     visibleCapsules.splice(entryIndex, 1);
 
@@ -265,27 +296,40 @@ const capsuleSlots = [
     });
 
     showCapsule(nextElement, true);
+    reconcileCapsuleLayer();
   }
 
   async function rotateCapsules() {
-    if (shouldStopCycle()) {
-      stopCycle();
+    if (isRotating || shouldStopCycle()) {
+      if (shouldStopCycle()) stopCycle();
       return;
     }
 
-    const swaps = prefersReducedMotion() ? 1 : Math.random() > 0.45 ? 2 : 1;
-    for (let i = 0; i < swaps; i += 1) {
-      await swapOneCapsule();
-      if (shouldStopCycle()) break;
+    isRotating = true;
+    try {
+      const swaps = prefersReducedMotion() ? 1 : Math.random() > 0.45 ? 2 : 1;
+      for (let i = 0; i < swaps; i += 1) {
+        await swapOneCapsule();
+        if (shouldStopCycle()) break;
+      }
+    } finally {
+      isRotating = false;
     }
+  }
+
+  function scheduleNextRotation() {
+    clearCycleTimer();
+    if (stopped || prefersReducedMotion()) return;
+
+    cycleTimerId = window.setTimeout(async () => {
+      await rotateCapsules();
+      if (!stopped) scheduleNextRotation();
+    }, ROTATION_INTERVAL_MS);
   }
 
   function startCycle() {
     if (prefersReducedMotion()) return;
-
-    cycleTimerId = window.setInterval(() => {
-      void rotateCapsules();
-    }, 4200);
+    scheduleNextRotation();
   }
 
   capsulesLayer.addEventListener("click", (event) => {
@@ -324,7 +368,8 @@ const capsuleSlots = [
 
   window.addEventListener("resize", () => {
     if (shouldStopCycle()) return;
-    if (cycleTimerId !== undefined) window.clearInterval(cycleTimerId);
+    clearCycleTimer();
+    isRotating = false;
     stopped = false;
     renderInitial();
     startCycle();
