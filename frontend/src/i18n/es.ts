@@ -128,15 +128,22 @@ export const es: Translations = {
   ],
   loading: {
     label: "Arquitectando insights",
-    messages: [
-      "Analizando tu pregunta...",
-      "Buscando la experiencia de Diego...",
-      "Mapeando la arquitectura técnica...",
-      "Encontrando proyectos relevantes...",
-      "Preparando el dashboard visual...",
-      "Calibrando parámetros del sistema...",
-      "Sintetizando resultados...",
-    ],
+    status: {
+      thinking: "Analizando tu pregunta…",
+      synthesizing: "Armando la respuesta…",
+      done: "¡Listo!",
+      followUp: "Consultando…",
+    },
+    tools: {
+      get_skills: "Skills",
+      get_projects: "Proyectos",
+      get_experience: "Experiencia",
+      get_timeline: "Timeline",
+      get_education: "Educación",
+      get_certifications: "Certificaciones",
+      get_languages: "Idiomas",
+      get_contact: "Contacto",
+    },
   },
   errors: {
     connectionTitle: "Problema de conexión",

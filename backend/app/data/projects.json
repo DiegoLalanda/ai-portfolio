@@ -37,7 +37,13 @@
         "type": "repo"
       }
     ],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80",
+        "alt": "Vista urbana al atardecer"
+      }
+    ],
     "startDate": "2025-01",
     "endDate": "2025-11",
     "current": false,
@@ -75,7 +81,13 @@
         "type": "demo"
       }
     ],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80",
+        "alt": "Paisaje nocturno con luces de ciudad"
+      }
+    ],
     "startDate": "2025-03",
     "endDate": "2025-11",
     "current": false,
@@ -110,7 +122,13 @@
     ],
     "team": [],
     "links": [],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
+        "alt": "Espacio de trabajo moderno"
+      }
+    ],
     "startDate": "2025-01",
     "endDate": "2025-06",
     "current": false,
@@ -144,7 +162,13 @@
     ],
     "team": [],
     "links": [],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1486406146927-c627a92ad1ab?w=800&q=80",
+        "alt": "Rascacielos de vidrio al atardecer"
+      }
+    ],
     "startDate": "2025-03",
     "endDate": "2025-08",
     "current": false,
@@ -174,7 +198,13 @@
     ],
     "team": [],
     "links": [],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1465447142348-e9952c393450?w=800&q=80",
+        "alt": "Montañas y valle al amanecer"
+      }
+    ],
     "startDate": "2024-01",
     "endDate": "2024-06",
     "current": false,
@@ -206,7 +236,13 @@
     ],
     "team": [],
     "links": [],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+        "alt": "Tierra desde el espacio con luces de red"
+      }
+    ],
     "startDate": "2024-03",
     "endDate": "2024-08",
     "current": false,
@@ -238,7 +274,13 @@
     ],
     "team": [],
     "links": [],
-    "media": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+        "alt": "Resort con piscina y palmeras"
+      }
+    ],
     "startDate": "2024-01",
     "endDate": "2024-06",
     "current": false,

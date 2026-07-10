@@ -12,6 +12,8 @@ interface TimelineItem {
   description: string;
 }
 
+const DOT_COLORS = ["bg-primary", "bg-secondary", "bg-tertiary"] as const;
+
 function parseItem(raw: unknown, index: number): TimelineItem {
   const item = asRecord(raw);
   return {
@@ -30,24 +32,27 @@ export function TimelineWidget({ widget }: { widget: Widget }) {
   if (items.length === 0) return null;
 
   return (
-    <WidgetCard title={widget.title ?? "Timeline"} icon={<History size={16} aria-hidden="true" />}>
-      <ol className="relative flex flex-col gap-5 border-l-2 border-outline-variant/60 pl-5">
-        {items.map((item) => (
-          <li key={item.id} className="relative">
-            <span className="absolute -left-[26px] top-1 h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_8px_rgba(208,188,255,0.6)]" />
+    <WidgetCard title={widget.title ?? "Timeline"} icon={<History size={14} aria-hidden="true" />}>
+      <div className="relative grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+        <div className="absolute left-0 top-5 hidden h-px w-full bg-white/5 md:block" aria-hidden="true" />
+        {items.map((item, index) => (
+          <div key={item.id} className="relative z-10 space-y-3">
+            <div
+              className={`mb-1 h-4 w-4 rounded-full border-4 border-background ${DOT_COLORS[index % DOT_COLORS.length]}`}
+            />
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <p className="font-label-md text-body-md font-semibold text-on-surface">{item.title}</p>
-              <span className="whitespace-nowrap text-label-sm text-on-surface-variant">
+              <h3 className="font-headline-md text-on-surface">{item.title}</h3>
+              <span className="whitespace-nowrap font-label-sm text-on-surface-variant">
                 {item.date}
                 {item.endDate ? ` — ${item.endDate}` : ""}
               </span>
             </div>
             {item.description && (
-              <p className="mt-1 text-body-md text-on-surface-variant">{item.description}</p>
+              <p className="font-body-md text-on-surface-variant">{item.description}</p>
             )}
-          </li>
+          </div>
         ))}
-      </ol>
+      </div>
     </WidgetCard>
   );
 }

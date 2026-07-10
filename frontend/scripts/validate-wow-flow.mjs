@@ -41,12 +41,13 @@ try {
     { timeout: 45000 }
   );
 
-  await page.locator("#open-project-detail").scrollIntoViewIfNeeded();
-  await page.click("#open-project-detail");
-  await page.waitForFunction(() => {
-    const modal = document.getElementById("project-detail-modal");
-    return modal && modal.classList.contains("modal-open") && !modal.classList.contains("hidden");
-  });
+  await page.waitForFunction(
+    () => {
+      const container = document.getElementById("agent-response-container");
+      return container && container.textContent && container.textContent.trim().length > 20;
+    },
+    { timeout: 45000 }
+  );
 
   const unexpectedErrors = consoleErrors.filter((error) => {
     const normalized = error.toLowerCase();

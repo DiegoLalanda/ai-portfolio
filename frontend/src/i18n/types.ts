@@ -26,7 +26,13 @@ export interface Translations {
   suggestions: Suggestion[];
   loading: {
     label: string;
-    messages: string[];
+    status: {
+      thinking: string;
+      synthesizing: string;
+      done: string;
+      followUp: string;
+    };
+    tools: Record<string, string>;
   };
   errors: {
     connectionTitle: string;

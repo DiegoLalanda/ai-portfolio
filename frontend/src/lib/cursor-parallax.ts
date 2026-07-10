@@ -1,7 +1,8 @@
 /** Parallax suave que sigue al cursor — solo en dispositivos con mouse. */
 export function initCursorParallax(strength = 20) {
-  const parallax = document.getElementById("parallax-container");
-  if (!parallax) return;
+  const parallaxEl = document.getElementById("parallax-container");
+  if (!parallaxEl) return;
+  const parallax: HTMLElement = parallaxEl;
 
   const canFollowCursor = window.matchMedia("(hover: hover) and (pointer: fine)");
 

@@ -180,8 +180,101 @@
   height: 2px;
   background: linear-gradient(90deg, #d0bcff, #4cd7f6);
   width: 0%;
-  transition: width 10s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 0 10px rgba(208, 188, 255, 0.5);
+}
+
+.progress-line--indeterminate {
+  width: 35% !important;
+  animation: progressIndeterminate 1.35s ease-in-out infinite;
+}
+
+.progress-line--complete {
+  width: 100% !important;
+  animation: none;
+}
+
+@keyframes progressIndeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+.loading-panel__status {
+  min-width: 0;
+}
+
+.loading-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(208, 188, 255, 0.18);
+  background: rgba(208, 188, 255, 0.08);
+  padding: 0.2rem 0.55rem 0.2rem 0.4rem;
+  font-family: "Geist", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #d0bcff;
+  animation: messageFadeIn 0.35s ease-out forwards;
+}
+
+.loading-tool-chip__spinner {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(208, 188, 255, 0.25);
+  border-top-color: #d0bcff;
+  animation: loadingToolSpin 0.7s linear infinite;
+}
+
+.loading-tool-chip__check {
+  font-size: 11px;
+  line-height: 1;
+  color: #4cd7f6;
+}
+
+.loading-tool-chip--running {
+  border-color: rgba(208, 188, 255, 0.35);
+  background: rgba(208, 188, 255, 0.14);
+}
+
+.loading-tool-chip--done {
+  border-color: rgba(76, 215, 246, 0.28);
+  background: rgba(76, 215, 246, 0.08);
+  color: #c8f1f9;
+}
+
+@keyframes loadingToolSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.project-visual img {
+  object-position: center;
+}
+
+.interactive-card {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.interactive-card:hover {
+  border-color: rgba(208, 188, 255, 0.18);
+}
+
+.dashboard-followup-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 2px solid rgba(208, 188, 255, 0.2);
+  border-top-color: #d0bcff;
+  animation: loadingToolSpin 0.75s linear infinite;
 }
 
 .message-fade-in {
@@ -705,7 +798,17 @@
     animation: none !important;
   }
 
-  .progress-line {
+  .loading-tool-chip__spinner,
+  .dashboard-followup-spinner {
+    animation: none !important;
+    border-top-color: #d0bcff;
+  }
+
+  .progress-line,
+  .progress-line--indeterminate {
+    animation: none !important;
+    transform: none !important;
     transition: none !important;
+    width: 100% !important;
   }
 }

@@ -14,7 +14,7 @@ Cada widget es `{ id, type, title, data }`. La tabla describe qué se espera den
 |---|---|---|
 | `text` | `{ "body": string }` | Texto adicional libre que no encaja en otro widget. |
 | `experience` | `{ "items": [{ "id", "role", "company", "startDate", "endDate", "current", "highlights": string[] }] }` (subconjunto de `experience.json`) | Preguntas sobre trayectoria laboral. |
-| `projects` | `{ "items": [{ "id", "name", "summary", "stack": string[], "links": [{ "label", "url", "type" }] }] }` (subconjunto de `projects.json`) | Preguntas sobre proyectos concretos o el trabajo de Diego en general. |
+| `projects` | `{ "items": [{ "id", "name", "summary", "stack": string[], "links": [{ "label", "url", "type" }], "media": [{ "type", "url", "alt" }] }] }` (subconjunto de `projects.json`; incluir `media` cuando la tool lo devuelva) | Preguntas sobre proyectos concretos o el trabajo de Diego en general. |
 | `skills` | `{ "categories": { [category: string]: string[] } }` | Preguntas sobre stack técnico, agrupado como en el CV. |
 | `technology-cloud` | `{ "items": string[] }` | Listado plano de tecnologías (tag cloud), ej. el stack usado en un proyecto puntual. |
 | `education` | `{ "items": [{ "id", "institution", "degree", "fieldOfStudy", "startDate", "endDate", "status" }] }` (subconjunto de `education.json`) | Preguntas sobre títulos y formación. |

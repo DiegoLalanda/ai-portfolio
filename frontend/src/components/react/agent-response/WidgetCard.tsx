@@ -5,25 +5,45 @@ interface WidgetCardProps {
   title?: string | null;
   icon?: ReactNode;
   className?: string;
+  contentClassName?: string;
+  /** When true, children handle their own padding (e.g. split project card). */
+  flush?: boolean;
   children: ReactNode;
 }
 
 /**
- * Contenedor visual compartido por todos los widgets: mismo "glass-card"
- * que el resto del sitio, con un título opcional + ícono. Cada widget solo
- * se ocupa de su contenido interno; este componente resuelve el chrome
- * repetido para que agregar un widget nuevo sea más simple.
+ * Contenedor visual compartido por todos los widgets: bloque glass-panel
+ * al estilo del dashboard prototipo, con section-label opcional.
+ *
+ * El padding va en un wrapper — nunca en `.section-label` (es un pill inline-flex).
  */
-export function WidgetCard({ title, icon, className, children }: WidgetCardProps) {
+export function WidgetCard({
+  title,
+  icon,
+  className,
+  contentClassName,
+  flush = false,
+  children,
+}: WidgetCardProps) {
   return (
-    <div className={cn("glass-card p-5 md:p-6", className)}>
+    <div className={cn("overflow-hidden rounded-xl glass-panel", className)}>
       {title && (
-        <div className="mb-4 flex items-center gap-2 font-label-md text-label-md uppercase tracking-wide text-primary">
-          {icon}
-          <span>{title}</span>
+        <div className="px-6 pt-5 md:px-8 md:pt-6">
+          <div className="section-label">
+            {icon}
+            <span>{title}</span>
+          </div>
         </div>
       )}
-      {children}
+      <div
+        className={cn(
+          !flush && "px-6 pb-6 pt-4 md:px-8 md:pb-8 md:pt-5",
+          flush && title && "pt-4 md:pt-5",
+          contentClassName,
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 }

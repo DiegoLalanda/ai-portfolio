@@ -4,8 +4,6 @@ import HeroIntro from "@/components/sections/HeroIntro.astro";
 import AiPromptCapsules from "@/components/sections/AiPromptCapsules.astro";
 import SubmittedPrompt from "@/components/sections/SubmittedPrompt.astro";
 import LoadingPanel from "@/components/sections/LoadingPanel.astro";
-import DashboardResults from "@/components/sections/DashboardResults.astro";
-import ProjectDetailModal from "@/components/sections/ProjectDetailModal.astro";
 import SiteFooter from "@/components/layout/SiteFooter.astro";
 import AgentResponseIsland from "@/components/react/AgentResponseIsland";
 import { getTranslations, type Locale } from "@/i18n";
@@ -21,7 +19,7 @@ const t = getTranslations(locale);
 <Layout title={t.meta.title} locale={locale}>
   <div
     id="page-root"
-    class="flex h-dvh flex-col overflow-hidden"
+    class="flex min-h-dvh flex-col"
     data-error-title={t.errors.connectionTitle}
     data-error-summary={t.errors.connectionSummary}
   >
@@ -44,7 +42,7 @@ const t = getTranslations(locale);
       <div id="phase-processing" class="hidden flex w-full max-w-container-max flex-col items-center text-center">
         <HeroIntro locale={locale} receded />
         <SubmittedPrompt question="" />
-        <LoadingPanel messages={t.loading.messages} autostart={false} label={t.loading.label} />
+        <LoadingPanel loading={t.loading} />
       </div>
     </main>
 
@@ -52,17 +50,17 @@ const t = getTranslations(locale);
       id="phase-dashboard"
       class="relative z-10 hidden shrink-0 translate-y-10 px-margin-edge py-section-gap-desktop opacity-0 transition-all duration-1000 ease-out"
     >
-      <div id="agent-response-container" class="mx-auto mb-gutter max-w-container-max">
+      <div
+        id="agent-response-container"
+        class="mx-auto max-w-container-max"
+        data-followup-label={t.loading.status.followUp}
+      >
         <AgentResponseIsland client:idle />
       </div>
-
-      <DashboardResults />
     </section>
 
-    <SiteFooter locale={locale} compact class="z-10 shrink-0 transition-all duration-500" />
+    <SiteFooter locale={locale} compact class="z-10 mt-auto shrink-0 transition-all duration-500" />
   </div>
-
-  <ProjectDetailModal />
 
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
   <script is:inline src="/ambient-background.js"></script>
@@ -75,8 +73,9 @@ const t = getTranslations(locale);
 </script>
 
 <script>
-  import { sendChatMessage } from "@/lib/api";
+  import { streamChatMessage } from "@/lib/api";
   import type { AgentResponse } from "@/types/agent-response";
+  import type { ChatStreamEvent } from "@/types/chat-stream";
 
   const pageRoot = document.getElementById("page-root");
   const main = document.getElementById("parallax-container");
@@ -84,16 +83,17 @@ const t = getTranslations(locale);
   const processingPhase = document.getElementById("phase-processing");
   const dashboardPhase = document.getElementById("phase-dashboard");
 
-  let loadingAnimationDone = false;
   let agentResponse: AgentResponse | null = null;
 
+  function dispatchStreamEvent(event: ChatStreamEvent) {
+    window.dispatchEvent(new CustomEvent("loading:stream", { detail: event }));
+  }
+
   function revealDashboard() {
-    if (!dashboardPhase || !pageRoot || !main) return;
+    if (!dashboardPhase || !pageRoot || !main || agentResponse === null) return;
 
-    pageRoot.classList.remove("h-dvh", "overflow-hidden");
-    pageRoot.classList.add("min-h-dvh");
-
-    main.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center");
+    // Main deja de absorber altura; el footer sigue abajo vía mt-auto + min-h-dvh.
+    main.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center", "justify-start");
     main.classList.add("shrink-0");
 
     dashboardPhase.classList.remove("hidden");
@@ -104,20 +104,17 @@ const t = getTranslations(locale);
     });
   }
 
-  function maybeRevealDashboard() {
-    if (loadingAnimationDone && agentResponse !== null) revealDashboard();
-  }
-
   window.addEventListener("mock-chat:submit", (event) => {
     if (!landingPhase || !processingPhase) return;
+
+    // Si el dashboard ya está visible, los follow-ups los maneja AgentResponseIsland.
+    if (dashboardPhase && !dashboardPhase.classList.contains("hidden")) return;
 
     const question = (event as CustomEvent<{ question: string }>).detail?.question ?? "";
     const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
     if (submittedQuestion) submittedQuestion.value = question;
 
-    loadingAnimationDone = false;
     agentResponse = null;
-
     pageRoot?.classList.add("is-thinking");
 
     landingPhase.classList.add("phase-exiting");
@@ -129,15 +126,19 @@ const t = getTranslations(locale);
       requestAnimationFrame(() => processingPhase.classList.remove("phase-entering"));
     }, 200);
 
-    main?.classList.remove("justify-center");
+    // Mantener main como flex-1 para empujar el footer al fondo del viewport.
+    main?.classList.add("flex-1", "min-h-0");
+    main?.classList.remove("shrink-0", "justify-center");
     main?.classList.add("justify-start");
     window.dispatchEvent(new CustomEvent("loading:start"));
 
-    sendChatMessage(question)
+    streamChatMessage(question, dispatchStreamEvent)
       .then((data) => {
         agentResponse = data;
+        window.dispatchEvent(new CustomEvent("loading:finish"));
         window.dispatchEvent(new CustomEvent("agent-response:ready", { detail: data }));
-        maybeRevealDashboard();
+        pageRoot?.classList.remove("is-thinking");
+        revealDashboard();
       })
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
@@ -150,14 +151,10 @@ const t = getTranslations(locale);
           suggested_actions: [],
         };
         agentResponse = fallback;
+        window.dispatchEvent(new CustomEvent("loading:finish"));
         window.dispatchEvent(new CustomEvent("agent-response:ready", { detail: fallback }));
-        maybeRevealDashboard();
+        pageRoot?.classList.remove("is-thinking");
+        revealDashboard();
       });
-  });
-
-  window.addEventListener("loading:complete", () => {
-    loadingAnimationDone = true;
-    pageRoot?.classList.remove("is-thinking");
-    maybeRevealDashboard();
   });
 </script>

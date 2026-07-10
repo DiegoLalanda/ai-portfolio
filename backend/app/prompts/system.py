@@ -118,7 +118,7 @@ Your response is validated against a fixed JSON schema with these fields:
   visitor (ask a follow-up question, open a link, or reach out to Diego).
 
 Available widget types and their "data" shape: "text" ({ "body" }),
-"experience" ({ "items" }), "projects" ({ "items" }), "skills"
+"experience" ({ "items" }), "projects" ({ "items" with optional "media": [{ "type", "url", "alt" }] }), "skills"
 ({ "categories" }), "technology-cloud" ({ "items" }), "education"
 ({ "items" }), "contact" ({ "email", "phone", "location", "links" }),
 "timeline" ({ "items" }). Every item you put inside a widget's "data" must

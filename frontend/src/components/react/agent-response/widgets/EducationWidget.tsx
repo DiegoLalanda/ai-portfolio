@@ -32,10 +32,13 @@ export function EducationWidget({ widget }: { widget: Widget }) {
   if (items.length === 0) return null;
 
   return (
-    <WidgetCard title={widget.title ?? "Education"} icon={<GraduationCap size={16} aria-hidden="true" />}>
-      <ul className="flex flex-col gap-4">
+    <WidgetCard title={widget.title ?? "Education"} icon={<GraduationCap size={14} aria-hidden="true" />}>
+      <div className="space-y-3">
         {items.map((item) => (
-          <li key={item.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <div
+            key={item.id}
+            className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2 rounded-lg border border-white/5 bg-surface-container-low p-4 transition-colors hover:bg-surface-container"
+          >
             <div>
               <p className="font-label-md text-body-md font-semibold text-on-surface">
                 {item.degree}
@@ -43,12 +46,12 @@ export function EducationWidget({ widget }: { widget: Widget }) {
               </p>
               <p className="text-body-md text-on-surface-variant">{item.institution}</p>
             </div>
-            <span className="whitespace-nowrap text-label-sm text-on-surface-variant">
+            <span className="whitespace-nowrap font-label-sm text-primary">
               {item.status || `${item.startDate} — ${item.endDate}`}
             </span>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </WidgetCard>
   );
 }

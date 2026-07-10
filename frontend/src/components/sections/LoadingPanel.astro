@@ -1,92 +1,180 @@
 ---
+import type { Translations } from "@/i18n/types";
+
 interface Props {
-  /** Mensajes que se van revelando secuencialmente mientras "procesa" la consulta. */
-  messages: string[];
-  /** Etiqueta superior del panel. */
-  label?: string;
-  /**
-   * Si es `false`, la secuencia no arranca sola al montar el componente: espera
-   * el evento `loading:start` disparado por quien orquesta el flujo (p. ej. tras
-   * enviar una pregunta). Por defecto arranca sola, como en la pantalla standalone.
-   */
-  autostart?: boolean;
+  loading: Translations["loading"];
+  /** Si es true, muestra estado "thinking" al montar (página demo). */
+  demo?: boolean;
 }
 
-const { messages, label = "System Architecting", autostart = true } = Astro.props;
+const { loading, demo = false } = Astro.props;
 ---
 
 <div class="mx-auto w-full max-w-xl">
   <div
     id="loading-panel"
-    class="glass-panel relative flex flex-col gap-6 overflow-hidden rounded-xl p-8 text-left fade-in-up delay-300"
-    data-messages={JSON.stringify(messages)}
-    data-autostart={String(autostart)}
+    class="loading-panel glass-panel relative overflow-hidden rounded-xl px-4 py-3 text-left fade-in-up delay-300 md:px-5 md:py-3.5"
+    data-loading={JSON.stringify(loading)}
+    data-demo={String(demo)}
   >
-    <div class="mb-2 flex items-center gap-3">
-      <div class="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
-      <span class="font-label-md text-label-md uppercase tracking-widest text-primary">{label}</span>
+    <div class="mb-2 flex items-center gap-2.5">
+      <div class="loading-panel__dot h-1.5 w-1.5 animate-pulse rounded-full bg-primary"></div>
+      <span class="font-label-md text-label-md uppercase tracking-widest text-primary">{loading.label}</span>
     </div>
-    <div id="loading-messages" class="min-h-[180px] space-y-4"></div>
+
+    <div class="loading-panel__row flex items-center gap-2.5">
+      <span
+        id="loading-status-icon"
+        class="loading-message-icon material-symbols-outlined shrink-0 text-[18px] text-outline-variant"
+        aria-hidden="true"
+      >
+        blur_on
+      </span>
+      <p id="loading-status-text" class="loading-panel__status shimmer-text truncate font-body-md text-body-md text-on-surface">
+        {loading.status.thinking}
+      </p>
+    </div>
+
+    <div id="loading-tools" class="loading-panel__tools mt-2 flex flex-wrap items-center gap-1.5 empty:hidden" aria-live="polite"></div>
+
     <div class="absolute bottom-0 left-0 h-[2px] w-full bg-white/5">
-      <div id="global-progress" class="progress-line"></div>
+      <div id="global-progress" class="progress-line progress-line--indeterminate"></div>
     </div>
   </div>
 </div>
 
 <script>
+  interface LoadingCopy {
+    label: string;
+    status: {
+      thinking: string;
+      synthesizing: string;
+      done: string;
+    };
+    tools: Record<string, string>;
+  }
+
+  interface StreamEventDetail {
+    type: string;
+    phase?: string;
+    tool?: string;
+  }
+
+  type ToolChipState = "running" | "done";
+
   const panel = document.getElementById("loading-panel");
-  const container = document.getElementById("loading-messages");
+  const statusText = document.getElementById("loading-status-text");
+  const statusIcon = document.getElementById("loading-status-icon");
+  const toolsContainer = document.getElementById("loading-tools");
   const progressLine = document.getElementById("global-progress");
 
-  const messages: string[] = panel?.dataset.messages ? JSON.parse(panel.dataset.messages) : [];
-  const autostart = panel?.dataset.autostart === "true";
+  const copy: LoadingCopy = panel?.dataset.loading ? JSON.parse(panel.dataset.loading) : {
+    label: "",
+    status: { thinking: "Thinking…", synthesizing: "Building response…", done: "Done!" },
+    tools: {},
+  };
 
-  let currentMessage = 0;
-  let pendingTimeoutId: number | undefined;
+  /** Tools usadas en esta corrida — se mantienen a la vista (no se borran al terminar). */
+  const usedTools = new Map<string, ToolChipState>();
 
-  function showNextMessage() {
-    if (!container || !progressLine) return;
+  function toolLabel(name: string) {
+    return copy.tools[name] ?? name.replace(/^get_/, "").replaceAll("_", " ");
+  }
 
-    if (currentMessage >= messages.length) {
-      window.dispatchEvent(new CustomEvent("loading:complete"));
+  function renderTools() {
+    if (!toolsContainer) return;
+    toolsContainer.innerHTML = "";
+
+    usedTools.forEach((state, tool) => {
+      const chip = document.createElement("span");
+      chip.className = `loading-tool-chip loading-tool-chip--${state}`;
+
+      if (state === "running") {
+        const spinner = document.createElement("span");
+        spinner.className = "loading-tool-chip__spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        chip.appendChild(spinner);
+      } else {
+        const check = document.createElement("span");
+        check.className = "loading-tool-chip__check";
+        check.setAttribute("aria-hidden", "true");
+        check.textContent = "✓";
+        chip.appendChild(check);
+      }
+
+      const label = document.createElement("span");
+      label.className = "loading-tool-chip__label";
+      label.textContent = toolLabel(tool);
+      chip.appendChild(label);
+
+      toolsContainer.appendChild(chip);
+    });
+  }
+
+  function setStatus(text: string, icon = "blur_on") {
+    if (statusText) statusText.textContent = text;
+    if (statusIcon) statusIcon.textContent = icon;
+  }
+
+  function resetPanel() {
+    usedTools.clear();
+    renderTools();
+    setStatus(copy.status.thinking, "blur_on");
+    progressLine?.classList.add("progress-line--indeterminate");
+    progressLine?.classList.remove("progress-line--complete");
+    if (progressLine) progressLine.style.width = "";
+  }
+
+  function handleStreamEvent(event: StreamEventDetail) {
+    if (event.type === "started") {
+      setStatus(copy.status.thinking, "blur_on");
       return;
     }
 
-    container.querySelectorAll(".loading-message-active").forEach((element) => {
-      element.classList.remove("loading-message-active");
-      element.classList.add("loading-message-past");
-    });
+    if (event.type === "status") {
+      if (event.phase === "synthesizing") {
+        setStatus(copy.status.synthesizing, "auto_awesome");
+      } else {
+        setStatus(copy.status.thinking, "blur_on");
+      }
+      return;
+    }
 
-    const messageEl = document.createElement("div");
-    messageEl.className = "message-fade-in loading-message-active flex items-center gap-3";
+    if (event.type === "tool_call" && event.tool) {
+      usedTools.set(event.tool, "running");
+      setStatus(`${toolLabel(event.tool)}…`, "build");
+      renderTools();
+      return;
+    }
 
-    const icon = document.createElement("span");
-    icon.className = "loading-message-icon material-symbols-outlined text-[18px] text-outline-variant";
-    icon.setAttribute("aria-hidden", "true");
-    icon.innerText = "blur_on";
-
-    const text = document.createElement("span");
-    text.className = "font-body-md text-body-md text-on-surface shimmer-text typing-effect";
-    text.innerText = messages[currentMessage] ?? "";
-
-    messageEl.appendChild(icon);
-    messageEl.appendChild(text);
-    container.appendChild(messageEl);
-
-    currentMessage += 1;
-    progressLine.style.width = `${(currentMessage / messages.length) * 100}%`;
-
-    pendingTimeoutId = window.setTimeout(showNextMessage, 1500 + Math.random() * 1000);
+    if (event.type === "tool_done" && event.tool) {
+      usedTools.set(event.tool, "done");
+      renderTools();
+      if (![...usedTools.values()].some((state) => state === "running")) {
+        setStatus(copy.status.thinking, "blur_on");
+      }
+    }
   }
 
-  function runSequence() {
-    if (pendingTimeoutId !== undefined) window.clearTimeout(pendingTimeoutId);
-    currentMessage = 0;
-    if (container) container.innerHTML = "";
-    if (progressLine) progressLine.style.width = "0%";
-    showNextMessage();
+  function completePanel() {
+    usedTools.forEach((_, tool) => usedTools.set(tool, "done"));
+    renderTools();
+    setStatus(copy.status.done, "check_circle");
+    progressLine?.classList.remove("progress-line--indeterminate");
+    progressLine?.classList.add("progress-line--complete");
+    if (progressLine) progressLine.style.width = "100%";
+    window.dispatchEvent(new CustomEvent("loading:complete"));
   }
 
-  if (autostart) window.setTimeout(runSequence, 800);
-  window.addEventListener("loading:start", runSequence);
+  window.addEventListener("loading:start", resetPanel);
+
+  window.addEventListener("loading:stream", (event) => {
+    const detail = (event as CustomEvent<StreamEventDetail>).detail;
+    if (!detail) return;
+    handleStreamEvent(detail);
+  });
+
+  window.addEventListener("loading:finish", completePanel);
+
+  if (panel) resetPanel();
 </script>

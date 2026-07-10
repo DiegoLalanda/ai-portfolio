@@ -128,15 +128,22 @@ export const en: Translations = {
   ],
   loading: {
     label: "Architecting Insights",
-    messages: [
-      "Analyzing your question...",
-      "Searching Diego's experience...",
-      "Mapping technical architecture...",
-      "Finding relevant projects...",
-      "Preparing visual dashboard...",
-      "Calibrating system parameters...",
-      "Synthesizing results...",
-    ],
+    status: {
+      thinking: "Analyzing your question…",
+      synthesizing: "Building the response…",
+      done: "Done!",
+      followUp: "Looking that up…",
+    },
+    tools: {
+      get_skills: "Skills",
+      get_projects: "Projects",
+      get_experience: "Experience",
+      get_timeline: "Timeline",
+      get_education: "Education",
+      get_certifications: "Certifications",
+      get_languages: "Languages",
+      get_contact: "Contact",
+    },
   },
   errors: {
     connectionTitle: "Connection issue",

@@ -27,28 +27,28 @@ export function ContactWidget({ widget }: { widget: Widget }) {
   if (!email && !phone && !location && links.length === 0) return null;
 
   return (
-    <WidgetCard title={widget.title ?? "Contact"} icon={<Mail size={16} aria-hidden="true" />}>
-      <div className="flex flex-col gap-2.5">
+    <WidgetCard title={widget.title ?? "Contact"} icon={<Mail size={14} aria-hidden="true" />}>
+      <div className="space-y-3">
         {email && (
           <a
             href={`mailto:${email}`}
-            className="flex items-center gap-2 text-body-md text-on-surface-variant hover:text-primary"
+            className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3 text-body-md text-on-surface-variant transition-colors hover:border-primary/20 hover:text-primary"
           >
             <Mail size={15} className="shrink-0 text-primary" aria-hidden="true" />
             {email}
           </a>
         )}
         {phone && (
-          <span className="flex items-center gap-2 text-body-md text-on-surface-variant">
+          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3 text-body-md text-on-surface-variant">
             <Phone size={15} className="shrink-0 text-primary" aria-hidden="true" />
             {phone}
-          </span>
+          </div>
         )}
         {location && (
-          <span className="flex items-center gap-2 text-body-md text-on-surface-variant">
+          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3 text-body-md text-on-surface-variant">
             <MapPin size={15} className="shrink-0 text-primary" aria-hidden="true" />
             {location}
-          </span>
+          </div>
         )}
         {links.map((link) => (
           <a
@@ -56,7 +56,7 @@ export function ContactWidget({ widget }: { widget: Widget }) {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-body-md text-secondary hover:underline"
+            className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3 text-body-md text-secondary transition-colors hover:border-secondary/30 hover:underline"
           >
             <SquareArrowOutUpRight size={14} className="shrink-0" aria-hidden="true" />
             {link.label}

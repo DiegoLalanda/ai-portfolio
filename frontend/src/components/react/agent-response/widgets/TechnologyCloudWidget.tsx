@@ -9,12 +9,12 @@ export function TechnologyCloudWidget({ widget }: { widget: Widget }) {
   if (items.length === 0) return null;
 
   return (
-    <WidgetCard title={widget.title ?? "Technology"} icon={<Cloud size={16} aria-hidden="true" />}>
+    <WidgetCard title={widget.title ?? "Technology"} icon={<Cloud size={14} aria-hidden="true" />}>
       <div className="flex flex-wrap gap-2">
         {items.map((tech) => (
           <span
             key={tech}
-            className="rounded-full bg-secondary/10 px-3 py-1.5 text-label-sm text-secondary"
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-label-sm text-secondary transition-colors hover:border-secondary/30 hover:bg-secondary/10"
           >
             {tech}
           </span>

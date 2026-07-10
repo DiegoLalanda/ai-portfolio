@@ -20,7 +20,7 @@ export function SuggestedActions({ actions, onAction }: SuggestedActionsProps) {
   if (actions.length === 0) return null;
 
   return (
-    <div className="mt-6 flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-3">
       {actions.map((action, index) => {
         const Icon = ICONS[action.action] ?? MessageCircleQuestion;
         return (
