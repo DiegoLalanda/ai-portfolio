@@ -16,11 +16,18 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+def _context_kwargs(payload: ChatRequest) -> dict:
+    return {
+        "shown_widget_types": payload.shown_widget_types,
+        "prior_questions": payload.prior_questions,
+    }
+
+
 @router.post("/chat", response_model=ChatResponse)
 async def chat(payload: ChatRequest) -> ChatResponse:
     logger.info("POST /chat question=%r", payload.question)
     try:
-        agent_response = await get_answer(payload.question)
+        agent_response = await get_answer(payload.question, **_context_kwargs(payload))
     except ChatServiceError as error:
         logger.error("Error al generar respuesta con Gemini: %s", error)
         raise HTTPException(status_code=502, detail="Failed to get a response from the AI provider.") from error
@@ -33,7 +40,7 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
 
     async def event_generator():
         try:
-            async for event in stream_chat_events(payload.question):
+            async for event in stream_chat_events(payload.question, **_context_kwargs(payload)):
                 yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
         except Exception as error:  # noqa: BLE001 — informar al cliente SSE
             logger.exception("Error en stream de chat")

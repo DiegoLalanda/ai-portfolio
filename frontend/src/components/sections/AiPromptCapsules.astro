@@ -366,6 +366,15 @@ const capsuleSlots = [
 
   window.addEventListener("mock-chat:submit", stopCycle);
 
+  window.addEventListener("portfolio:reset", () => {
+    stopped = false;
+    isRotating = false;
+    if (input) input.value = "";
+    updateSubmitState();
+    renderInitial();
+    startCycle();
+  });
+
   window.addEventListener("resize", () => {
     if (shouldStopCycle()) return;
     clearCycleTimer();

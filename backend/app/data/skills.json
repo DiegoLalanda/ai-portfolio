@@ -61,7 +61,7 @@
     "proficiency": 3,
     "yearsOfExperience": 1,
     "tags": ["ai", "embeddings", "llm"],
-    "featured": false,
+    "featured": true,
     "order": 6,
     "visible": true
   },
@@ -72,7 +72,7 @@
     "proficiency": 4,
     "yearsOfExperience": 1,
     "tags": ["ai", "prompts", "llm"],
-    "featured": false,
+    "featured": true,
     "order": 7,
     "visible": true
   },
@@ -116,7 +116,7 @@
     "proficiency": 3,
     "yearsOfExperience": 1,
     "tags": ["ai", "aws", "llm"],
-    "featured": false,
+    "featured": true,
     "order": 11,
     "visible": true
   },
@@ -127,7 +127,7 @@
     "proficiency": 4,
     "yearsOfExperience": 1,
     "tags": ["ai", "bots", "agents"],
-    "featured": false,
+    "featured": true,
     "order": 12,
     "visible": true
   },
@@ -138,9 +138,9 @@
     "proficiency": 3,
     "yearsOfExperience": 1,
     "tags": ["aws", "cloud", "serverless"],
-    "featured": true,
+    "featured": false,
     "order": 13,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-aws-s3",
@@ -160,7 +160,7 @@
     "proficiency": 3,
     "yearsOfExperience": 1,
     "tags": ["aws", "database", "nosql"],
-    "featured": false,
+    "featured": true,
     "order": 15,
     "visible": true
   },
@@ -358,7 +358,7 @@
     "proficiency": 4,
     "yearsOfExperience": 3,
     "tags": ["frontend", "javascript"],
-    "featured": false,
+    "featured": true,
     "order": 33,
     "visible": true
   },
@@ -369,7 +369,7 @@
     "proficiency": 4,
     "yearsOfExperience": 3,
     "tags": ["frontend", "html"],
-    "featured": false,
+    "featured": true,
     "order": 34,
     "visible": true
   },
@@ -380,7 +380,7 @@
     "proficiency": 4,
     "yearsOfExperience": 3,
     "tags": ["frontend", "css"],
-    "featured": false,
+    "featured": true,
     "order": 35,
     "visible": true
   },
@@ -391,7 +391,7 @@
     "proficiency": 4,
     "yearsOfExperience": 2,
     "tags": ["frontend", "css", "tailwind"],
-    "featured": false,
+    "featured": true,
     "order": 36,
     "visible": true
   },
@@ -446,7 +446,7 @@
     "proficiency": 3,
     "yearsOfExperience": 2,
     "tags": ["database", "sql", "mysql"],
-    "featured": false,
+    "featured": true,
     "order": 41,
     "visible": true
   },
@@ -479,7 +479,7 @@
     "proficiency": 3,
     "yearsOfExperience": 1,
     "tags": ["backend", "cache", "redis"],
-    "featured": false,
+    "featured": true,
     "order": 44,
     "visible": true
   },
@@ -569,6 +569,193 @@
     "tags": ["it", "audit", "security"],
     "featured": false,
     "order": 52,
+    "visible": true
+  },
+  {
+    "id": "skill-astro",
+    "name": "Astro",
+    "category": "frontend",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["frontend", "astro", "ssg"],
+    "featured": true,
+    "order": 53,
+    "visible": true
+  },
+  {
+    "id": "skill-linux-zorin",
+    "name": "Linux (Zorin OS)",
+    "category": "cloud-devops",
+    "proficiency": 3,
+    "yearsOfExperience": 3,
+    "tags": ["linux", "zorin", "devops"],
+    "featured": false,
+    "order": 54,
+    "visible": true
+  },
+  {
+    "id": "skill-microservices",
+    "name": "Microservicios",
+    "category": "backend-data",
+    "proficiency": 3,
+    "yearsOfExperience": 2,
+    "tags": ["architecture", "microservices", "backend"],
+    "featured": true,
+    "order": 55,
+    "visible": true
+  },
+  {
+    "id": "skill-distributed-systems",
+    "name": "Sistemas distribuidos",
+    "category": "backend-data",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["architecture", "distributed-systems", "backend"],
+    "featured": true,
+    "order": 56,
+    "visible": true
+  },
+  {
+    "id": "skill-rest-apis",
+    "name": "API REST",
+    "category": "backend-data",
+    "proficiency": 4,
+    "yearsOfExperience": 3,
+    "tags": ["api", "rest", "backend"],
+    "featured": true,
+    "order": 57,
+    "visible": true
+  },
+  {
+    "id": "skill-async",
+    "name": "Async / Concurrencia",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 2,
+    "tags": ["python", "async", "concurrency"],
+    "featured": false,
+    "order": 58,
+    "visible": true
+  },
+  {
+    "id": "skill-langfuse",
+    "name": "Langfuse",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["ai", "observability", "langfuse", "llm"],
+    "featured": true,
+    "order": 59,
+    "visible": true
+  },
+  {
+    "id": "skill-unit-testing",
+    "name": "Testing unitario",
+    "category": "backend-data",
+    "proficiency": 3,
+    "yearsOfExperience": 2,
+    "tags": ["testing", "unit-testing", "quality"],
+    "featured": false,
+    "order": 60,
+    "visible": true
+  },
+  {
+    "id": "skill-vector-search",
+    "name": "Búsqueda vectorial",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["ai", "vector-search", "embeddings", "rag"],
+    "featured": true,
+    "order": 61,
+    "visible": true
+  },
+  {
+    "id": "skill-semantic-search",
+    "name": "Búsqueda semántica",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["ai", "semantic-search", "rag"],
+    "featured": true,
+    "order": 62,
+    "visible": true
+  },
+  {
+    "id": "skill-knowledge-bases",
+    "name": "Knowledge Bases",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["ai", "kb", "rag", "knowledge"],
+    "featured": true,
+    "order": 63,
+    "visible": true
+  },
+  {
+    "id": "skill-ollama",
+    "name": "Ollama",
+    "category": "ai",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["ai", "ollama", "llm", "local"],
+    "featured": true,
+    "order": 64,
+    "visible": true
+  },
+  {
+    "id": "skill-aws",
+    "name": "AWS",
+    "category": "cloud-devops",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["aws", "cloud", "devops"],
+    "featured": true,
+    "order": 65,
+    "visible": true
+  },
+  {
+    "id": "skill-kubernetes",
+    "name": "Kubernetes",
+    "category": "cloud-devops",
+    "proficiency": 2,
+    "yearsOfExperience": 1,
+    "tags": ["kubernetes", "k8s", "devops", "containers"],
+    "featured": true,
+    "order": 66,
+    "visible": true
+  },
+  {
+    "id": "skill-cicd",
+    "name": "CI/CD",
+    "category": "cloud-devops",
+    "proficiency": 3,
+    "yearsOfExperience": 2,
+    "tags": ["cicd", "jenkins", "devops"],
+    "featured": true,
+    "order": 67,
+    "visible": true
+  },
+  {
+    "id": "skill-gdevelop",
+    "name": "GDevelop",
+    "category": "gamedev",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": ["gamedev", "gdevelop", "2d"],
+    "featured": true,
+    "order": 68,
+    "visible": true
+  },
+  {
+    "id": "skill-unity",
+    "name": "Unity",
+    "category": "gamedev",
+    "proficiency": 2,
+    "yearsOfExperience": 1,
+    "tags": ["gamedev", "unity", "3d"],
+    "featured": true,
+    "order": 69,
     "visible": true
   }
 ]

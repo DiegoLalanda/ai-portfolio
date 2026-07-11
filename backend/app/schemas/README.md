@@ -13,11 +13,11 @@ Cada widget es `{ id, type, title, data }`. La tabla describe qué se espera den
 | `type` | `data` esperado | Pensado para |
 |---|---|---|
 | `text` | `{ "body": string }` | Texto adicional libre que no encaja en otro widget. |
-| `experience` | `{ "items": [{ "id", "role", "company", "startDate", "endDate", "current", "highlights": string[] }] }` (subconjunto de `experience.json`) | Preguntas sobre trayectoria laboral. |
-| `projects` | `{ "items": [{ "id", "name", "summary", "stack": string[], "links": [{ "label", "url", "type" }], "media": [{ "type", "url", "alt" }] }] }` (subconjunto de `projects.json`; incluir `media` cuando la tool lo devuelva) | Preguntas sobre proyectos concretos o el trabajo de Diego en general. |
-| `skills` | `{ "categories": { [category: string]: string[] } }` | Preguntas sobre stack técnico, agrupado como en el CV. |
+| `experience` | `{ "items": [{ "id", "role", "company", "startDate", "endDate", "current", "summary", "highlights": string[], "stack": string[] }] }` (subconjunto de `experience.json`) | Preguntas sobre trayectoria laboral. |
+| `projects` | `{ "displayGroup"?: "full-stack" | "ia" | "otras", "items"?: [...] }` — el frontend filtra el catálogo por `displayGroup`; omitirlo solo si preguntan por todos los proyectos. Llamar `get_projects(display_group=...)` con el mismo filtro. | Preguntas sobre proyectos concretos o el trabajo de Diego en general. |
+| `skills` | `{ "categories": { [category: string]: string[] } }` — prefer keys `ai`, `cloud-devops`, `frontend`, `backend-data`, `design-cms-other`, `gamedev`; values = skill names from `skills.json`. For stack questions, include items across categories. | Preguntas sobre stack técnico, agrupado como en el CV. |
 | `technology-cloud` | `{ "items": string[] }` | Listado plano de tecnologías (tag cloud), ej. el stack usado en un proyecto puntual. |
-| `education` | `{ "items": [{ "id", "institution", "degree", "fieldOfStudy", "startDate", "endDate", "status" }] }` (subconjunto de `education.json`) | Preguntas sobre títulos y formación. |
+| `education` | `{ "items": [{ "id", "institution", "degree", "fieldOfStudy", "startDate", "endDate", "status", "highlights": string[] }] }` (subconjunto de `education.json`) | Preguntas sobre títulos y formación. |
 | `contact` | `{ "email", "phone", "location", "links": [{ "label", "url", "type" }] }` (subconjunto de `contact.json`) | Preguntas sobre cómo contactar a Diego. |
 | `timeline` | `{ "items": [{ "id", "date", "endDate", "type", "title", "description", "icon" }] }` (subconjunto de `timeline.json`) | Preguntas sobre la trayectoria completa en orden cronológico. |
 
@@ -26,10 +26,7 @@ Cada widget es `{ id, type, title, data }`. La tabla describe qué se espera den
 - `id` de cada widget: kebab-case, único dentro de la respuesta (no global), ej. `"experience-finnegans"`.
 - Los `items`/`categories`/`links` dentro de `data` deben salir siempre de una tool (`app/tools/`), nunca inventados por el modelo — misma regla de grounding que ya rige el resto del agente (ver `app/prompts/system.py`).
 - Si una pregunta no amerita ningún widget, `widgets` puede quedar como `[]`; `summary` siempre alcanza para responder por sí sola.
-- `suggested_actions.action`:
-  - `"ask"` → el frontend reenvía `payload` como si el visitante hubiera escrito esa pregunta.
-  - `"link"` → el frontend abre `payload` (URL) en una nueva pestaña.
-  - `"contact"` → el frontend interpreta `payload` como un email (`contiene "@"`) o una URL (`empieza con "http"`) y actúa en consecuencia.
+- `suggested_actions.action`: use `"ask"` only. The frontend reenvía `payload` como pregunta al agente. No uses `"link"` ni `"contact"` en sugerencias del dashboard.
 
 ## Cómo agregar un widget nuevo
 

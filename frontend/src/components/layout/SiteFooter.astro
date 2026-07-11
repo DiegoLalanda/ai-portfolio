@@ -1,6 +1,7 @@
 ---
 import LanguageSwitcher from "@/components/layout/LanguageSwitcher.astro";
 import { getTranslations, type Locale } from "@/i18n";
+import { GITHUB_URL, LINKEDIN_URL } from "@/lib/socialLinks";
 
 interface Props {
   class?: string;
@@ -26,11 +27,27 @@ const t = getTranslations(locale);
     <div class="hidden text-center text-outline-variant md:block">{t.footer.tagline}</div>
     <div class="site-footer__actions flex w-full flex-nowrap items-center justify-center gap-2 md:w-auto md:gap-6">
       <LanguageSwitcher locale={locale} />
-      <a class="site-footer__link text-outline-variant transition-colors hover:text-primary" href="#">GitHub</a>
-      <a class="site-footer__link text-outline-variant transition-colors hover:text-primary" href="#">LinkedIn</a>
+      <a
+        class="site-footer__link text-outline-variant transition-colors hover:text-primary"
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+      <a
+        class="site-footer__link text-outline-variant transition-colors hover:text-primary"
+        href={LINKEDIN_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        LinkedIn
+      </a>
       <a
         class="site-footer__cta rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-primary shadow-[0_0_15px_rgba(208,188,255,0.2)] transition-all duration-300 hover:bg-primary hover:text-on-primary hover:shadow-[0_0_25px_rgba(208,188,255,0.4)] md:px-4 md:py-2"
-        href="#"
+        href={LINKEDIN_URL}
+        target="_blank"
+        rel="noopener noreferrer"
       >
         {t.footer.getInTouch}
       </a>

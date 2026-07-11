@@ -7,6 +7,7 @@ interface Props {
   placeholder?: string;
   placeholders?: string[];
   sendAriaLabel?: string;
+  resetAriaLabel?: string;
   class?: string;
 }
 
@@ -17,6 +18,7 @@ const {
   placeholder,
   placeholders = [],
   sendAriaLabel = "Send",
+  resetAriaLabel = "Ask again",
   class: className,
 } = Astro.props;
 const placeholderCycle = placeholders.length > 0 ? placeholders : ["..."];
@@ -40,18 +42,20 @@ const isReadonly = mode === "readonly";
     value={isReadonly ? value : undefined}
     placeholder={!isReadonly ? initialPlaceholder : undefined}
     data-placeholder-cycle={!isReadonly ? JSON.stringify(placeholderCycle) : undefined}
-    class="w-full border-none bg-transparent font-body-md text-body-md text-on-surface placeholder-outline-variant focus:outline-none focus:ring-0"
+    class="min-w-0 w-full border-none bg-transparent font-body-md text-body-md text-on-surface placeholder-outline-variant focus:outline-none focus:ring-0 read-only:truncate"
   />
   {
     isReadonly ? (
-      <span
-        class="ml-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary"
-        aria-hidden="true"
+      <button
+        type="button"
+        id="submitted-prompt-reset"
+        aria-label={resetAriaLabel}
+        class="prompt-pill-status ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary/90"
       >
-        <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">
+        <span class="material-symbols-outlined text-[20px] leading-none" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">
           check
         </span>
-      </span>
+      </button>
     ) : (
       <button
         type="button"

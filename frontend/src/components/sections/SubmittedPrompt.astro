@@ -1,14 +1,28 @@
 ---
 import PromptPill from "@/components/sections/PromptPill.astro";
+import { getTranslations, type Locale } from "@/i18n";
 
 interface Props {
+  locale: Locale;
   /** Texto inicial mostrado antes de que el flujo mockeado lo reemplace en runtime. */
   question?: string;
 }
 
-const { question = "" } = Astro.props;
+const { locale, question = "" } = Astro.props;
+const t = getTranslations(locale);
 ---
 
 <div class="relative mx-auto mb-12 w-full max-w-2xl fade-in-up">
-  <PromptPill mode="readonly" inputId="submitted-question" value={question} />
+  <PromptPill
+    mode="readonly"
+    inputId="submitted-question"
+    value={question}
+    resetAriaLabel={t.dashboard.askAgainAriaLabel}
+  />
 </div>
+
+<script>
+  document.getElementById("submitted-prompt-reset")?.addEventListener("click", () => {
+    window.dispatchEvent(new CustomEvent("portfolio:ask-again"));
+  });
+</script>

@@ -1,0 +1,84 @@
+import { useEffect, useMemo, useState } from "react";
+import { Box } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  getLucideIcon,
+  resolveSkillIcon,
+  shouldInvertIcon,
+  skillIconUrls,
+  type SkillIconRef,
+} from "./skillIcons";
+
+interface SkillBadgeProps {
+  name: string;
+}
+
+/** Logo (Devicon / Simple Icons / Lucide) + nombre. */
+export function SkillBadge({ name }: SkillBadgeProps) {
+  const ref = useMemo(() => resolveSkillIcon(name), [name]);
+  const candidates = useMemo(() => (ref ? skillIconUrls(ref) : []), [ref]);
+  const [urlIndex, setUrlIndex] = useState(0);
+  const activeUrl = candidates[urlIndex] ?? null;
+  const invert = shouldInvertIcon(ref);
+
+  useEffect(() => {
+    setUrlIndex(0);
+  }, [name]);
+
+  return (
+    <div className="group flex w-[5rem] flex-col items-center gap-2.5 sm:w-[5.5rem]">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-[#0c0c0e] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-colors group-hover:border-white/20 group-hover:bg-[#121216] sm:h-16 sm:w-16">
+        <SkillGlyph
+          refIcon={ref}
+          activeUrl={activeUrl}
+          invert={invert}
+          onImageError={() => {
+            setUrlIndex((current) => (current + 1 < candidates.length ? current + 1 : candidates.length));
+          }}
+        />
+      </div>
+      <span className="line-clamp-2 min-h-[2.2em] text-center font-label-sm leading-tight text-on-surface-variant transition-colors group-hover:text-on-surface">
+        {formatSkillLabel(name)}
+      </span>
+    </div>
+  );
+}
+
+function SkillGlyph({
+  refIcon,
+  activeUrl,
+  invert,
+  onImageError,
+}: {
+  refIcon: SkillIconRef | null;
+  activeUrl: string | null;
+  invert: boolean;
+  onImageError: () => void;
+}) {
+  if (refIcon?.provider === "lucide") {
+    const Icon = getLucideIcon(refIcon.icon);
+    return <Icon className="h-8 w-8 text-on-surface sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />;
+  }
+
+  if (activeUrl) {
+    return (
+      <img
+        key={activeUrl}
+        src={activeUrl}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={cn("h-8 w-8 object-contain sm:h-9 sm:w-9", invert && "brightness-0 invert")}
+        onError={onImageError}
+      />
+    );
+  }
+
+  return (
+    <Box className="h-8 w-8 text-on-surface-variant sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />
+  );
+}
+
+function formatSkillLabel(name: string) {
+  return name.replace(/^skill-/, "").replaceAll("-", " ");
+}

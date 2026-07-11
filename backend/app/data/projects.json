@@ -1,5 +1,280 @@
 [
   {
+    "id": "proj-finni",
+    "name": "Finni — Plataforma de agentes IA",
+    "type": "professional",
+    "role": "AI Developer",
+    "summary": "Plataforma de agentes de IA en Finnegans para procesos internos y productos orientados a clientes.",
+    "description": "Finni es la plataforma de agentes de inteligencia artificial que Diego desarrolla en Finnegans. Integra LLMs, RAG, bots y orquestación de agentes para automatizar procesos internos y habilitar capacidades de IA en productos de la empresa.",
+    "problem": "Finnegans necesitaba escalar la adopción de IA con agentes reutilizables, integraciones entre sistemas y respuestas confiables apoyadas en datos de la organización.",
+    "solution": "Diseño e implementación de agentes con Python (FastAPI), servicios en AWS (Bedrock, DynamoDB, S3), RAG, MCP y observabilidad, integrados con el ecosistema Angular de la empresa.",
+    "result": "Plataforma en evolución continua que centraliza agentes de IA para uso interno y funcionalidades orientadas a clientes.",
+    "highlights": [
+      "Agentes de IA y bots para procesos internos y productos para clientes.",
+      "LLMs, RAG, embeddings, prompt engineering y protocolo MCP.",
+      "Stack Python, FastAPI, Angular, AWS (Bedrock, DynamoDB, S3) y observabilidad con Grafana."
+    ],
+    "stack": [
+      "skill-python",
+      "skill-fastapi",
+      "skill-angular",
+      "skill-typescript",
+      "skill-amazon-bedrock",
+      "skill-dynamodb",
+      "skill-ai-agents",
+      "skill-rag",
+      "skill-llms",
+      "skill-mcp",
+      "skill-grafana"
+    ],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
+        "alt": "Visual abstracto de inteligencia artificial"
+      }
+    ],
+    "startDate": "2025-07",
+    "endDate": null,
+    "current": true,
+    "tags": ["ai", "agents", "finnegans", "finni", "llm", "rag"],
+    "displayGroup": "ia",
+    "featured": true,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "proj-ai-portfolio",
+    "name": "Portfolio IA — Asistente conversacional",
+    "type": "personal",
+    "role": "Full-Stack Developer",
+    "summary": "Portfolio interactivo con asistente de IA que responde en streaming sobre experiencia, skills y proyectos.",
+    "description": "Este portfolio: frontend en Astro + React con widgets dinámicos (skills, proyectos, experiencia) y backend en FastAPI + Gemini con function calling, respuestas estructuradas y streaming SSE en tiempo real.",
+    "problem": "Un CV estático no permite a reclutadores explorar el perfil de forma conversacional ni ver la experiencia en IA de Diego de manera interactiva.",
+    "solution": "Agente con tools sobre datos JSON del portfolio, contrato AgentResponse con widgets visuales, chat en streaming y UI glassmorphism bilingüe (ES/EN).",
+    "result": "Portfolio vivo donde visitantes preguntan en lenguaje natural y reciben respuestas fundamentadas con bloques visuales (skills, proyectos, timelines).",
+    "highlights": [
+      "Chat en streaming con Gemini, function calling manual y eventos de progreso.",
+      "Widgets dinámicos: skills, proyectos agrupados, experiencia/educación con timeline.",
+      "Stack Astro, React, TypeScript, Tailwind, FastAPI, Python y Gemini."
+    ],
+    "stack": [
+      "skill-astro",
+      "skill-react",
+      "skill-typescript",
+      "skill-tailwind-css",
+      "skill-python",
+      "skill-fastapi",
+      "skill-llms",
+      "skill-ai-agents",
+      "skill-rag"
+    ],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
+        "alt": "Red neuronal abstracta"
+      }
+    ],
+    "startDate": "2025-01",
+    "endDate": null,
+    "current": true,
+    "tags": ["ai", "portfolio", "agents", "gemini", "astro"],
+    "displayGroup": "ia",
+    "featured": true,
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "proj-en-un-toke",
+    "name": "En un Toke",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "E-commerce con WordPress, WooCommerce, Mercado Pago y optimización publicitaria.",
+    "description": "E-commerce con WordPress y WooCommerce, integrando pasarela de pagos (Mercado Pago) y envíos (Correo Argentino). Implementación de Meta Pixel y API de Conversiones para optimización de campañas publicitarias.",
+    "problem": "Un negocio necesitaba una tienda online con pagos, envíos y tracking de conversiones para campañas de marketing digital.",
+    "solution": "Implementación de WooCommerce con Mercado Pago, Correo Argentino y Meta Pixel con API de Conversiones.",
+    "result": "E-commerce operativo con pagos, envíos y optimización de campañas publicitarias.",
+    "highlights": [
+      "Integración de Mercado Pago y Correo Argentino.",
+      "Meta Pixel y API de Conversiones para optimización de campañas.",
+      "WordPress + WooCommerce con enfoque en marketing digital."
+    ],
+    "stack": ["skill-wordpress", "skill-woocommerce"],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1465447142348-e9952c393450?w=800&q=80",
+        "alt": "Montañas y valle al amanecer"
+      }
+    ],
+    "startDate": "2024-01",
+    "endDate": "2024-06",
+    "current": false,
+    "tags": ["ecommerce", "wordpress", "marketing", "freelance"],
+    "displayGroup": "full-stack",
+    "featured": true,
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "proj-tu-seguro-online",
+    "name": "Tu Seguro Online",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "Plataforma full-stack de gestión de clientes para un asesor de seguros.",
+    "description": "Plataforma full-stack de gestión de clientes para un asesor de seguros, con integración de APIs externas de aseguradoras (Río Uruguay Seguros) para cotizar vehículos.",
+    "problem": "Un asesor de seguros necesitaba centralizar la gestión de clientes e integrar cotizaciones de aseguradoras externas.",
+    "solution": "Desarrollo de plataforma NestJS + Angular con integración de APIs de Río Uruguay Seguros y despliegue en Render y Neon.",
+    "result": "Sistema de gestión de clientes con cotización de vehículos integrada a APIs de aseguradoras.",
+    "highlights": [
+      "Integración con APIs externas de aseguradoras (Río Uruguay Seguros).",
+      "Gestión de clientes y cotización de vehículos.",
+      "Stack NestJS, Angular, PostgreSQL, TypeORM, Render y Neon."
+    ],
+    "stack": [
+      "skill-nestjs",
+      "skill-angular",
+      "skill-postgresql",
+      "skill-typeorm",
+      "skill-render",
+      "skill-neon"
+    ],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
+        "alt": "Automóvil en estudio para cotización de seguros"
+      }
+    ],
+    "startDate": "2025-03",
+    "endDate": "2025-08",
+    "current": false,
+    "tags": ["freelance", "insurance", "api-integration"],
+    "displayGroup": "full-stack",
+    "featured": true,
+    "order": 4,
+    "visible": true
+  },
+  {
+    "id": "proj-easy-survey",
+    "name": "Easy Survey",
+    "type": "freelance",
+    "role": "Full-Stack Developer",
+    "summary": "Plataforma de encuestas anónimas con diseño UI/UX y despliegue completo.",
+    "description": "Plataforma de encuestas anónimas. Responsable del diseño UI/UX (Figma), desarrollo frontend (Angular) y despliegue completo.",
+    "problem": "Necesidad de una plataforma simple para crear y responder encuestas anónimas con una experiencia de usuario clara.",
+    "solution": "Desarrollo full-stack con NestJS y Angular, base de datos PostgreSQL y despliegue en Render y Neon.",
+    "result": "Plataforma funcional desplegada en producción con flujo completo de encuestas anónimas.",
+    "highlights": [
+      "Diseño UI/UX completo en Figma.",
+      "Frontend en Angular y backend en NestJS con TypeORM.",
+      "Despliegue en Render y Neon."
+    ],
+    "stack": [
+      "skill-nestjs",
+      "skill-typeorm",
+      "skill-angular",
+      "skill-postgresql",
+      "skill-figma",
+      "skill-render",
+      "skill-neon"
+    ],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
+        "alt": "Espacio de trabajo moderno"
+      }
+    ],
+    "startDate": "2025-01",
+    "endDate": "2025-06",
+    "current": false,
+    "tags": ["freelance", "surveys", "angular", "nestjs"],
+    "displayGroup": "full-stack",
+    "featured": false,
+    "order": 5,
+    "visible": true
+  },
+  {
+    "id": "proj-claims-api",
+    "name": "API de Gestión de Reclamos",
+    "type": "academic",
+    "role": "Backend Developer",
+    "summary": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos.",
+    "description": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos, con arquitectura moderna y documentación Swagger.",
+    "problem": "Una concesionaria necesitaba un backend confiable para gestionar reclamos de clientes.",
+    "solution": "API REST con Node.js, Express, PostgreSQL, Sequelize, autenticación JWT y documentación Swagger.",
+    "result": "API funcional con arquitectura moderna y documentación para integración con frontend.",
+    "highlights": [
+      "Arquitectura REST con autenticación JWT.",
+      "PostgreSQL con Sequelize ORM.",
+      "Documentación Swagger para integración."
+    ],
+    "stack": ["skill-nodejs", "skill-express", "skill-postgresql", "skill-sequelize"],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+        "alt": "Tierra desde el espacio con luces de red"
+      }
+    ],
+    "startDate": "2024-03",
+    "endDate": "2024-08",
+    "current": false,
+    "tags": ["api", "backend", "automotive", "university"],
+    "displayGroup": "full-stack",
+    "featured": false,
+    "order": 6,
+    "visible": true
+  },
+  {
+    "id": "proj-verde-nido",
+    "name": "Verde Nido",
+    "type": "academic",
+    "role": "Frontend Developer",
+    "summary": "Plataforma de alojamientos de hotel con catálogo interactivo, filtros y CRUD admin.",
+    "description": "Plataforma de alojamientos de hotel. Diseño UI/UX (Figma). Uso de API externa con catálogo interactivo, filtros avanzados y CRUD para administrador.",
+    "problem": "Crear una plataforma de reservas de hotel con catálogo interactivo y panel administrativo.",
+    "solution": "Frontend en React consumiendo API externa, con filtros avanzados y CRUD de administrador. Diseño UI/UX en Figma.",
+    "result": "Plataforma frontend funcional con catálogo interactivo y gestión administrativa.",
+    "highlights": [
+      "Diseño UI/UX completo en Figma.",
+      "Catálogo interactivo con filtros avanzados.",
+      "CRUD de administrador sobre API externa."
+    ],
+    "stack": ["skill-react", "skill-nodejs", "skill-mysql", "skill-figma"],
+    "team": [],
+    "links": [],
+    "media": [
+      {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+        "alt": "Resort con piscina y palmeras"
+      }
+    ],
+    "startDate": "2024-01",
+    "endDate": "2024-06",
+    "current": false,
+    "tags": ["frontend", "hospitality", "react", "university"],
+    "displayGroup": "full-stack",
+    "featured": false,
+    "order": 7,
+    "visible": true
+  },
+  {
     "id": "proj-cachibache-app",
     "name": "CachiBache — App móvil de reportes urbanos",
     "type": "academic",
@@ -47,9 +322,10 @@
     "startDate": "2025-01",
     "endDate": "2025-11",
     "current": false,
-    "tags": ["mobile", "react-native", "expo", "nestjs", "university", "featured"],
-    "featured": true,
-    "order": 1,
+    "tags": ["mobile", "react-native", "expo", "nestjs", "university"],
+    "displayGroup": "otras",
+    "featured": false,
+    "order": 8,
     "visible": true
   },
   {
@@ -67,7 +343,7 @@
       "Controles simples e intuitivos con sistema de puntos y monedas.",
       "Arte 2D estilo cartoon, jugable directamente en navegador vía Itch.io."
     ],
-    "stack": [],
+    "stack": ["skill-gdevelop"],
     "team": [
       { "name": "Fernanda Elola", "role": "Team Member", "url": null },
       { "name": "Diego Lalanda", "role": "Game Developer", "url": "https://github.com/DiegoLalanda" },
@@ -92,201 +368,9 @@
     "endDate": "2025-11",
     "current": false,
     "tags": ["game", "gdevelop", "arcade", "2d"],
-    "featured": true,
-    "order": 2,
-    "visible": true
-  },
-  {
-    "id": "proj-easy-survey",
-    "name": "Easy Survey",
-    "type": "freelance",
-    "role": "Full-Stack Developer",
-    "summary": "Plataforma de encuestas anónimas con diseño UI/UX y despliegue completo.",
-    "description": "Plataforma de encuestas anónimas. Responsable del diseño UI/UX (Figma), desarrollo frontend (Angular) y despliegue completo.",
-    "problem": "Necesidad de una plataforma simple para crear y responder encuestas anónimas con una experiencia de usuario clara.",
-    "solution": "Desarrollo full-stack con NestJS y Angular, base de datos PostgreSQL y despliegue en Render y Neon.",
-    "result": "Plataforma funcional desplegada en producción con flujo completo de encuestas anónimas.",
-    "highlights": [
-      "Diseño UI/UX completo en Figma.",
-      "Frontend en Angular y backend en NestJS con TypeORM.",
-      "Despliegue en Render y Neon."
-    ],
-    "stack": [
-      "skill-nestjs",
-      "skill-typeorm",
-      "skill-angular",
-      "skill-postgresql",
-      "skill-figma",
-      "skill-render",
-      "skill-neon"
-    ],
-    "team": [],
-    "links": [],
-    "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
-        "alt": "Espacio de trabajo moderno"
-      }
-    ],
-    "startDate": "2025-01",
-    "endDate": "2025-06",
-    "current": false,
-    "tags": ["freelance", "surveys", "angular", "nestjs"],
+    "displayGroup": "otras",
     "featured": false,
-    "order": 3,
-    "visible": true
-  },
-  {
-    "id": "proj-tu-seguro-online",
-    "name": "Tu Seguro Online",
-    "type": "freelance",
-    "role": "Full-Stack Developer",
-    "summary": "Plataforma full-stack de gestión de clientes para un asesor de seguros.",
-    "description": "Plataforma full-stack de gestión de clientes para un asesor de seguros, con integración de APIs externas de aseguradoras (Río Uruguay Seguros) para cotizar vehículos.",
-    "problem": "Un asesor de seguros necesitaba centralizar la gestión de clientes e integrar cotizaciones de aseguradoras externas.",
-    "solution": "Desarrollo de plataforma NestJS + Angular con integración de APIs de Río Uruguay Seguros y despliegue en Render y Neon.",
-    "result": "Sistema de gestión de clientes con cotización de vehículos integrada a APIs de aseguradoras.",
-    "highlights": [
-      "Integración con APIs externas de aseguradoras (Río Uruguay Seguros).",
-      "Gestión de clientes y cotización de vehículos.",
-      "Stack NestJS, Angular, PostgreSQL, TypeORM, Render y Neon."
-    ],
-    "stack": [
-      "skill-nestjs",
-      "skill-angular",
-      "skill-postgresql",
-      "skill-typeorm",
-      "skill-render",
-      "skill-neon"
-    ],
-    "team": [],
-    "links": [],
-    "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1486406146927-c627a92ad1ab?w=800&q=80",
-        "alt": "Rascacielos de vidrio al atardecer"
-      }
-    ],
-    "startDate": "2025-03",
-    "endDate": "2025-08",
-    "current": false,
-    "tags": ["freelance", "insurance", "api-integration"],
-    "featured": false,
-    "order": 4,
-    "visible": true
-  },
-  {
-    "id": "proj-en-un-toke",
-    "name": "En un Toke",
-    "type": "freelance",
-    "role": "Full-Stack Developer",
-    "summary": "E-commerce con WordPress, WooCommerce, Mercado Pago y optimización publicitaria.",
-    "description": "E-commerce con WordPress y WooCommerce, integrando pasarela de pagos (Mercado Pago) y envíos (Correo Argentino). Implementación de Meta Pixel y API de Conversiones para optimización de campañas publicitarias.",
-    "problem": "Un negocio necesitaba una tienda online con pagos, envíos y tracking de conversiones para campañas de marketing digital.",
-    "solution": "Implementación de WooCommerce con Mercado Pago, Correo Argentino y Meta Pixel con API de Conversiones.",
-    "result": "E-commerce operativo con pagos, envíos y optimización de campañas publicitarias.",
-    "highlights": [
-      "Integración de Mercado Pago y Correo Argentino.",
-      "Meta Pixel y API de Conversiones para optimización de campañas.",
-      "WordPress + WooCommerce con enfoque en marketing digital."
-    ],
-    "stack": [
-      "skill-wordpress",
-      "skill-woocommerce"
-    ],
-    "team": [],
-    "links": [],
-    "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1465447142348-e9952c393450?w=800&q=80",
-        "alt": "Montañas y valle al amanecer"
-      }
-    ],
-    "startDate": "2024-01",
-    "endDate": "2024-06",
-    "current": false,
-    "tags": ["ecommerce", "wordpress", "marketing"],
-    "featured": false,
-    "order": 5,
-    "visible": true
-  },
-  {
-    "id": "proj-claims-api",
-    "name": "API de Gestión de Reclamos",
-    "type": "professional",
-    "role": "Backend Developer",
-    "summary": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos.",
-    "description": "API RESTful robusta para un sistema de reclamos de una concesionaria de vehículos, con arquitectura moderna y documentación Swagger.",
-    "problem": "Una concesionaria necesitaba un backend confiable para gestionar reclamos de clientes.",
-    "solution": "API REST con Node.js, Express, PostgreSQL, Sequelize, autenticación JWT y documentación Swagger.",
-    "result": "API funcional con arquitectura moderna y documentación para integración con frontend.",
-    "highlights": [
-      "Arquitectura REST con autenticación JWT.",
-      "PostgreSQL con Sequelize ORM.",
-      "Documentación Swagger para integración."
-    ],
-    "stack": [
-      "skill-nodejs",
-      "skill-express",
-      "skill-postgresql",
-      "skill-sequelize"
-    ],
-    "team": [],
-    "links": [],
-    "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-        "alt": "Tierra desde el espacio con luces de red"
-      }
-    ],
-    "startDate": "2024-03",
-    "endDate": "2024-08",
-    "current": false,
-    "tags": ["api", "backend", "automotive"],
-    "featured": false,
-    "order": 6,
-    "visible": true
-  },
-  {
-    "id": "proj-verde-nido",
-    "name": "Verde Nido",
-    "type": "academic",
-    "role": "Frontend Developer",
-    "summary": "Plataforma de alojamientos de hotel con catálogo interactivo, filtros y CRUD admin.",
-    "description": "Plataforma de alojamientos de hotel. Diseño UI/UX (Figma). Uso de API externa con catálogo interactivo, filtros avanzados y CRUD para administrador.",
-    "problem": "Crear una plataforma de reservas de hotel con catálogo interactivo y panel administrativo.",
-    "solution": "Frontend en React consumiendo API externa, con filtros avanzados y CRUD de administrador. Diseño UI/UX en Figma.",
-    "result": "Plataforma frontend funcional con catálogo interactivo y gestión administrativa.",
-    "highlights": [
-      "Diseño UI/UX completo en Figma.",
-      "Catálogo interactivo con filtros avanzados.",
-      "CRUD de administrador sobre API externa."
-    ],
-    "stack": [
-      "skill-react",
-      "skill-nodejs",
-      "skill-mysql",
-      "skill-figma"
-    ],
-    "team": [],
-    "links": [],
-    "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-        "alt": "Resort con piscina y palmeras"
-      }
-    ],
-    "startDate": "2024-01",
-    "endDate": "2024-06",
-    "current": false,
-    "tags": ["frontend", "hospitality", "react"],
-    "featured": false,
-    "order": 7,
+    "order": 9,
     "visible": true
   }
 ]

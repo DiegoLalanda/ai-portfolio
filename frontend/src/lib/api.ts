@@ -5,16 +5,30 @@
 
 import type { AgentResponse } from "@/types/agent-response";
 import type { ChatStreamEvent } from "@/types/chat-stream";
+import type { DashboardSessionContext } from "@/lib/dashboard-context";
 
 const API_BASE_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000";
 
 export type ChatResponse = AgentResponse;
 
-export async function sendChatMessage(question: string): Promise<ChatResponse> {
+export interface ChatRequestBody {
+  question: string;
+  shown_widget_types?: string[];
+  prior_questions?: string[];
+}
+
+export async function sendChatMessage(
+  question: string,
+  context: DashboardSessionContext = { shownWidgetTypes: [], priorQuestions: [] },
+): Promise<ChatResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({
+      question,
+      shown_widget_types: context.shownWidgetTypes,
+      prior_questions: context.priorQuestions,
+    } satisfies ChatRequestBody),
   });
 
   if (!response.ok) {
@@ -27,6 +41,7 @@ export async function sendChatMessage(question: string): Promise<ChatResponse> {
 export async function streamChatMessage(
   question: string,
   onEvent: (event: ChatStreamEvent) => void,
+  context: DashboardSessionContext = { shownWidgetTypes: [], priorQuestions: [] },
 ): Promise<ChatResponse> {
   const response = await fetch(`${API_BASE_URL}/api/v1/chat/stream`, {
     method: "POST",
@@ -34,7 +49,11 @@ export async function streamChatMessage(
       "Content-Type": "application/json",
       Accept: "text/event-stream",
     },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({
+      question,
+      shown_widget_types: context.shownWidgetTypes,
+      prior_questions: context.priorQuestions,
+    } satisfies ChatRequestBody),
   });
 
   if (!response.ok) {

@@ -98,7 +98,7 @@ export const es: Translations = {
     {
       id: "projects",
       label: "Proyectos",
-      question: "Mostrame tus proyectos destacados...",
+      question: "Mostrame tus proyectos: freelance, universidad y personales...",
     },
     {
       id: "teaching",
@@ -150,11 +150,28 @@ export const es: Translations = {
     connectionSummary:
       "No pudimos conectar con el backend en este momento. Verificá que la API esté en ejecución.",
   },
+  dashboard: {
+    askAgain: "Volver a preguntar",
+    askAgainAriaLabel: "Volver a la pantalla inicial para hacer otra pregunta",
+  },
   footer: {
     tagline: "© Diego Lalanda · Hecho con amor, mates e inteligencia (artificial).",
     getInTouch: "Contacto",
   },
   langSwitcher: {
     ariaLabel: "Seleccionar idioma",
+  },
+  projects: {
+    title: "Proyectos",
+    viewDetails: "Ver detalles",
+    modal: {
+      close: "Cerrar detalle del proyecto",
+      returnToPortfolio: "Volver al portfolio",
+      challenge: "El desafío",
+      solution: "La solución",
+      results: "Resultados",
+      highlights: "Puntos clave",
+      role: "Rol",
+    },
   },
 };

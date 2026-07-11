@@ -98,7 +98,7 @@ export const en: Translations = {
     {
       id: "projects",
       label: "Projects",
-      question: "Show me your featured projects...",
+      question: "Show me your projects: freelance, university, and personal work...",
     },
     {
       id: "teaching",
@@ -149,11 +149,28 @@ export const en: Translations = {
     connectionTitle: "Connection issue",
     connectionSummary: "Couldn't reach the backend right now. Please make sure the API is running.",
   },
+  dashboard: {
+    askAgain: "Ask again",
+    askAgainAriaLabel: "Return to the home screen to ask another question",
+  },
   footer: {
     tagline: "© Diego Lalanda · Made with love, mates, and artificial intelligence.",
     getInTouch: "Get in Touch",
   },
   langSwitcher: {
     ariaLabel: "Select language",
+  },
+  projects: {
+    title: "Projects",
+    viewDetails: "View details",
+    modal: {
+      close: "Close project detail",
+      returnToPortfolio: "Return to portfolio",
+      challenge: "The challenge",
+      solution: "The solution",
+      results: "Results",
+      highlights: "Highlights",
+      role: "Role",
+    },
   },
 };

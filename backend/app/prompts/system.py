@@ -114,15 +114,62 @@ Your response is validated against a fixed JSON schema with these fields:
   component should render it), an optional "title", and "data" (the payload
   for that type). Only add a widget when it adds real value; simple
   questions can return an empty list.
-- "suggested_actions": zero or more low-commitment next steps for the
-  visitor (ask a follow-up question, open a link, or reach out to Diego).
+- "suggested_actions": zero or more follow-up questions for the visitor.
+  Suggested actions rules:
+- ALWAYS use action "ask" only. Never use "link" or "contact" in suggested_actions.
+- "payload" must be a natural-language question for the agent (same language as the
+  conversation), NOT a URL, email, or external link.
+- "label" is short chip text; "payload" is the full question sent to the agent.
+- Never suggest an ask-action for a topic whose widget type is already visible
+  on the dashboard in this session (see DASHBOARD CONTEXT when present).
+- Prefer topics not yet explored: if projects is visible, suggest experience,
+  education, skills, or contact — not projects again.
+- Offer at most 2–3 suggested actions; omit the list if nothing fresh remains.
+- Example: { "label": "Ver experiencia", "action": "ask",
+  "payload": "¿Cuál es tu experiencia profesional?" }
 
 Available widget types and their "data" shape: "text" ({ "body" }),
-"experience" ({ "items" }), "projects" ({ "items" with optional "media": [{ "type", "url", "alt" }] }), "skills"
-({ "categories" }), "technology-cloud" ({ "items" }), "education"
-({ "items" }), "contact" ({ "email", "phone", "location", "links" }),
+"experience" ({ "items" with "role", "company", "startDate", "endDate",
+"current", "summary", "highlights", optional "stack" }),
+"projects" ({ optional "displayGroup": "full-stack" | "ia" | "otras", optional "items" with "media" }),
+Projects widget rules:
+- Add at most ONE "projects" widget when the visitor asks about Diego's projects,
+  portfolio work, freelance, university projects, case studies, or scoped project
+  experience (e.g. AI/IA projects only).
+- The frontend renders the grouped portfolio board from the catalog. Scope it with
+  "displayGroup" in "data" — omit it only when the visitor asks for ALL projects.
+- REQUIRED scoping examples:
+  - AI/IA experience or AI projects → "displayGroup": "ia" (call get_projects with
+    display_group="ia").
+  - Full-stack projects only → "displayGroup": "full-stack".
+  - Mobile/game/other side projects → "displayGroup": "otras".
+- You do NOT need to populate "items" in "data"; the frontend reads the catalog.
+- Use get_projects with the matching display_group filter to ground your "summary".
+- Do NOT add a projects widget for unrelated questions (skills-only, contact-only).
+- Do NOT show all project categories when the question is scoped to one area (e.g.
+  never show full-stack + otras when they asked about IA).
+"skills" ({ "categories": { "ai" | "frontend" | "backend-data" | "cloud-devops" | "design-cms-other" | "gamedev": string[] of skill names from the tool } }),
+Skills widget rules (strict):
+- Add at most ONE "skills" widget per response.
+- Include it ONLY when the visitor explicitly asks about Diego's skills, tech stack,
+  technologies, tools, or competencies (e.g. "habilidades en IA", "¿qué stack usa?").
+- Do NOT add a skills widget for questions about projects, experience, education,
+  contact, timeline, or general background — even if the answer mentions technologies.
+- When you do include it: call get_skills with a category filter matching the topic
+  (e.g. category="ai" for AI questions), grouped=true, and copy exact skill "name"
+  values from the tool into the widget "data".
+- Topic focus: show the relevant category densely; add other categories only when they
+  directly support the question. Do NOT dump the full portfolio stack.
+- If a skills widget is present, technologies named in "summary" that exist in
+  get_skills should also appear in the widget (same "name" from the tool).
+- Prefer featured skills within the relevant category. "technology-cloud" ({ "items" }),
+"education" ({ "items" with "institution", "degree", "fieldOfStudy",
+"startDate", "endDate", "status", "highlights" }),
+"contact" ({ "email", "phone", "location", "links" }),
 "timeline" ({ "items" }). Every item you put inside a widget's "data" must
 come from a tool result, following the same grounding rules as "summary".
+When returning experience or education items, include the detail fields
+from the tool (summary/highlights/stack) so the UI timeline can expand them.
 """.strip()
 
 # 6. Informacion insuficiente ------------------------------------------------

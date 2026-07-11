@@ -1,9 +1,9 @@
 import { Layers } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
+import { SkillBadge } from "../SkillBadge";
+import { getCategoryMeta } from "../skillIcons";
 import { WidgetCard } from "../WidgetCard";
 import { asRecord, asStringArray } from "../utils";
-
-const LEVEL_COLORS = ["text-primary", "text-secondary", "text-tertiary", "text-outline"] as const;
 
 /** data: { categories: { [category: string]: string[] } } */
 export function SkillsWidget({ widget }: { widget: Widget }) {
@@ -16,27 +16,30 @@ export function SkillsWidget({ widget }: { widget: Widget }) {
 
   return (
     <WidgetCard title={widget.title ?? "Skills"} icon={<Layers size={14} aria-hidden="true" />}>
-      <div className="space-y-3">
-        {entries.map(([category, skills], index) => (
-          <div
-            key={category}
-            className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-surface-container-low p-3 transition-colors hover:bg-surface-container"
-          >
-            <div className="min-w-0 flex-1">
-              <p className="mb-1 font-label-sm uppercase tracking-wide text-on-surface-variant">{category}</p>
-              <div className="flex flex-wrap gap-x-2 gap-y-1">
+      <div className="skills-board flex flex-col gap-7 md:gap-8">
+        {entries.map(([category, skills]) => {
+          const meta = getCategoryMeta(category);
+
+          return (
+            <section key={category} className="skills-board__row min-w-0">
+              <div className="mb-4 flex items-center gap-2.5">
+                <span className={`h-1.5 w-1.5 rounded-full ${meta.accentDot}`} aria-hidden="true" />
+                <h3
+                  className={`font-label-md text-label-md uppercase tracking-[0.14em] ${meta.accentClass}`}
+                >
+                  {meta.label}
+                </h3>
+                <span className="h-px flex-1 bg-white/5" aria-hidden="true" />
+              </div>
+
+              <div className="flex flex-wrap gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6">
                 {skills.map((skill) => (
-                  <span key={skill} className="font-body-md text-on-surface">
-                    {skill}
-                  </span>
+                  <SkillBadge key={skill} name={skill} />
                 ))}
               </div>
-            </div>
-            <span className={`shrink-0 font-label-sm uppercase ${LEVEL_COLORS[index % LEVEL_COLORS.length]}`}>
-              {skills.length > 4 ? "Expert" : skills.length > 2 ? "Core" : "Lead"}
-            </span>
-          </div>
-        ))}
+            </section>
+          );
+        })}
       </div>
     </WidgetCard>
   );

@@ -48,6 +48,11 @@
       },
       "current": { "type": "boolean" },
       "tags": { "$ref": "_common.schema.json#/$defs/tags" },
+      "displayGroup": {
+        "type": "string",
+        "enum": ["full-stack", "ia", "otras"],
+        "description": "UI grouping for the portfolio projects board."
+      },
       "featured": { "type": "boolean", "description": "Highlight this project (e.g. in the dashboard case study)." },
       "order": { "type": "integer", "description": "Manual sort order, ascending, within this file." },
       "visible": { "type": "boolean", "description": "Toggle to hide the project without deleting it." }
@@ -55,7 +60,7 @@
     "required": [
       "id", "name", "type", "role", "summary", "description", "problem",
       "solution", "result", "highlights", "stack", "team", "links", "media",
-      "startDate", "endDate", "current", "tags", "featured", "order", "visible"
+      "startDate", "endDate", "current", "tags", "displayGroup", "featured", "order", "visible"
     ],
     "additionalProperties": false
   }

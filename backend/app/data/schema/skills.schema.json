@@ -11,7 +11,7 @@
       "name": { "type": "string" },
       "category": {
         "type": "string",
-        "enum": ["ai", "cloud-devops", "frontend", "backend-data", "design-cms-other"],
+        "enum": ["ai", "cloud-devops", "frontend", "backend-data", "design-cms-other", "gamedev"],
         "description": "High-level grouping used to render skill sections."
       },
       "proficiency": {

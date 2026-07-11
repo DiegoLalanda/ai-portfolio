@@ -27,15 +27,20 @@ export function parseProjectMedia(raw: unknown): ProjectMedia | null {
 interface ProjectVisualProps {
   media?: ProjectMedia | null;
   name: string;
-  variant?: "split" | "card";
+  variant?: "split" | "card" | "compact";
 }
 
 export function ProjectVisual({ media, name, variant = "split" }: ProjectVisualProps) {
-  const minHeight = variant === "split" ? "min-h-[220px] md:min-h-[280px]" : "min-h-[180px]";
+  const minHeight =
+    variant === "split"
+      ? "min-h-[220px] md:min-h-[280px]"
+      : variant === "compact"
+        ? "min-h-[88px]"
+        : "min-h-[180px]";
 
   if (media?.url) {
     return (
-      <div className={cnVisualPanel(minHeight)}>
+      <div className={cnVisualPanel(minHeight, variant)}>
         <img
           src={media.url}
           alt={media.alt || name}
@@ -54,15 +59,17 @@ export function ProjectVisual({ media, name, variant = "split" }: ProjectVisualP
   }
 
   return (
-    <div className={cnVisualPanel(minHeight)}>
+    <div className={cnVisualPanel(minHeight, variant)}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent opacity-20 transition-transform duration-1000 group-hover:scale-110" />
-      <div className="relative z-10 grid grid-cols-3 gap-2">
+      <div className="relative z-10 grid grid-cols-3 gap-1.5">
         {FALLBACK_ICONS.map((Icon, index) => (
           <div
             key={index}
-            className="flex h-14 w-14 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-primary md:h-16 md:w-16"
+            className={`flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-primary ${
+              variant === "compact" ? "h-8 w-8" : "h-14 w-14 md:h-16 md:w-16"
+            }`}
           >
-            <Icon size={22} aria-hidden="true" />
+            <Icon size={variant === "compact" ? 14 : 22} aria-hidden="true" />
           </div>
         ))}
       </div>
@@ -70,6 +77,7 @@ export function ProjectVisual({ media, name, variant = "split" }: ProjectVisualP
   );
 }
 
-function cnVisualPanel(minHeight: string) {
-  return `project-visual relative flex ${minHeight} items-center justify-center overflow-hidden bg-surface-container-highest p-6`;
+function cnVisualPanel(minHeight: string, variant: "split" | "card" | "compact") {
+  const padding = variant === "compact" ? "p-3" : "p-6";
+  return `project-visual relative flex ${minHeight} items-center justify-center overflow-hidden bg-surface-container-highest ${padding}`;
 }

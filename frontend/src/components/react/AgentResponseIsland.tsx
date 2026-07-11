@@ -1,25 +1,27 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { MessageCircleQuestion } from "lucide-react";
 import { streamChatMessage } from "@/lib/api";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
+import {
+  collectShownWidgetTypes,
+  withFilteredSuggestions,
+} from "@/lib/dashboard-context";
 import { AgentResponseView } from "@/components/react/agent-response/AgentResponseView";
 
 /**
  * Puente entre la orquestación en vanilla JS de HomePage y el árbol React
  * del dashboard. Acumula respuestas para que el reclutador arme el dashboard
  * con follow-ups (suggested actions) sin perder lo anterior.
- *
- * Eventos que escucha:
- * - "agent-response:ready": primera respuesta (o reset + set desde HomePage).
- * - "mock-chat:submit": pregunta nueva desde landing; limpia el stack.
- *
- * Follow-ups "ask" se resuelven acá: loader circular + append abajo.
  */
 export default function AgentResponseIsland() {
   const [responses, setResponses] = useState<AgentResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
+  const [askedQuestions, setAskedQuestions] = useState<string[]>([]);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const latestRef = useRef<HTMLDivElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
   const followUpLabel =
     typeof document !== "undefined"
       ? (document.getElementById("agent-response-container")?.dataset.followupLabel ?? "…")
@@ -27,24 +29,36 @@ export default function AgentResponseIsland() {
 
   useEffect(() => {
     function handleReady(event: Event) {
-      const detail = (event as CustomEvent<AgentResponse>).detail;
-      if (!detail) return;
-      setResponses([detail]);
+      const detail = (event as CustomEvent<{ response?: AgentResponse; question?: string }>).detail;
+      const response = detail?.response ?? (detail as unknown as AgentResponse);
+      if (!response?.title) return;
+
+      const initialQuestion =
+        detail?.question ??
+        (document.getElementById("submitted-question") as HTMLInputElement | null)?.value ??
+        "";
+
+      const filtered = withFilteredSuggestions(response, []);
+      setResponses([filtered]);
+      setAskedQuestions(initialQuestion.trim() ? [initialQuestion.trim()] : []);
       setIsLoading(false);
       setPendingQuestion(null);
     }
 
     function handleReset() {
       setResponses([]);
+      setAskedQuestions([]);
       setIsLoading(false);
       setPendingQuestion(null);
     }
 
     window.addEventListener("agent-response:ready", handleReady);
     window.addEventListener("mock-chat:submit", handleReset);
+    window.addEventListener("portfolio:reset", handleReset);
     return () => {
       window.removeEventListener("agent-response:ready", handleReady);
       window.removeEventListener("mock-chat:submit", handleReset);
+      window.removeEventListener("portfolio:reset", handleReset);
     };
   }, []);
 
@@ -63,15 +77,24 @@ export default function AgentResponseIsland() {
   async function runFollowUp(question: string) {
     if (isLoading) return;
 
+    const shownWidgetTypes = collectShownWidgetTypes(responses);
+    const priorQuestions = askedQuestions;
+
     setIsLoading(true);
     setPendingQuestion(question);
+    setAskedQuestions((prev) => [...prev, question]);
     document.getElementById("page-root")?.classList.add("is-thinking");
 
     try {
-      const data = await streamChatMessage(question, () => {
-        /* follow-up: solo spinner circular, sin LoadingPanel */
-      });
-      setResponses((prev) => [...prev, data]);
+      const data = await streamChatMessage(
+        question,
+        () => {
+          /* follow-up: solo spinner circular */
+        },
+        { shownWidgetTypes, priorQuestions },
+      );
+      const filtered = withFilteredSuggestions(data, shownWidgetTypes);
+      setResponses((prev) => [...prev, filtered]);
     } catch (error) {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
@@ -92,33 +115,40 @@ export default function AgentResponseIsland() {
   }
 
   function handleAction(action: SuggestedAction) {
-    switch (action.action) {
-      case "ask":
-        void runFollowUp(action.payload);
-        break;
-      case "link":
-        window.open(action.payload, "_blank", "noopener,noreferrer");
-        break;
-      case "contact":
-        if (action.payload.includes("@")) {
-          window.location.href = `mailto:${action.payload}`;
-        } else if (action.payload.startsWith("http")) {
-          window.open(action.payload, "_blank", "noopener,noreferrer");
-        }
-        break;
+    if (action.action === "ask") {
+      void runFollowUp(action.payload);
     }
   }
 
   if (responses.length === 0 && !isLoading) return null;
 
+  const shownWidgetTypes = collectShownWidgetTypes(responses);
+  const latestResponse = responses[responses.length - 1];
+  const latestFilteredActions = latestResponse
+    ? withFilteredSuggestions(latestResponse, shownWidgetTypes).suggested_actions
+    : [];
+  const showAskAgain = !isLoading && latestFilteredActions.length === 0;
+  const askAgainLabel =
+    typeof document !== "undefined"
+      ? (document.getElementById("agent-response-container")?.dataset.askAgainLabel ?? "Ask again")
+      : "Ask again";
+  const askAgainAriaLabel =
+    typeof document !== "undefined"
+      ? (document.getElementById("agent-response-container")?.dataset.askAgainAriaLabel ?? askAgainLabel)
+      : askAgainLabel;
+
   return (
     <div className="mx-auto flex w-full max-w-container-max flex-col gap-gutter">
       {responses.map((response, index) => {
         const isLatest = index === responses.length - 1;
+        const displayResponse = isLatest
+          ? withFilteredSuggestions(response, shownWidgetTypes)
+          : { ...response, suggested_actions: [] };
+
         return (
           <AgentResponseView
             key={`${response.title}-${index}`}
-            response={response}
+            response={displayResponse}
             onAction={handleAction}
             showActions={isLatest && !isLoading}
             anchorRef={isLatest ? latestRef : undefined}
@@ -141,6 +171,22 @@ export default function AgentResponseIsland() {
               {pendingQuestion}
             </p>
           )}
+        </div>
+      )}
+
+      {showAskAgain && (
+        <div className="flex justify-center pb-2">
+          <motion.button
+            type="button"
+            aria-label={askAgainAriaLabel}
+            onClick={() => window.dispatchEvent(new CustomEvent("portfolio:ask-again"))}
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+            className="secondary-btn flex items-center gap-2 rounded-full px-5 py-2.5 font-label-md text-label-sm text-on-surface-variant transition-colors hover:text-primary"
+          >
+            <MessageCircleQuestion size={15} aria-hidden="true" />
+            {askAgainLabel}
+          </motion.button>
         </div>
       )}
     </div>

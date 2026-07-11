@@ -38,11 +38,28 @@ export interface Translations {
     connectionTitle: string;
     connectionSummary: string;
   };
+  dashboard: {
+    askAgain: string;
+    askAgainAriaLabel: string;
+  };
   footer: {
     tagline: string;
     getInTouch: string;
   };
   langSwitcher: {
     ariaLabel: string;
+  };
+  projects: {
+    title: string;
+    viewDetails: string;
+    modal: {
+      close: string;
+      returnToPortfolio: string;
+      challenge: string;
+      solution: string;
+      results: string;
+      highlights: string;
+      role: string;
+    };
   };
 }

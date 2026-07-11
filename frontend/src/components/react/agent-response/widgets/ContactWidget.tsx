@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, SquareArrowOutUpRight } from "lucide-react";
+import { resolveLinkedInUrl } from "@/lib/socialLinks";
 import type { Widget } from "@/types/agent-response";
 import { WidgetCard } from "../WidgetCard";
 import { asArray, asRecord, asString } from "../utils";
@@ -53,7 +53,7 @@ export function ContactWidget({ widget }: { widget: Widget }) {
         {links.map((link) => (
           <a
             key={link.url}
-            href={link.url}
+            href={resolveLinkedInUrl(link.url)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3 text-body-md text-secondary transition-colors hover:border-secondary/30 hover:underline"

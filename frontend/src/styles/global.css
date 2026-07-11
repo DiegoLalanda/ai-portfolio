@@ -277,6 +277,44 @@
   animation: loadingToolSpin 0.75s linear infinite;
 }
 
+.timeline-rail {
+  position: relative;
+}
+
+.timeline-rail__line--vertical {
+  position: absolute;
+  left: 0;
+  top: 1.35rem;
+  bottom: 1.35rem;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.timeline-rail__line--horizontal {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .timeline-rail__line--horizontal {
+    display: block;
+    position: absolute;
+    left: 0.4rem;
+    right: 0.4rem;
+    top: 0.85rem;
+    height: 1px;
+    width: auto;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.timeline-rail__dot {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.timeline-rail__dot--active {
+  box-shadow: 0 0 12px rgba(208, 188, 255, 0.45);
+}
+
 .message-fade-in {
   animation: messageFadeIn 0.5s ease-out forwards;
   opacity: 0;
@@ -798,10 +836,13 @@
     animation: none !important;
   }
 
-  .loading-tool-chip__spinner,
   .dashboard-followup-spinner {
     animation: none !important;
     border-top-color: #d0bcff;
+  }
+
+  .timeline-rail__dot--active {
+    box-shadow: none;
   }
 
   .progress-line,

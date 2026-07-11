@@ -1,160 +1,124 @@
+import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { FolderGit2, SquareArrowOutUpRight } from "lucide-react";
+import { ArrowRight, FolderGit2 } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
-import { ProjectVisual, parseProjectMedia, type ProjectMedia } from "../ProjectVisual";
+import { getTranslations, localeFromPathname, type Locale } from "@/i18n";
+import {
+  getPortfolioSections,
+  getProjectById,
+  inferProjectDisplayGroupsFromTitle,
+  parseProjectDisplayGroups,
+  type PortfolioProject,
+} from "@/lib/projectCatalog";
+import { ProjectVisual, parseProjectMedia } from "../ProjectVisual";
+import { ProjectDetailModal } from "../ProjectDetailModal";
 import { WidgetCard } from "../WidgetCard";
-import { asArray, asRecord, asString, asStringArray } from "../utils";
 
-interface ProjectLink {
-  label: string;
-  url: string;
+function usePageLocale(): Locale {
+  if (typeof document === "undefined") return "es";
+  return localeFromPathname(window.location.pathname);
 }
 
-interface ProjectItem {
-  id: string;
-  name: string;
-  summary: string;
-  stack: string[];
-  links: ProjectLink[];
-  media: ProjectMedia | null;
-}
-
-function parseLink(raw: unknown): ProjectLink | null {
-  const link = asRecord(raw);
-  const url = asString(link.url);
-  if (!url) return null;
-  return { label: asString(link.label, "Link"), url };
-}
-
-function parseItem(raw: unknown, index: number): ProjectItem {
-  const item = asRecord(raw);
-  return {
-    id: asString(item.id, `project-${index}`),
-    name: asString(item.name),
-    summary: asString(item.summary),
-    stack: asStringArray(item.stack),
-    links: asArray(item.links)
-      .map(parseLink)
-      .filter((link): link is ProjectLink => link !== null),
-    media: parseProjectMedia(item.media),
-  };
-}
-
-function ProjectCaseStudy({ item, hideHeader = false }: { item: ProjectItem; hideHeader?: boolean }) {
+function ProjectCard({
+  project,
+  viewDetailsLabel,
+  onViewDetails,
+}: {
+  project: PortfolioProject;
+  viewDetailsLabel: string;
+  onViewDetails: (project: PortfolioProject) => void;
+}) {
   const prefersReducedMotion = useReducedMotion();
+  const media = project.media[0] ? parseProjectMedia(project.media) : null;
 
   return (
-    <article className="group overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-center p-6 md:p-8 lg:p-10">
-          {!hideHeader && (
-            <div className="section-label mb-4">
-              <FolderGit2 size={14} aria-hidden="true" />
-              Case Study
-            </div>
-          )}
-          <h3 className="font-display-lg text-headline-md mb-3 text-primary md:text-headline-lg">{item.name}</h3>
-          {item.summary && (
-            <p className="font-body-md mb-6 text-on-surface-variant md:font-body-lg">{item.summary}</p>
-          )}
-          {item.stack.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-1.5">
-              {item.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-label-sm text-on-surface"
-                >
-                  {tech.replace(/^skill-/, "").replaceAll("-", " ")}
-                </span>
-              ))}
-            </div>
-          )}
-          {item.links.length > 0 && (
-            <div className="flex flex-wrap gap-3">
-              {item.links.map((link) => (
-                <motion.a
-                  key={link.url}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={prefersReducedMotion ? undefined : { x: 2 }}
-                  className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-5 py-2.5 font-label-md text-primary transition-colors hover:bg-primary/20"
-                >
-                  {link.label}
-                  <SquareArrowOutUpRight size={14} aria-hidden="true" />
-                </motion.a>
-              ))}
-            </div>
-          )}
-        </div>
-        <ProjectVisual media={item.media} name={item.name} variant="split" />
-      </div>
-    </article>
-  );
-}
-
-function ProjectCard({ item }: { item: ProjectItem }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  return (
-    <article className="interactive-card group overflow-hidden rounded-xl border border-white/5">
-      <ProjectVisual media={item.media} name={item.name} variant="card" />
-      <div className="p-5 md:p-6">
-        <h3 className="font-label-md text-body-md font-semibold text-on-surface">{item.name}</h3>
-        {item.summary && <p className="mt-2 text-body-md text-on-surface-variant">{item.summary}</p>}
-        {item.links.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-3">
-            {item.links.map((link) => (
-              <motion.a
-                key={link.url}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={prefersReducedMotion ? undefined : { x: 2 }}
-                className="inline-flex items-center gap-1 text-label-sm text-secondary hover:underline"
-              >
-                {link.label}
-                <SquareArrowOutUpRight size={12} aria-hidden="true" />
-              </motion.a>
-            ))}
-          </div>
+    <article className="interactive-card group flex w-[11.5rem] shrink-0 snap-start flex-col overflow-hidden rounded-lg border border-white/5 sm:w-[12.5rem]">
+      <ProjectVisual media={media} name={project.name} variant="compact" />
+      <div className="flex flex-1 flex-col p-3">
+        <h3 className="line-clamp-2 font-label-sm text-[13px] font-semibold leading-snug text-on-surface">
+          {project.name}
+        </h3>
+        {project.summary && (
+          <p className="mt-1.5 line-clamp-2 flex-1 text-[12px] leading-snug text-on-surface-variant">
+            {project.summary}
+          </p>
         )}
+        <motion.button
+          type="button"
+          whileHover={prefersReducedMotion ? undefined : { x: 2 }}
+          onClick={() => onViewDetails(project)}
+          className="mt-2.5 inline-flex w-fit items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 font-label-sm text-[11px] text-primary transition-colors hover:bg-primary/20"
+        >
+          {viewDetailsLabel}
+          <ArrowRight size={12} aria-hidden="true" />
+        </motion.button>
       </div>
     </article>
   );
 }
 
-/** data: { items: [{ id, name, summary, stack, links, media? }] } */
+/** Cada categoría es una fila horizontal; las filas se apilan verticalmente. */
 export function ProjectsWidget({ widget }: { widget: Widget }) {
-  const items = asArray(widget.data.items).map(parseItem);
-  if (items.length === 0) return null;
+  const locale = usePageLocale();
+  const t = getTranslations(locale);
+  const displayGroups =
+    parseProjectDisplayGroups(widget.data) ?? inferProjectDisplayGroupsFromTitle(widget.title);
+  const sections = useMemo(
+    () => getPortfolioSections(locale, displayGroups),
+    [locale, displayGroups],
+  );
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-  if (items.length === 1) {
-    return (
+  const selectedProject = selectedProjectId ? getProjectById(selectedProjectId) ?? null : null;
+
+  if (sections.every((section) => section.items.length === 0)) return null;
+
+  return (
+    <>
       <WidgetCard
-        title={widget.title ?? "Projects"}
+        title={widget.title ?? t.projects.title}
         icon={<FolderGit2 size={14} aria-hidden="true" />}
         flush
         contentClassName="p-0"
-        className="interactive-card"
       >
-        <ProjectCaseStudy item={items[0]} hideHeader />
-      </WidgetCard>
-    );
-  }
+        <div className="projects-board flex flex-col gap-6 px-6 pb-6 md:gap-7 md:px-8 md:pb-8">
+          {sections.map((section) => (
+            <section
+              key={section.id}
+              aria-labelledby={`projects-section-${section.id}`}
+              className="projects-board__row min-w-0"
+            >
+              <div className="mb-3 flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                <h3
+                  id={`projects-section-${section.id}`}
+                  className="shrink-0 font-label-md text-label-md uppercase tracking-[0.14em] text-primary"
+                >
+                  {section.title}
+                </h3>
+                <span className="h-px min-w-8 flex-1 bg-white/5" aria-hidden="true" />
+              </div>
 
-  return (
-    <WidgetCard
-      title={widget.title ?? "Projects"}
-      icon={<FolderGit2 size={14} aria-hidden="true" />}
-      flush
-      contentClassName="p-0"
-    >
-      <div className="grid gap-gutter px-6 pb-6 md:grid-cols-2 md:px-8 md:pb-8">
-        {items.map((item) => (
-          <ProjectCard key={item.id} item={item} />
-        ))}
-      </div>
-    </WidgetCard>
+              <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 snap-x snap-mandatory">
+                {section.items.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    viewDetailsLabel={t.projects.viewDetails}
+                    onViewDetails={(item) => setSelectedProjectId(item.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </WidgetCard>
+
+      <ProjectDetailModal
+        project={selectedProject}
+        labels={t.projects.modal}
+        onClose={() => setSelectedProjectId(null)}
+      />
+    </>
   );
 }
