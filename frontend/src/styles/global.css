@@ -674,11 +674,19 @@
 
 .phase-exiting {
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-10px);
   transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+    opacity 0.45s ease-out 0.12s,
+    transform 0.45s ease-out 0.12s;
   pointer-events: none;
+}
+
+.phase-exiting .glass-input-container {
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.35s ease-out,
+    transform 0.35s ease-out;
 }
 
 .phase-entering {
@@ -700,14 +708,9 @@
   transition: opacity 0.7s ease;
 }
 
-#page-root.is-thinking #ambient-background {
-  opacity: 1.08;
-  filter: brightness(1.12);
-}
-
 #page-root.is-thinking #aurora-shader-layer,
 #page-root.is-thinking #aurora-particles-layer {
-  transition: opacity 0.7s ease, filter 0.7s ease;
+  transition: opacity 0.5s ease;
 }
 
 .loading-message-past {
@@ -816,7 +819,6 @@
 
   #page-root.is-thinking #ambient-background {
     opacity: 1 !important;
-    filter: none !important;
   }
 
   #project-detail-modal,

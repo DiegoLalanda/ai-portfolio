@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight, FolderGit2 } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
-import { getTranslations, localeFromPathname, type Locale } from "@/i18n";
+import { getTranslations } from "@/i18n";
 import {
   getPortfolioSections,
   getProjectById,
@@ -13,11 +13,7 @@ import {
 import { ProjectVisual, parseProjectMedia } from "../ProjectVisual";
 import { ProjectDetailModal } from "../ProjectDetailModal";
 import { WidgetCard } from "../WidgetCard";
-
-function usePageLocale(): Locale {
-  if (typeof document === "undefined") return "es";
-  return localeFromPathname(window.location.pathname);
-}
+import { useResponseLocale } from "../ResponseLocaleContext";
 
 function ProjectCard({
   project,
@@ -59,7 +55,7 @@ function ProjectCard({
 
 /** Cada categoría es una fila horizontal; las filas se apilan verticalmente. */
 export function ProjectsWidget({ widget }: { widget: Widget }) {
-  const locale = usePageLocale();
+  const locale = useResponseLocale();
   const t = getTranslations(locale);
   const displayGroups =
     parseProjectDisplayGroups(widget.data) ?? inferProjectDisplayGroupsFromTitle(widget.title);
@@ -69,7 +65,9 @@ export function ProjectsWidget({ widget }: { widget: Widget }) {
   );
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
-  const selectedProject = selectedProjectId ? getProjectById(selectedProjectId) ?? null : null;
+  const selectedProject = selectedProjectId
+    ? (getProjectById(selectedProjectId, locale) ?? null)
+    : null;
 
   if (sections.every((section) => section.items.length === 0)) return null;
 

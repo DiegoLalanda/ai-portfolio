@@ -40,6 +40,8 @@ const capsuleSlots = [
 </div>
 
 <script>
+  import { absorbIntoBlackHole } from "@/lib/black-hole-absorb";
+
   interface Suggestion {
     id: string;
     label: string;
@@ -145,6 +147,15 @@ const capsuleSlots = [
     stopped = true;
     isRotating = false;
     clearCycleTimer();
+  }
+
+  function absorbVisibleCapsules() {
+    if (visibleCapsules.length === 0) return;
+    const elements = visibleCapsules.map((entry) => entry.element);
+    visibleCapsules = [];
+    clearCycleTimer();
+    isRotating = false;
+    void absorbIntoBlackHole(elements, { delay: 0 });
   }
 
   /** Elimina píldoras huérfanas si el DOM y el estado interno se desincronizan. */
@@ -360,11 +371,13 @@ const capsuleSlots = [
   submitButton?.addEventListener("click", () => {
     const question = input?.value.trim();
     if (!question) return;
-    stopCycle();
     window.dispatchEvent(new CustomEvent("mock-chat:submit", { detail: { question } }));
   });
 
-  window.addEventListener("mock-chat:submit", stopCycle);
+  window.addEventListener("mock-chat:submit", () => {
+    stopCycle();
+    absorbVisibleCapsules();
+  });
 
   window.addEventListener("portfolio:reset", () => {
     stopped = false;

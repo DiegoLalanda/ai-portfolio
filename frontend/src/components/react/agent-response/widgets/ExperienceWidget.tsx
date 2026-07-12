@@ -1,7 +1,9 @@
 import { Briefcase } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
+import { localizeExperienceFields } from "@/lib/experienceCopy";
 import { TimelineRail, type TimelineRailItem } from "../TimelineRail";
 import { WidgetCard } from "../WidgetCard";
+import { useResponseLocale } from "../ResponseLocaleContext";
 import { asArray, asRecord, asString, asStringArray } from "../utils";
 
 interface ExperienceItem {
@@ -31,8 +33,8 @@ function parseItem(raw: unknown, index: number): ExperienceItem {
   };
 }
 
-function formatDateRange(item: ExperienceItem) {
-  return `${item.startDate} — ${item.current ? "Present" : item.endDate}`;
+function formatDateRange(item: ExperienceItem, presentLabel: string) {
+  return `${item.startDate} — ${item.current ? presentLabel : item.endDate}`;
 }
 
 function ExperienceDetails({ item }: { item: ExperienceItem }) {
@@ -71,19 +73,25 @@ function hasDetails(item: ExperienceItem) {
 
 /** data: { items: [{ id, role, company, startDate, endDate, current, summary?, highlights, stack? }] } */
 export function ExperienceWidget({ widget }: { widget: Widget }) {
-  const items = asArray(widget.data.items).map(parseItem);
+  const locale = useResponseLocale();
+  const presentLabel = locale === "en" ? "Present" : "Actualidad";
+  const defaultTitle = locale === "en" ? "Experience" : "Experiencia";
+
+  const items = asArray(widget.data.items)
+    .map(parseItem)
+    .map((item) => localizeExperienceFields(item, locale));
   if (items.length === 0) return null;
 
   const railItems: TimelineRailItem[] = items.map((item) => ({
     id: item.id,
     title: item.role,
     subtitle: item.company,
-    dateLabel: formatDateRange(item),
+    dateLabel: formatDateRange(item, presentLabel),
     details: hasDetails(item) ? <ExperienceDetails item={item} /> : undefined,
   }));
 
   return (
-    <WidgetCard title={widget.title ?? "Experience"} icon={<Briefcase size={14} aria-hidden="true" />}>
+    <WidgetCard title={widget.title ?? defaultTitle} icon={<Briefcase size={14} aria-hidden="true" />}>
       <TimelineRail items={railItems} defaultOpenFirst orientation="auto" seed={widget.id} />
     </WidgetCard>
   );

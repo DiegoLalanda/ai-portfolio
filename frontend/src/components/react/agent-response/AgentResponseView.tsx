@@ -2,8 +2,10 @@ import { motion, useReducedMotion } from "motion/react";
 import { Sparkles } from "lucide-react";
 import type { Ref } from "react";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
+import type { Locale } from "@/i18n/types";
 import { WidgetRenderer } from "./WidgetRenderer";
 import { SuggestedActions } from "./SuggestedActions";
+import { ResponseLocaleContext } from "./ResponseLocaleContext";
 
 interface AgentResponseViewProps {
   response: AgentResponse;
@@ -12,6 +14,8 @@ interface AgentResponseViewProps {
   showActions?: boolean;
   /** Ref al primer bloque (para scroll en follow-ups). */
   anchorRef?: Ref<HTMLDivElement>;
+  /** Idioma de esta respuesta (widgets + i18n de catálogo). */
+  locale?: Locale;
 }
 
 /**
@@ -23,6 +27,7 @@ export function AgentResponseView({
   onAction,
   showActions = true,
   anchorRef,
+  locale = "es",
 }: AgentResponseViewProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -36,7 +41,7 @@ export function AgentResponseView({
   };
 
   return (
-    <>
+    <ResponseLocaleContext.Provider value={locale}>
       <motion.div
         ref={anchorRef}
         className="glass-panel rounded-xl px-6 py-5 text-left md:px-8 md:py-6"
@@ -74,6 +79,6 @@ export function AgentResponseView({
           <SuggestedActions actions={response.suggested_actions} onAction={onAction} />
         </motion.div>
       )}
-    </>
+    </ResponseLocaleContext.Provider>
   );
 }

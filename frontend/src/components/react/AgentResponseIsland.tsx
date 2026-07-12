@@ -7,7 +7,15 @@ import {
   collectShownWidgetTypes,
   withFilteredSuggestions,
 } from "@/lib/dashboard-context";
+import { normalizeResponseLanguage } from "@/lib/responseLanguage";
 import { AgentResponseView } from "@/components/react/agent-response/AgentResponseView";
+
+function withResponseLanguage(response: AgentResponse, question: string): AgentResponse {
+  return {
+    ...response,
+    language: normalizeResponseLanguage(response.language, question || response.summary || response.title),
+  };
+}
 
 /**
  * Puente entre la orquestación en vanilla JS de HomePage y el árbol React
@@ -38,7 +46,10 @@ export default function AgentResponseIsland() {
         (document.getElementById("submitted-question") as HTMLInputElement | null)?.value ??
         "";
 
-      const filtered = withFilteredSuggestions(response, []);
+      const filtered = withFilteredSuggestions(
+        withResponseLanguage(response, initialQuestion),
+        [],
+      );
       setResponses([filtered]);
       setAskedQuestions(initialQuestion.trim() ? [initialQuestion.trim()] : []);
       setIsLoading(false);
@@ -93,12 +104,16 @@ export default function AgentResponseIsland() {
         },
         { shownWidgetTypes, priorQuestions },
       );
-      const filtered = withFilteredSuggestions(data, shownWidgetTypes);
+      const filtered = withFilteredSuggestions(
+        withResponseLanguage(data, question),
+        shownWidgetTypes,
+      );
       setResponses((prev) => [...prev, filtered]);
     } catch (error) {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
       const fallback: AgentResponse = {
+        language: "en",
         title: pageRoot?.dataset.errorTitle ?? "Connection issue",
         summary:
           pageRoot?.dataset.errorSummary ??
@@ -149,6 +164,7 @@ export default function AgentResponseIsland() {
           <AgentResponseView
             key={`${response.title}-${index}`}
             response={displayResponse}
+            locale={displayResponse.language === "en" ? "en" : "es"}
             onAction={handleAction}
             showActions={isLatest && !isLoading}
             anchorRef={isLatest ? latestRef : undefined}

@@ -10,6 +10,7 @@ los datos reales antes de responder.
 Forma del contrato:
 
     {
+      "language": "en",
       "title": "Diego's AI & Backend experience",
       "summary": "Diego has spent the last months working as an AI Developer...",
       "widgets": [
@@ -95,6 +96,14 @@ class SuggestedAction(BaseModel):
 class AgentResponse(BaseModel):
     """Respuesta estructurada del agente. Es el contrato completo entre backend y frontend."""
 
+    language: Literal["es", "en"] = Field(
+        ...,
+        description=(
+            "Language of the visitor question: 'en' or 'es'. "
+            "All visitor-facing strings (title, summary, widget titles, item text, "
+            "suggested_actions) MUST be written in this language."
+        ),
+    )
     title: str = Field(..., description="Encabezado corto de la respuesta, ej. \"Diego's AI experience\".")
     summary: str = Field(
         ...,

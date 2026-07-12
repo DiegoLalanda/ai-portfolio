@@ -1,5 +1,6 @@
 import projectsData from "../../../backend/app/data/projects.json";
 import type { Locale } from "@/i18n/types";
+import { localizeProject } from "@/lib/projectCopy";
 
 export type ProjectDisplayGroup = "full-stack" | "ia" | "otras";
 
@@ -61,8 +62,9 @@ export const PORTFOLIO_PROJECTS = (projectsData as PortfolioProject[])
   .filter((project) => project.visible)
   .sort((a, b) => a.order - b.order);
 
-export function getProjectById(id: string): PortfolioProject | undefined {
-  return PORTFOLIO_PROJECTS.find((project) => project.id === id);
+export function getProjectById(id: string, locale: Locale = "es"): PortfolioProject | undefined {
+  const project = PORTFOLIO_PROJECTS.find((item) => item.id === id);
+  return project ? localizeProject(project, locale) : undefined;
 }
 
 export function getPortfolioSections(locale: Locale, groups?: ProjectDisplayGroup[]) {
@@ -73,7 +75,9 @@ export function getPortfolioSections(locale: Locale, groups?: ProjectDisplayGrou
     .map((group) => ({
       id: group,
       title: labels[group],
-      items: PORTFOLIO_PROJECTS.filter((project) => project.displayGroup === group),
+      items: PORTFOLIO_PROJECTS.filter((project) => project.displayGroup === group).map((project) =>
+        localizeProject(project, locale),
+      ),
     }))
     .filter((section) => section.items.length > 0);
 }

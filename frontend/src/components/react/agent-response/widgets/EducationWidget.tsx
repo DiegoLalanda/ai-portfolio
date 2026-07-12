@@ -1,7 +1,9 @@
 import { GraduationCap } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
+import { localizeEducationFields } from "@/lib/educationCopy";
 import { TimelineRail, type TimelineRailItem } from "../TimelineRail";
 import { WidgetCard } from "../WidgetCard";
+import { useResponseLocale } from "../ResponseLocaleContext";
 import { asArray, asRecord, asString, asStringArray } from "../utils";
 
 interface EducationItem {
@@ -40,14 +42,20 @@ function formatDateLabel(item: EducationItem) {
   return `${item.startDate} — ${item.endDate}`;
 }
 
-function EducationDetails({ item }: { item: EducationItem }) {
+function EducationDetails({
+  item,
+  fieldLabel,
+}: {
+  item: EducationItem;
+  fieldLabel: string;
+}) {
   if (item.highlights.length === 0 && !item.fieldOfStudy) return null;
 
   return (
     <div className="space-y-3">
       {item.fieldOfStudy && (
         <p className="font-body-md text-on-surface-variant">
-          Field of study: <span className="text-on-surface">{item.fieldOfStudy}</span>
+          {fieldLabel}: <span className="text-on-surface">{item.fieldOfStudy}</span>
         </p>
       )}
       {item.highlights.length > 0 && (
@@ -66,7 +74,13 @@ function EducationDetails({ item }: { item: EducationItem }) {
 
 /** data: { items: [{ id, institution, degree, fieldOfStudy, startDate, endDate, status, highlights? }] } */
 export function EducationWidget({ widget }: { widget: Widget }) {
-  const items = asArray(widget.data.items).map(parseItem);
+  const locale = useResponseLocale();
+  const defaultTitle = locale === "en" ? "Education" : "Educación";
+  const fieldLabel = locale === "en" ? "Field of study" : "Área de estudio";
+
+  const items = asArray(widget.data.items)
+    .map(parseItem)
+    .map((item) => localizeEducationFields(item, locale));
   if (items.length === 0) return null;
 
   const railItems: TimelineRailItem[] = items.map((item) => {
@@ -76,12 +90,12 @@ export function EducationWidget({ widget }: { widget: Widget }) {
       title: item.degree,
       subtitle: item.institution,
       dateLabel: formatDateLabel(item),
-      details: hasDetails ? <EducationDetails item={item} /> : undefined,
+      details: hasDetails ? <EducationDetails item={item} fieldLabel={fieldLabel} /> : undefined,
     };
   });
 
   return (
-    <WidgetCard title={widget.title ?? "Education"} icon={<GraduationCap size={14} aria-hidden="true" />}>
+    <WidgetCard title={widget.title ?? defaultTitle} icon={<GraduationCap size={14} aria-hidden="true" />}>
       <TimelineRail items={railItems} defaultOpenFirst orientation="auto" seed={widget.id} />
     </WidgetCard>
   );

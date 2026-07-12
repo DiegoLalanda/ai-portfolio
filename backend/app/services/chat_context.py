@@ -22,6 +22,7 @@ def build_agent_prompt(
                     "Do NOT add widgets of those types in this response unless the visitor "
                     "explicitly asks for more detail on that same topic.",
                     "Prefer suggesting topics that are NOT yet visible.",
+                    "Write suggested_actions in the SAME language as the visitor question.",
                 ]
             )
         if prior_questions:

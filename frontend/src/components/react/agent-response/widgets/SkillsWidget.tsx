@@ -3,10 +3,12 @@ import type { Widget } from "@/types/agent-response";
 import { SkillBadge } from "../SkillBadge";
 import { getCategoryMeta } from "../skillIcons";
 import { WidgetCard } from "../WidgetCard";
+import { useResponseLocale } from "../ResponseLocaleContext";
 import { asRecord, asStringArray } from "../utils";
 
 /** data: { categories: { [category: string]: string[] } } */
 export function SkillsWidget({ widget }: { widget: Widget }) {
+  const locale = useResponseLocale();
   const categories = asRecord(widget.data.categories);
   const entries = Object.entries(categories)
     .map(([category, skills]) => [category, asStringArray(skills)] as const)
@@ -15,7 +17,10 @@ export function SkillsWidget({ widget }: { widget: Widget }) {
   if (entries.length === 0) return null;
 
   return (
-    <WidgetCard title={widget.title ?? "Skills"} icon={<Layers size={14} aria-hidden="true" />}>
+    <WidgetCard
+      title={widget.title ?? (locale === "en" ? "Skills" : "Habilidades")}
+      icon={<Layers size={14} aria-hidden="true" />}
+    >
       <div className="skills-board flex flex-col gap-7 md:gap-8">
         {entries.map(([category, skills]) => {
           const meta = getCategoryMeta(category);

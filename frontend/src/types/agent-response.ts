@@ -41,6 +41,8 @@ export interface SuggestedAction {
 }
 
 export interface AgentResponse {
+  /** Idioma de la pregunta del visitante; define cómo se localizan los widgets. */
+  language?: "es" | "en";
   title: string;
   summary: string;
   widgets: Widget[];

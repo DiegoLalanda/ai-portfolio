@@ -76,6 +76,7 @@ const t = getTranslations(locale);
 
 <script>
   import { streamChatMessage } from "@/lib/api";
+  import { absorbIntoBlackHole, BLACK_HOLE_LANDING_EXIT_MS, clearAbsorbHiddenElements } from "@/lib/black-hole-absorb";
   import type { AgentResponse } from "@/types/agent-response";
   import type { ChatStreamEvent } from "@/types/chat-stream";
 
@@ -103,6 +104,8 @@ const t = getTranslations(locale);
     main?.classList.remove("shrink-0", "justify-start");
 
     pageRoot?.classList.remove("is-thinking");
+
+    clearAbsorbHiddenElements();
 
     const aiInput = document.getElementById("ai-input") as HTMLInputElement | null;
     const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
@@ -143,6 +146,11 @@ const t = getTranslations(locale);
     agentResponse = null;
     pageRoot?.classList.add("is-thinking");
 
+    const tagline = document.getElementById("hero-tagline");
+    if (tagline instanceof HTMLElement) {
+      void absorbIntoBlackHole([tagline], { delay: 40, stagger: 0 });
+    }
+
     landingPhase.classList.add("phase-exiting");
     window.setTimeout(() => {
       landingPhase.classList.add("hidden");
@@ -150,7 +158,7 @@ const t = getTranslations(locale);
       processingPhase.classList.remove("hidden");
       processingPhase.classList.add("phase-entering");
       requestAnimationFrame(() => processingPhase.classList.remove("phase-entering"));
-    }, 200);
+    }, BLACK_HOLE_LANDING_EXIT_MS);
 
     // Mantener main como flex-1 para empujar el footer al fondo del viewport.
     main?.classList.add("flex-1", "min-h-0");
@@ -171,6 +179,7 @@ const t = getTranslations(locale);
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
         const fallback: AgentResponse = {
+          language: "es",
           title: pageRoot?.dataset.errorTitle ?? "Connection issue",
           summary:
             pageRoot?.dataset.errorSummary ??

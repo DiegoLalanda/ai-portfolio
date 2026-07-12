@@ -28,7 +28,12 @@ export function WidgetCard({
   return (
     <div className={cn("overflow-hidden rounded-xl glass-panel", className)}>
       {title && (
-        <div className="px-6 pt-5 md:px-8 md:pt-6">
+        <div
+          className={cn(
+            "px-6 pt-5 md:px-8 md:pt-6",
+            flush && "mb-4 md:mb-5",
+          )}
+        >
           <div className="section-label">
             {icon}
             <span>{title}</span>
@@ -38,7 +43,6 @@ export function WidgetCard({
       <div
         className={cn(
           !flush && "px-6 pb-6 pt-4 md:px-8 md:pb-8 md:pt-5",
-          flush && title && "pt-4 md:pt-5",
           contentClassName,
         )}
       >
