@@ -150,6 +150,9 @@ export const es: Translations = {
     connectionTitle: "Problema de conexión",
     connectionSummary:
       "No pudimos conectar con el backend en este momento. Verificá que la API esté en ejecución.",
+    rateLimitTitle: "Límite de preguntas superado",
+    rateLimitSummary: "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.",
+    downloadCV: "Descargar CV Completo",
   },
   dashboard: {
     askAgain: "Volver a preguntar",

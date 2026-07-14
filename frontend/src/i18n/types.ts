@@ -37,6 +37,9 @@ export interface Translations {
   errors: {
     connectionTitle: string;
     connectionSummary: string;
+    rateLimitTitle?: string;
+    rateLimitSummary?: string;
+    downloadCV?: string;
   };
   dashboard: {
     askAgain: string;

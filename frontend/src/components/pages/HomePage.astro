@@ -23,6 +23,8 @@ const t = getTranslations(locale);
     data-locale={locale}
     data-error-title={t.errors.connectionTitle}
     data-error-summary={t.errors.connectionSummary}
+    data-ratelimit-title={t.errors.rateLimitTitle}
+    data-ratelimit-summary={t.errors.rateLimitSummary}
   >
     <div id="ambient-background" class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div id="aurora-shader-layer" class="absolute inset-0 z-0">
@@ -179,14 +181,36 @@ const t = getTranslations(locale);
       })
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
+        
+        const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
+        const title = isRateLimit 
+          ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
+          : (pageRoot?.dataset.errorTitle ?? "Connection issue");
+        const summary = isRateLimit
+          ? (pageRoot?.dataset.ratelimitSummary ?? "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.")
+          : (pageRoot?.dataset.errorSummary ?? "Couldn't reach the backend right now. Please make sure the API is running.");
+
         const fallback: AgentResponse = {
           language: pageRoot?.dataset.locale === "en" ? "en" : "es",
-          title: pageRoot?.dataset.errorTitle ?? "Connection issue",
-          summary:
-            pageRoot?.dataset.errorSummary ??
-            "Couldn't reach the backend right now. Please make sure the API is running.",
-          widgets: [],
-          suggested_actions: [],
+          title,
+          summary,
+          widgets: isRateLimit ? [
+            {
+              id: "rate-limit-cv-download",
+              type: "text" as any,
+              title: null,
+              data: {
+                text: "", // El renderer de text puede estar vacío o llevar un mensaje, pero usaremos suggested actions o un widget custom
+              }
+            }
+          ] : [],
+          suggested_actions: isRateLimit ? [
+            {
+              label: pageRoot?.dataset.locale === "en" ? "Download Full CV" : "Descargar CV Completo",
+              action: "link",
+              payload: "/CV-Diego Lalanda-2025.pdf"
+            }
+          ] : [],
         };
         agentResponse = fallback;
         window.dispatchEvent(new CustomEvent("loading:finish"));

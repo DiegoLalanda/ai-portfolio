@@ -109,17 +109,39 @@ export default function AgentResponseIsland() {
         shownWidgetTypes,
       );
       setResponses((prev) => [...prev, filtered]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
+      
+      const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
+      const title = isRateLimit 
+        ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
+        : (pageRoot?.dataset.errorTitle ?? "Connection issue");
+      const summary = isRateLimit
+        ? (pageRoot?.dataset.ratelimitSummary ?? "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.")
+        : (pageRoot?.dataset.errorSummary ?? "Couldn't reach the backend right now. Please make sure the API is running.");
+
       const fallback: AgentResponse = {
         language: (pageRoot?.dataset.locale as any) === "en" ? "en" : "es",
-        title: pageRoot?.dataset.errorTitle ?? "Connection issue",
-        summary:
-          pageRoot?.dataset.errorSummary ??
-          "Couldn't reach the backend right now. Please make sure the API is running.",
-        widgets: [],
-        suggested_actions: [],
+        title,
+        summary,
+        widgets: isRateLimit ? [
+          {
+            id: "rate-limit-cv-download-followup",
+            type: "text" as any,
+            title: null,
+            data: {
+              text: "",
+            }
+          }
+        ] : [],
+        suggested_actions: isRateLimit ? [
+          {
+            label: (pageRoot?.dataset.locale as any) === "en" ? "Download Full CV" : "Descargar CV Completo",
+            action: "link",
+            payload: "/CV-Diego Lalanda-2025.pdf"
+          }
+        ] : [],
       };
       setResponses((prev) => [...prev, fallback]);
     } finally {
@@ -132,6 +154,8 @@ export default function AgentResponseIsland() {
   function handleAction(action: SuggestedAction) {
     if (action.action === "ask") {
       void runFollowUp(action.payload);
+    } else if (action.action === "link") {
+      window.open(action.payload, "_blank");
     }
   }
 

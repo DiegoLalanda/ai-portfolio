@@ -149,6 +149,9 @@ export const en: Translations = {
   errors: {
     connectionTitle: "Connection issue",
     connectionSummary: "Couldn't reach the backend right now. Please make sure the API is running.",
+    rateLimitTitle: "Rate limit exceeded",
+    rateLimitSummary: "You have exceeded the limit of 10 questions per minute. Please wait a moment before asking again.",
+    downloadCV: "Download Full CV",
   },
   dashboard: {
     askAgain: "Ask again",
