@@ -17,6 +17,7 @@ from app.tools.get_experience import get_experience
 from app.tools.get_languages import get_languages
 from app.tools.get_projects import get_projects
 from app.tools.get_skills import get_skills
+from app.tools.get_soft_skills import get_soft_skills
 from app.tools.get_timeline import get_timeline
 
 __all__ = [
@@ -27,5 +28,6 @@ __all__ = [
     "get_languages",
     "get_projects",
     "get_skills",
+    "get_soft_skills",
     "get_timeline",
 ]

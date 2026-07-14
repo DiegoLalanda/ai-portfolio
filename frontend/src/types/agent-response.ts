@@ -17,7 +17,10 @@ export type KnownWidgetType =
   | "technology-cloud"
   | "education"
   | "contact"
-  | "experience";
+  | "experience"
+  | "certifications"
+  | "languages"
+  | "soft-skills";
 
 export interface Widget {
   id: string;

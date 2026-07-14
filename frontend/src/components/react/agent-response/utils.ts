@@ -23,3 +23,7 @@ export function asStringArray(value: unknown): string[] {
 export function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
+
+export function asNumber(value: unknown, fallback = 0): number {
+  return typeof value === "number" && !Number.isNaN(value) ? value : fallback;
+}

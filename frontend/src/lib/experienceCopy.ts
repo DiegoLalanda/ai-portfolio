@@ -40,15 +40,14 @@ const EXPERIENCE_EN: Record<string, ExperienceCopy> = {
   },
 };
 
-export function localizeExperienceFields(
-  item: {
+export function localizeExperienceFields<
+  T extends {
     id: string;
     role: string;
     summary: string;
     highlights: string[];
   },
-  locale: Locale,
-) {
+>(item: T, locale: Locale): T {
   if (locale !== "en") return item;
   const copy = EXPERIENCE_EN[item.id];
   if (!copy) return item;
@@ -57,5 +56,5 @@ export function localizeExperienceFields(
     role: copy.role ?? item.role,
     summary: copy.summary ?? item.summary,
     highlights: copy.highlights ?? item.highlights,
-  };
+  } as T;
 }

@@ -1,3 +1,4 @@
+import { Mail, MapPin, Phone, SquareArrowOutUpRight } from "lucide-react";
 import { resolveLinkedInUrl } from "@/lib/socialLinks";
 import type { Widget } from "@/types/agent-response";
 import { WidgetCard } from "../WidgetCard";

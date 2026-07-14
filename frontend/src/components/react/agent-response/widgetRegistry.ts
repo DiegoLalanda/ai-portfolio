@@ -9,6 +9,9 @@ import { TechnologyCloudWidget } from "./widgets/TechnologyCloudWidget";
 import { EducationWidget } from "./widgets/EducationWidget";
 import { ContactWidget } from "./widgets/ContactWidget";
 import { TimelineWidget } from "./widgets/TimelineWidget";
+import { CertificationsWidget } from "./widgets/CertificationsWidget";
+import { LanguagesWidget } from "./widgets/LanguagesWidget";
+import { SoftSkillsWidget } from "./widgets/SoftSkillsWidget";
 
 export interface WidgetComponentProps {
   widget: Widget;
@@ -32,4 +35,7 @@ export const widgetRegistry: Record<string, ComponentType<WidgetComponentProps>>
   education: EducationWidget,
   contact: ContactWidget,
   timeline: TimelineWidget,
+  certifications: CertificationsWidget,
+  languages: LanguagesWidget,
+  "soft-skills": SoftSkillsWidget,
 };

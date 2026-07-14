@@ -64,6 +64,9 @@ WidgetType = Literal[
     "education",
     "contact",
     "experience",
+    "certifications",
+    "languages",
+    "soft-skills",
 ]
 
 # Qué debe hacer el frontend al activar una suggested_action.

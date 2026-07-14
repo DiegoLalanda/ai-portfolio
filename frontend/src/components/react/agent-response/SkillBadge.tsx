@@ -26,8 +26,8 @@ export function SkillBadge({ name }: SkillBadgeProps) {
   }, [name]);
 
   return (
-    <div className="group flex w-[5rem] flex-col items-center gap-2.5 sm:w-[5.5rem]">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-[#0c0c0e] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-colors group-hover:border-white/20 group-hover:bg-[#121216] sm:h-16 sm:w-16">
+    <div className="group flex flex-col items-center gap-1.5 sm:w-[5.5rem] sm:gap-2.5">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-[#0c0c0e] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-colors group-hover:border-white/20 group-hover:bg-[#121216] sm:h-16 sm:w-16">
         <SkillGlyph
           refIcon={ref}
           activeUrl={activeUrl}
@@ -37,7 +37,7 @@ export function SkillBadge({ name }: SkillBadgeProps) {
           }}
         />
       </div>
-      <span className="line-clamp-2 min-h-[2.2em] text-center font-label-sm leading-tight text-on-surface-variant transition-colors group-hover:text-on-surface">
+      <span className="line-clamp-2 min-h-[2.2em] text-center text-[11px] leading-tight text-on-surface-variant transition-colors group-hover:text-on-surface sm:font-label-sm">
         {formatSkillLabel(name)}
       </span>
     </div>
@@ -57,7 +57,7 @@ function SkillGlyph({
 }) {
   if (refIcon?.provider === "lucide") {
     const Icon = getLucideIcon(refIcon.icon);
-    return <Icon className="h-8 w-8 text-on-surface sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />;
+    return <Icon className="h-6 w-6 text-on-surface sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />;
   }
 
   if (activeUrl) {
@@ -68,14 +68,14 @@ function SkillGlyph({
         alt=""
         loading="lazy"
         decoding="async"
-        className={cn("h-8 w-8 object-contain sm:h-9 sm:w-9", invert && "brightness-0 invert")}
+        className={cn("h-6 w-6 object-contain sm:h-9 sm:w-9", invert && "brightness-0 invert")}
         onError={onImageError}
       />
     );
   }
 
   return (
-    <Box className="h-8 w-8 text-on-surface-variant sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />
+    <Box className="h-6 w-6 text-on-surface-variant sm:h-9 sm:w-9" strokeWidth={1.5} aria-hidden="true" />
   );
 }
 

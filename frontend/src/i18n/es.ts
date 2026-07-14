@@ -142,6 +142,7 @@ export const es: Translations = {
       get_education: "Educación",
       get_certifications: "Certificaciones",
       get_languages: "Idiomas",
+      get_soft_skills: "Habilidades blandas",
       get_contact: "Contacto",
     },
   },

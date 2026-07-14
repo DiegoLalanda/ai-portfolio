@@ -28,16 +28,15 @@ const EDUCATION_EN: Record<string, EducationCopy> = {
   },
 };
 
-export function localizeEducationFields(
-  item: {
+export function localizeEducationFields<
+  T extends {
     id: string;
     degree: string;
     fieldOfStudy: string;
     status: string;
     highlights: string[];
   },
-  locale: Locale,
-) {
+>(item: T, locale: Locale): T {
   if (locale !== "en") return item;
   const copy = EDUCATION_EN[item.id];
   if (!copy) return item;
@@ -47,5 +46,5 @@ export function localizeEducationFields(
     fieldOfStudy: copy.fieldOfStudy ?? item.fieldOfStudy,
     status: copy.status ?? (item.status === "completed" ? "Completed" : item.status),
     highlights: copy.highlights ?? item.highlights,
-  };
+  } as T;
 }

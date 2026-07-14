@@ -12,6 +12,7 @@ from app.tools import (
     get_languages,
     get_projects,
     get_skills,
+    get_soft_skills,
     get_timeline,
 )
 
@@ -23,6 +24,7 @@ TOOLS = [
     get_projects,
     get_experience,
     get_skills,
+    get_soft_skills,
     get_timeline,
     get_education,
     get_certifications,

@@ -7,6 +7,9 @@ const TOPIC_PATTERNS: Partial<Record<KnownWidgetType, RegExp[]>> = {
   skills: [/skill/i, /habilidad/i, /stack/i, /tecnolog/i, /competenc/i],
   contact: [/contact/i, /contacto/i, /email/i, /reach/i],
   timeline: [/timeline/i, /línea de tiempo/i, /linea de tiempo/i, /cronolog/i],
+  certifications: [/certif/i, /curso/i, /diploma/i, /credencial/i, /credential/i],
+  languages: [/idioma/i, /language/i, /english/i, /inglés/i, /portugués/i, /português/i],
+  "soft-skills": [/soft.?skill/i, /habilidad blanda/i, /interpersonal/i, /teamwork/i, /trabajo en equipo/i],
 };
 
 export interface DashboardSessionContext {

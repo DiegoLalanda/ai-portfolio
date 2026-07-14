@@ -18,8 +18,11 @@ Cada widget es `{ id, type, title, data }`. La tabla describe qué se espera den
 | `skills` | `{ "categories": { [category: string]: string[] } }` — prefer keys `ai`, `cloud-devops`, `frontend`, `backend-data`, `design-cms-other`, `gamedev`; values = skill names from `skills.json`. For stack questions, include items across categories. | Preguntas sobre stack técnico, agrupado como en el CV. |
 | `technology-cloud` | `{ "items": string[] }` | Listado plano de tecnologías (tag cloud), ej. el stack usado en un proyecto puntual. |
 | `education` | `{ "items": [{ "id", "institution", "degree", "fieldOfStudy", "startDate", "endDate", "status", "highlights": string[] }] }` (subconjunto de `education.json`) | Preguntas sobre títulos y formación. |
-| `contact` | `{ "email", "phone", "location", "links": [{ "label", "url", "type" }] }` (subconjunto de `contact.json`) | Preguntas sobre cómo contactar a Diego. |
+| `contact` | `{ "email", "phone", "location", "links": [{ "label", "url", "type" }] }` (subconjunto of `contact.json`) | Preguntas sobre cómo contactar a Diego. |
 | `timeline` | `{ "items": [{ "id", "date", "endDate", "type", "title", "description", "icon" }] }` (subconjunto de `timeline.json`) | Preguntas sobre la trayectoria completa en orden cronológico. |
+| `certifications` | `{ "items": [{ "id", "name", "issuer", "imageUrl", "issueDate", "credentialUrl", "description", "skills": string[] }] }` (subconjunto de `certifications.json`) | Preguntas sobre certificaciones y cursos. |
+| `languages` | `{ "items": [{ "id", "name", "code", "proficiency", "proficiencyPercent" }] }` (subconjunto de `languages.json`) | Preguntas sobre idiomas. |
+| `soft-skills` | `{ "items": [{ "id", "name", "description" }] }` (subconjunto de `softskills.json`) | Preguntas sobre habilidades blandas. |
 
 ## Convenciones
 

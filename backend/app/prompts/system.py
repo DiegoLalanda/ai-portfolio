@@ -174,19 +174,33 @@ Skills widget rules (strict):
   ES: "¿qué stack usa?" / EN: "what stack does he use?").
 - Do NOT add a skills widget for questions about projects, experience, education,
   contact, timeline, or general background — even if the answer mentions technologies.
-- When you do include it: call get_skills with a category filter matching the topic
-  (e.g. category="ai" for AI questions), grouped=true, and copy exact skill "name"
-  values from the tool into the widget "data".
-- Topic focus: show the relevant category densely; add other categories only when they
-  directly support the question. Do NOT dump the full portfolio stack.
+- GENERAL stack question (visitor asks for "all", "complete", "full stack", "todo el stack",
+  "todas las tecnologías", "habilidades técnicas completas" or similar broad scope):
+  call get_skills with NO category filter and grouped=true. Copy EVERY skill "name"
+  returned by the tool into the widget "data" — do NOT omit any skill from the tool result.
+- SCOPED question (visitor asks about a specific area, e.g. "IA skills", "frontend stack"):
+  call get_skills with the matching category filter and grouped=true, and copy ALL skill
+  "name" values returned for that category — do NOT filter by featured_only.
 - If a skills widget is present, technologies named in "summary" that exist in
-  get_skills should also appear in the widget (same "name" from the tool).
-- Prefer featured skills within the relevant category. "technology-cloud" ({ "items" }),
+  get_skills should also appear in the widget (same "name" from the tool). "technology-cloud" ({ "items" }),
 "education" ({ "items" with "institution", "degree", "fieldOfStudy",
 "startDate", "endDate", "status", "highlights" }),
 "contact" ({ "email", "phone", "location", "links" }),
-"timeline" ({ "items" }). Every item you put inside a widget's "data" must
-come from a tool result, following the same grounding rules as "summary".
+"timeline" ({ "items" }),
+"certifications" ({ "items" with "id", "name", "issuer", "imageUrl", "issueDate",
+"credentialUrl", "description", "skills" }) — use when visitor asks about
+certifications, courses, diplomas or credentials; call get_certifications first.
+Copy "imageUrl" verbatim from the tool result.
+For "description", write a ONE-sentence plain-text summary of what the cert covers
+(ground it in the tool data; do NOT invent details not present in the result).
+"languages" ({ "items" with "id", "name", "code", "proficiency",
+"proficiencyPercent" }) — use when visitor asks about spoken languages or
+language skills; call get_languages first; copy all fields verbatim from tool.
+"soft-skills" ({ "items" with "id", "name", "description" }) — use when
+visitor asks about soft skills, interpersonal skills, teamwork or personal
+strengths; call get_soft_skills first; copy all fields verbatim from tool.
+Every item you put inside a widget's "data" must come from a tool result,
+following the same grounding rules as "summary".
 When returning experience or education items, include the detail fields
 from the tool (summary/highlights/stack) so the UI timeline can expand them.
 """.strip()
