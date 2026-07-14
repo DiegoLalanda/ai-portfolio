@@ -20,6 +20,7 @@ const t = getTranslations(locale);
   <div
     id="page-root"
     class="flex min-h-dvh flex-col"
+    data-locale={locale}
     data-error-title={t.errors.connectionTitle}
     data-error-summary={t.errors.connectionSummary}
   >
@@ -118,6 +119,21 @@ const t = getTranslations(locale);
 
   window.addEventListener("portfolio:ask-again", resetPortfolio);
 
+  window.addEventListener("portfolio:restore-session", (event) => {
+    const question = (event as CustomEvent<{ question: string }>).detail?.question ?? "";
+    const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
+    if (submittedQuestion) submittedQuestion.value = question;
+
+    landingPhase?.classList.add("hidden");
+    processingPhase?.classList.add("hidden");
+    
+    main?.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center", "justify-start");
+    main?.classList.add("shrink-0");
+
+    dashboardPhase?.classList.remove("hidden", "opacity-0", "translate-y-10");
+    dashboardPhase?.classList.add("is-revealed");
+  });
+
   function revealDashboard() {
     if (!dashboardPhase || !pageRoot || !main || agentResponse === null) return;
 
@@ -179,7 +195,7 @@ const t = getTranslations(locale);
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
         const fallback: AgentResponse = {
-          language: "es",
+          language: pageRoot?.dataset.locale === "en" ? "en" : "es",
           title: pageRoot?.dataset.errorTitle ?? "Connection issue",
           summary:
             pageRoot?.dataset.errorSummary ??

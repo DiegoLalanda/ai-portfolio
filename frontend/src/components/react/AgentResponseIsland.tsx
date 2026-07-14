@@ -23,10 +23,34 @@ function withResponseLanguage(response: AgentResponse, question: string): AgentR
  * con follow-ups (suggested actions) sin perder lo anterior.
  */
 export default function AgentResponseIsland() {
-  const [responses, setResponses] = useState<AgentResponse[]>([]);
+  const [responses, setResponses] = useState<AgentResponse[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("portfolio:responses");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error("Error parsing saved responses", e);
+        }
+      }
+    }
+    return [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
-  const [askedQuestions, setAskedQuestions] = useState<string[]>([]);
+  const [askedQuestions, setAskedQuestions] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("portfolio:askedQuestions");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error("Error parsing saved questions", e);
+        }
+      }
+    }
+    return [];
+  });
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const latestRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -34,6 +58,43 @@ export default function AgentResponseIsland() {
     typeof document !== "undefined"
       ? (document.getElementById("agent-response-container")?.dataset.followupLabel ?? "…")
       : "…";
+
+  // Persistir en sessionStorage ante cambios
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (responses.length > 0) {
+        sessionStorage.setItem("portfolio:responses", JSON.stringify(responses));
+      } else {
+        sessionStorage.removeItem("portfolio:responses");
+      }
+    }
+  }, [responses]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (askedQuestions.length > 0) {
+        sessionStorage.setItem("portfolio:askedQuestions", JSON.stringify(askedQuestions));
+      } else {
+        sessionStorage.removeItem("portfolio:askedQuestions");
+      }
+    }
+  }, [askedQuestions]);
+
+  // Notificar restauración de sesión al montar si hay datos previos
+  useEffect(() => {
+    if (responses.length > 0) {
+      // Pequeño delay para asegurar que el DOM de Astro esté listo
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent("portfolio:restore-session", {
+            detail: {
+              question: askedQuestions[0] || "",
+            },
+          })
+        );
+      }, 50);
+    }
+  }, []);
 
   useEffect(() => {
     function handleReady(event: Event) {
@@ -61,6 +122,10 @@ export default function AgentResponseIsland() {
       setAskedQuestions([]);
       setIsLoading(false);
       setPendingQuestion(null);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("portfolio:responses");
+        sessionStorage.removeItem("portfolio:askedQuestions");
+      }
     }
 
     window.addEventListener("agent-response:ready", handleReady);
@@ -113,7 +178,7 @@ export default function AgentResponseIsland() {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
       const fallback: AgentResponse = {
-        language: "en",
+        language: (pageRoot?.dataset.locale as any) === "en" ? "en" : "es",
         title: pageRoot?.dataset.errorTitle ?? "Connection issue",
         summary:
           pageRoot?.dataset.errorSummary ??

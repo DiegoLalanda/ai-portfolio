@@ -350,6 +350,7 @@ const capsuleSlots = [
     if (!input) return;
     input.value = target.dataset.question;
     input.focus();
+    input.dispatchEvent(new Event("input", { bubbles: true }));
     updateSubmitState();
     pulseCapsule(target);
     flashInput();
@@ -396,6 +397,27 @@ const capsuleSlots = [
     renderInitial();
     startCycle();
   });
+
+  const pageRoot = document.getElementById("page-root");
+  const locale = pageRoot?.dataset.locale || "es";
+
+  function updateOfflineState() {
+    if (!input) return;
+    if (!navigator.onLine) {
+      input.disabled = true;
+      if (submitButton) submitButton.disabled = true;
+      input.placeholder = locale === "en" ? "No internet connection" : "Sin conexión a internet";
+      input.value = "";
+    } else {
+      input.disabled = false;
+      input.placeholder = "";
+      updateSubmitState();
+    }
+  }
+
+  window.addEventListener("online", updateOfflineState);
+  window.addEventListener("offline", updateOfflineState);
+  updateOfflineState();
 
   renderInitial();
   updateSubmitState();

@@ -4,12 +4,13 @@
 import json
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.chat import ChatServiceError, get_answer
 from app.services.chat_stream import stream_chat_events
+from app.core.rate_limiter import rate_limiter
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ def _context_kwargs(payload: ChatRequest) -> dict:
     }
 
 
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat", response_model=ChatResponse, dependencies=[Depends(rate_limiter)])
 async def chat(payload: ChatRequest) -> ChatResponse:
     logger.info("POST /chat question=%r", payload.question)
     try:
@@ -34,7 +35,7 @@ async def chat(payload: ChatRequest) -> ChatResponse:
     return ChatResponse(**agent_response.model_dump())
 
 
-@router.post("/chat/stream")
+@router.post("/chat/stream", dependencies=[Depends(rate_limiter)])
 async def chat_stream(payload: ChatRequest) -> StreamingResponse:
     logger.info("POST /chat/stream question=%r", payload.question)
 

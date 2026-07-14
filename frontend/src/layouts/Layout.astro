@@ -9,6 +9,13 @@ interface Props {
 }
 
 const { title, locale } = Astro.props;
+
+const description =
+  locale === "en"
+    ? "Interactive AI-powered portfolio of Diego Lalanda, Software Engineer and Developer specializing in AI, Machine Learning, and Full-Stack development."
+    : "Portfolio interactivo potenciado por IA de Diego Lalanda, Ingeniero y Desarrollador de Software especializado en IA, Machine Learning y desarrollo Full-Stack.";
+
+const ogImage = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80";
 ---
 
 <!doctype html>
@@ -17,6 +24,22 @@ const { title, locale } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- OpenGraph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

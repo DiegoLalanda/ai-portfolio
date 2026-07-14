@@ -59,10 +59,20 @@ const isReadonly = mode === "readonly";
     ) : (
       <button
         type="button"
+        id="voice-input-btn"
+        class="hidden flex h-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-high/40 transition-all duration-300 origin-center"
+        aria-label="Start voice input"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 0;">
+          mic
+        </span>
+      </button>
+      <button
+        type="button"
         id="ai-input-submit"
         disabled
         aria-label={sendAriaLabel}
-        class="ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface transition-colors hover:bg-primary hover:text-on-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40"
+        class="scale-0 w-0 opacity-0 pointer-events-none ml-0 overflow-hidden flex h-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all duration-300 origin-center disabled:pointer-events-none disabled:opacity-40 enabled:bg-white enabled:text-black enabled:opacity-100 enabled:shadow-lg hover:enabled:scale-105 active:enabled:scale-95"
       >
         <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 0;">
           arrow_forward
@@ -144,7 +154,148 @@ const isReadonly = mode === "readonly";
         timeoutId = window.setTimeout(tick, 900);
       }
 
-      document.querySelectorAll<HTMLInputElement>("[data-placeholder-cycle]").forEach(initPlaceholderCycle);
+      function initVoiceInput(input: HTMLInputElement) {
+        const voiceBtn = document.getElementById("voice-input-btn") as HTMLButtonElement | null;
+        if (!voiceBtn) return;
+
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        voiceBtn.classList.remove("hidden");
+        // Inicializar clases de visibilidad
+        if (!input.value.trim()) {
+          voiceBtn.classList.add("scale-100", "w-10", "opacity-100", "ml-2");
+        } else {
+          voiceBtn.classList.add("scale-0", "w-0", "opacity-0", "pointer-events-none", "ml-0", "overflow-hidden");
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        
+        const pageRoot = document.getElementById("page-root");
+        const locale = pageRoot?.dataset.locale || "es";
+        recognition.lang = locale === "en" ? "en-US" : "es-ES";
+        
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        let isRecording = false;
+        let originalPlaceholder = "";
+
+        function start() {
+          try {
+            recognition.start();
+          } catch (e) {
+            console.error("Error starting recognition", e);
+          }
+        }
+
+        function stop() {
+          try {
+            recognition.stop();
+          } catch (e) {
+            console.error("Error stopping recognition", e);
+          }
+        }
+
+        voiceBtn.addEventListener("click", () => {
+          if (isRecording) {
+            stop();
+          } else {
+            start();
+          }
+        });
+
+        recognition.onstart = () => {
+          isRecording = true;
+          voiceBtn.classList.add("bg-red-500", "text-white", "animate-pulse");
+          voiceBtn.classList.remove("text-on-surface-variant", "hover:text-primary", "hover:bg-surface-container-high/40");
+          const iconSpan = voiceBtn.querySelector(".material-symbols-outlined");
+          if (iconSpan) iconSpan.textContent = "mic_off";
+          
+          originalPlaceholder = input.placeholder;
+          input.placeholder = locale === "en" ? "Listening..." : "Escuchando...";
+          input.focus();
+        };
+
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0]?.[0]?.transcript;
+          if (transcript) {
+            input.value = transcript;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        };
+
+        recognition.onerror = (event: any) => {
+          console.error("Speech recognition error", event.error);
+          cleanup();
+        };
+
+        recognition.onend = () => {
+          cleanup();
+        };
+
+        function cleanup() {
+          isRecording = false;
+          if (voiceBtn) {
+            voiceBtn.classList.remove("bg-red-500", "text-white", "animate-pulse");
+            voiceBtn.classList.add("text-on-surface-variant", "hover:text-primary", "hover:bg-surface-container-high/40");
+            const iconSpan = voiceBtn.querySelector(".material-symbols-outlined");
+            if (iconSpan) iconSpan.textContent = "mic";
+          }
+          
+          if (originalPlaceholder) {
+            input.placeholder = originalPlaceholder;
+          }
+        }
+      }
+
+      function updateButtonStates(input: HTMLInputElement) {
+        const container = input.closest(".glass-input-container");
+        if (!container) return;
+
+        const voiceBtn = container.querySelector("#voice-input-btn") as HTMLButtonElement | null;
+        const submitBtn = container.querySelector("#ai-input-submit") as HTMLButtonElement | null;
+        if (!submitBtn) return;
+
+        const hasText = !!input.value.trim();
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        const isVoiceSupported = !!SpeechRecognition;
+
+        if (hasText) {
+          // Mostrar botón de enviar
+          submitBtn.classList.remove("scale-0", "w-0", "opacity-0", "pointer-events-none", "ml-0", "overflow-hidden");
+          submitBtn.classList.add("scale-100", "w-10", "opacity-100", "ml-2");
+          submitBtn.disabled = false;
+
+          // Ocultar botón de voz si está soportado
+          if (voiceBtn && isVoiceSupported) {
+            voiceBtn.classList.remove("scale-100", "w-10", "opacity-100", "ml-2");
+            voiceBtn.classList.add("scale-0", "w-0", "opacity-0", "pointer-events-none", "ml-0", "overflow-hidden");
+          }
+        } else {
+          // Ocultar botón de enviar
+          submitBtn.classList.remove("scale-100", "w-10", "opacity-100", "ml-2");
+          submitBtn.classList.add("scale-0", "w-0", "opacity-0", "pointer-events-none", "ml-0", "overflow-hidden");
+          submitBtn.disabled = true;
+
+          // Mostrar botón de voz si está soportado
+          if (voiceBtn && isVoiceSupported) {
+            voiceBtn.classList.remove("scale-0", "w-0", "opacity-0", "pointer-events-none", "ml-0", "overflow-hidden");
+            voiceBtn.classList.add("scale-100", "w-10", "opacity-100", "ml-2");
+          }
+        }
+      }
+
+      document.querySelectorAll<HTMLInputElement>("[data-placeholder-cycle]").forEach((input) => {
+        initPlaceholderCycle(input);
+        initVoiceInput(input);
+        updateButtonStates(input);
+        
+        input.addEventListener("input", () => {
+          updateButtonStates(input);
+        });
+      });
     </script>
   )
 }
