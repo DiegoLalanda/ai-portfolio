@@ -127,7 +127,7 @@ export default function AgentResponseIsland() {
         summary,
         widgets: isRateLimit ? [
           {
-            id: "rate-limit-cv-download-followup",
+            id: "rate-limit-cv-download",
             type: "text" as any,
             title: null,
             data: {
@@ -135,13 +135,7 @@ export default function AgentResponseIsland() {
             }
           }
         ] : [],
-        suggested_actions: isRateLimit ? [
-          {
-            label: (pageRoot?.dataset.locale as any) === "en" ? "Download Full CV" : "Descargar CV Completo",
-            action: "link",
-            payload: "/CV-Diego Lalanda-2025.pdf"
-          }
-        ] : [],
+        suggested_actions: [],
       };
       setResponses((prev) => [...prev, fallback]);
     } finally {

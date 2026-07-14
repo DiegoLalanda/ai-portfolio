@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "motion/react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Download } from "lucide-react";
 import type { Ref } from "react";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
 import type { Locale } from "@/i18n/types";
@@ -31,6 +31,9 @@ export function AgentResponseView({
 }: AgentResponseViewProps) {
   const prefersReducedMotion = useReducedMotion();
 
+  const isRateLimit = response.widgets.some((w) => w.id.startsWith("rate-limit-cv-download"));
+  const filteredWidgets = response.widgets.filter((w) => !w.id.startsWith("rate-limit-cv-download"));
+
   const itemVariants = {
     hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
     visible: {
@@ -54,9 +57,22 @@ export function AgentResponseView({
           {response.title}
         </div>
         <p className="font-body-md text-body-md text-on-surface-variant">{response.summary}</p>
+
+        {isRateLimit && (
+          <div className="mt-5">
+            <a
+              href="/CV-Diego Lalanda-2025.pdf"
+              download="CV-Diego Lalanda-2025.pdf"
+              className="primary-btn inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 font-label-md text-label-sm text-on-primary bg-primary hover:bg-primary/95 transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg"
+            >
+              <Download size={15} aria-hidden="true" />
+              {locale === "en" ? "Download Full CV" : "Descargar CV Completo"}
+            </a>
+          </div>
+        )}
       </motion.div>
 
-      {response.widgets.map((widget, index) => (
+      {filteredWidgets.map((widget, index) => (
         <motion.div
           key={widget.id}
           className="dashboard-reveal"

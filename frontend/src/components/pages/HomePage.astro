@@ -200,17 +200,11 @@ const t = getTranslations(locale);
               type: "text" as any,
               title: null,
               data: {
-                text: "", // El renderer de text puede estar vacío o llevar un mensaje, pero usaremos suggested actions o un widget custom
+                text: "",
               }
             }
           ] : [],
-          suggested_actions: isRateLimit ? [
-            {
-              label: pageRoot?.dataset.locale === "en" ? "Download Full CV" : "Descargar CV Completo",
-              action: "link",
-              payload: "/CV-Diego Lalanda-2025.pdf"
-            }
-          ] : [],
+          suggested_actions: [],
         };
         agentResponse = fallback;
         window.dispatchEvent(new CustomEvent("loading:finish"));
