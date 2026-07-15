@@ -51,6 +51,32 @@
   }
 }
 
+/* Mobile landing: footer pegado abajo, sin scroll fantasma del documento */
+@media (max-width: 767px) {
+  body.portfolio-landing-lock {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body.portfolio-landing-lock #page-root {
+    height: 100%;
+    min-height: 0;
+  }
+
+  body.portfolio-landing-lock #parallax-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.portfolio-landing-lock.portfolio-keyboard-open {
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
+  }
+}
+
 /* Google Material Symbols: sin esto, los íconos se muestran como texto plano. */
 .material-symbols-outlined {
   font-variation-settings:

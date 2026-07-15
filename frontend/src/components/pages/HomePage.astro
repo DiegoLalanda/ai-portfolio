@@ -19,7 +19,7 @@ const t = getTranslations(locale);
 <Layout title={t.meta.title} locale={locale}>
   <div
     id="page-root"
-    class="flex min-h-dvh flex-col"
+    class="flex w-full flex-1 flex-col min-h-0"
     data-locale={locale}
     data-error-title={t.errors.connectionTitle}
     data-error-summary={t.errors.connectionSummary}
@@ -64,7 +64,7 @@ const t = getTranslations(locale);
       </div>
     </section>
 
-    <SiteFooter locale={locale} compact class="z-10 mt-auto shrink-0 transition-all duration-500" />
+    <SiteFooter locale={locale} compact class="z-10 shrink-0 transition-all duration-500" />
   </div>
 
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
@@ -88,6 +88,31 @@ const t = getTranslations(locale);
   const landingPhase = document.getElementById("phase-landing");
   const processingPhase = document.getElementById("phase-processing");
   const dashboardPhase = document.getElementById("phase-dashboard");
+
+  function syncLandingViewportLock() {
+    const dashboardVisible =
+      dashboardPhase !== null && !dashboardPhase.classList.contains("hidden");
+    if (dashboardVisible) {
+      document.body.classList.remove("portfolio-landing-lock", "portfolio-keyboard-open");
+      return;
+    }
+    document.body.classList.add("portfolio-landing-lock");
+  }
+
+  syncLandingViewportLock();
+
+  const aiInput = document.getElementById("ai-input");
+  if (aiInput) {
+    aiInput.addEventListener("focus", () => {
+      if (document.body.classList.contains("portfolio-landing-lock")) {
+        document.body.classList.add("portfolio-keyboard-open");
+      }
+    });
+    aiInput.addEventListener("blur", () => {
+      document.body.classList.remove("portfolio-keyboard-open");
+      window.scrollTo(0, 0);
+    });
+  }
 
   let agentResponse: AgentResponse | null = null;
   type PendingAgentResponse = { response: AgentResponse; question: string };
@@ -122,6 +147,7 @@ const t = getTranslations(locale);
 
     window.dispatchEvent(new CustomEvent("portfolio:reset"));
     window.scrollTo({ top: 0, behavior: "smooth" });
+    syncLandingViewportLock();
   }
 
   window.addEventListener("portfolio:ask-again", resetPortfolio);
@@ -139,6 +165,7 @@ const t = getTranslations(locale);
       dashboardPhase.classList.remove("opacity-0", "translate-y-10");
       dashboardPhase.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+    document.body.classList.remove("portfolio-landing-lock", "portfolio-keyboard-open");
   }
 
   window.addEventListener("mock-chat:submit", (event) => {

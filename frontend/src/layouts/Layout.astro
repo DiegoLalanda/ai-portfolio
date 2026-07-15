@@ -22,7 +22,10 @@ const ogImage = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=
 <html class="dark" lang={locale}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -54,7 +57,7 @@ const ogImage = "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=
     <script is:inline src="/locale-detect.js"></script>
   </head>
   <body
-    class="relative flex min-h-screen flex-col bg-background antialiased selection:bg-primary selection:text-on-primary"
+    class="relative flex min-h-dvh flex-col bg-background antialiased selection:bg-primary selection:text-on-primary"
   >
     <SvgWarpFilters />
     <slot />
