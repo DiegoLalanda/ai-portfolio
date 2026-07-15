@@ -16,25 +16,66 @@ interface ExperienceItem {
   summary: string;
   highlights: string[];
   stack: string[];
+  logoUrl?: string;
+}
+
+const EXPERIENCE_LOGOS: Record<string, string> = {
+  "exp-finnegans-ai-developer": "/images/logos/logo_finnegans.jpg",
+  "exp-freelance-fullstack": "/images/logos/logo-diego.png",
+  "exp-cge-physics-teacher": "/images/logos/logo-cge.png",
+};
+
+function getExperienceLogo(id: string, company: string, role: string): string | undefined {
+  const normCompany = company.toLowerCase();
+  const normRole = role.toLowerCase();
+  if (id === "exp-finnegans-ai-developer" || normCompany.includes("finnegans") || normRole.includes("ai developer") || normRole.includes("ia developer")) {
+    return "/images/logos/logo_finnegans.jpg";
+  }
+  if (id === "exp-freelance-fullstack" || normCompany.includes("freelance") || normRole.includes("freelance") || normRole.includes("desarrollador web")) {
+    return "/images/logos/logo-diego.png";
+  }
+  if (id === "exp-cge-physics-teacher" || normCompany.includes("cge") || normCompany.includes("consejo general") || normRole.includes("física") || normRole.includes("physics")) {
+    return "/images/logos/logo-cge.png";
+  }
+  return EXPERIENCE_LOGOS[id];
 }
 
 function parseItem(raw: unknown, index: number): ExperienceItem {
   const item = asRecord(raw);
+  const id = asString(item.id, `experience-${index}`);
+  const company = asString(item.company);
+  const role = asString(item.role);
   return {
-    id: asString(item.id, `experience-${index}`),
-    role: asString(item.role),
-    company: asString(item.company),
+    id,
+    role,
+    company,
     startDate: asString(item.startDate),
     endDate: asString(item.endDate),
     current: item.current === true,
     summary: asString(item.summary),
     highlights: asStringArray(item.highlights),
     stack: asStringArray(item.stack),
+    logoUrl: getExperienceLogo(id, company, role),
   };
 }
 
 function formatDateRange(item: ExperienceItem, presentLabel: string) {
-  return `${item.startDate} — ${item.current ? presentLabel : item.endDate}`;
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 md:justify-end">
+      <span className="text-[12px] text-on-surface-variant font-medium">
+        {item.startDate} —
+      </span>
+      {item.current ? (
+        <span className="rounded-full bg-secondary/10 border border-secondary/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-secondary">
+          {presentLabel}
+        </span>
+      ) : (
+        <span className="text-[12px] text-on-surface-variant font-medium">
+          {item.endDate}
+        </span>
+      )}
+    </div>
+  );
 }
 
 function ExperienceDetails({ item }: { item: ExperienceItem }) {
@@ -87,6 +128,7 @@ export function ExperienceWidget({ widget }: { widget: Widget }) {
     title: item.role,
     subtitle: item.company,
     dateLabel: formatDateRange(item, presentLabel),
+    logoUrl: item.logoUrl,
     details: hasDetails(item) ? <ExperienceDetails item={item} /> : undefined,
   }));
 

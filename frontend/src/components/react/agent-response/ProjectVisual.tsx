@@ -24,6 +24,22 @@ export function parseProjectMedia(raw: unknown): ProjectMedia | null {
   return null;
 }
 
+export function parseAllProjectMedia(raw: unknown): ProjectMedia[] {
+  const items = asArray(raw);
+  const result: ProjectMedia[] = [];
+  for (const entry of items) {
+    const media = asRecord(entry);
+    const url = asString(media.url);
+    if (!url) continue;
+    result.push({
+      type: asString(media.type, "image"),
+      url,
+      alt: asString(media.alt, "Project preview"),
+    });
+  }
+  return result;
+}
+
 interface ProjectVisualProps {
   media?: ProjectMedia | null;
   name: string;

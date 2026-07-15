@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Award, ExternalLink, X } from "lucide-react";
+import { Award, X } from "lucide-react";
 import type { Widget } from "@/types/agent-response";
 import { WidgetCard } from "../WidgetCard";
 import { useResponseLocale } from "../ResponseLocaleContext";
@@ -25,12 +25,37 @@ const DEFAULT_CERT_IMAGES: Record<string, string> = {
   "cert-odoo-developer": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
   "cert-server-deploy": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
   "cert-docker-professional": "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=800&q=80",
+  "cert-python-data-analysis": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
 };
+
+const CERT_CREDENTIALS: Record<string, string> = {
+  "cert-argentina-programa-fullstack-jr": "https://drive.google.com/file/d/1I1nG65tjlgnvyB73R1QDB86A6u219ahl/view?usp=sharing",
+  "cert-argentina-programa-game-dev": "https://drive.google.com/file/d/1jyJq7lIdJoO0JEXIBAIOeLvUFvNiXxTB/view?usp=drive_link",
+  "cert-utn-robotics-diploma": "https://drive.google.com/file/d/1E1YooNsbc3nBw25swqUP7uWUwiTKRZwe/view?usp=sharing",
+  "cert-odoo-developer": "https://drive.google.com/file/d/1VStlfH-DKmZS2VooP805SpxQA5EGROtu/view?usp=drive_link",
+  "cert-server-deploy": "https://drive.google.com/file/d/18Y5k5eR9utRnh1SbkzM-PRMC6Cs9AeCj/view?usp=drive_link",
+  "cert-docker-professional": "https://drive.google.com/file/d/1Vj7WmZzhyjgynq_wZtjokprMOdhiCnZF/view?usp=drive_link",
+  "cert-python-data-analysis": "https://drive.google.com/file/d/1hSBmkMunr0IeiA6heWAPnvztIdI75B_H/view?usp=drive_link",
+};
+
+function getGoogleDriveThumbnailUrl(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/\/(?:file\/d|d)\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    // Usar el endpoint de miniaturas oficial de Google Drive
+    // Es el formato más compatible, rápido y libre de restricciones de CORS/cookies para etiquetas <img>
+    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w300`;
+  }
+  return null;
+}
 
 function parseItem(raw: unknown, index: number): CertificationItem {
   const item = asRecord(raw);
   const id = asString(item.id, `cert-${index}`);
-  const imageUrl = asString(item.imageUrl) || DEFAULT_CERT_IMAGES[id] || "";
+  const credentialUrl = asString(item.credentialUrl) || CERT_CREDENTIALS[id] || "";
+  const driveThumbnail = getGoogleDriveThumbnailUrl(credentialUrl);
+  // Priorizar la previsualización estática de Google Drive para la miniatura
+  const imageUrl = driveThumbnail || asString(item.imageUrl) || DEFAULT_CERT_IMAGES[id] || "";
   return {
     id,
     name: asString(item.name),
@@ -38,7 +63,7 @@ function parseItem(raw: unknown, index: number): CertificationItem {
     imageUrl,
     issueDate: asString(item.issueDate),
     expirationDate: asString(item.expirationDate),
-    credentialUrl: asString(item.credentialUrl),
+    credentialUrl,
     description: asString(item.description),
     skills: asStringArray(item.skills),
   };
@@ -53,27 +78,53 @@ function formatDate(yyyyMm: string): string {
 }
 
 function CertVisual({
+  id,
   imageUrl,
   name,
   large = false,
 }: {
+  id: string;
   imageUrl: string;
   name: string;
   large?: boolean;
 }) {
+  const [imgSrc, setImgSrc] = useState(imageUrl);
+  const [fallbackAttempted, setFallbackAttempted] = useState(false);
+
+  // Sincronizar imgSrc si la prop imageUrl cambia
+  useEffect(() => {
+    setImgSrc(imageUrl);
+    setFallbackAttempted(false);
+  }, [imageUrl]);
+
   const base = large
     ? "relative flex w-full items-center justify-center overflow-hidden rounded-xl bg-surface-container-highest"
     : "relative flex h-full min-h-[80px] w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-container-highest sm:w-28";
 
-  if (imageUrl) {
+  const handleImgError = () => {
+    if (!fallbackAttempted) {
+      // Si falló la miniatura de Google Drive, intentar con la imagen por defecto de Unsplash
+      const defaultImg = DEFAULT_CERT_IMAGES[id];
+      if (defaultImg && defaultImg !== imgSrc) {
+        setImgSrc(defaultImg);
+        setFallbackAttempted(true);
+        return;
+      }
+    }
+    // Si ya intentamos el fallback o no hay imagen por defecto, limpiar imgSrc para mostrar el icono Award
+    setImgSrc("");
+  };
+
+  if (imgSrc) {
     return (
       <div className={base} style={large ? { aspectRatio: "16/9" } : undefined}>
         <img
-          src={imageUrl}
+          src={imgSrc}
           alt={name}
           loading="lazy"
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          onError={handleImgError}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/60 via-transparent to-transparent" />
       </div>
@@ -92,19 +143,28 @@ function CertVisual({
   );
 }
 
+function getGoogleDriveEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/file/d/${match[1]}/preview`;
+  }
+  return null;
+}
+
 function CertDetailModal({
   item,
-  credentialLabel,
   closeLabel,
   onClose,
 }: {
   item: CertificationItem;
-  credentialLabel: string;
   closeLabel: string;
   onClose: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const prevFocusRef = useRef<HTMLElement | null>(null);
+
+  const embedUrl = getGoogleDriveEmbedUrl(item.credentialUrl);
 
   useEffect(() => {
     prevFocusRef.current =
@@ -146,9 +206,16 @@ function CertDetailModal({
       </button>
 
       <div className="glass-card flex w-full max-w-2xl flex-col overflow-hidden rounded-3xl">
-        {/* imagen grande — sin padding, borde arriba de la tarjeta */}
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/9" }}>
-          {item.imageUrl ? (
+        {/* Vista previa en vivo por defecto */}
+        <div className="relative w-full overflow-hidden bg-black/40" style={{ height: "380px" }}>
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              className="h-full w-full border-0 bg-surface-container-low"
+              allow="autoplay"
+              title={item.name}
+            />
+          ) : item.imageUrl ? (
             <>
               <img
                 src={item.imageUrl}
@@ -185,31 +252,6 @@ function CertDetailModal({
           {item.description && (
             <p className="text-[13px] leading-relaxed text-on-surface-variant">{item.description}</p>
           )}
-
-          {item.skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {item.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-on-surface-variant"
-                >
-                  {skill.replace(/^skill-/, "").replaceAll("-", " ")}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {item.credentialUrl && (
-            <a
-              href={item.credentialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="primary-btn mt-1 inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-[13px] font-medium text-white"
-            >
-              <ExternalLink size={14} aria-hidden="true" />
-              {credentialLabel}
-            </a>
-          )}
         </div>
       </div>
     </div>,
@@ -219,11 +261,9 @@ function CertDetailModal({
 
 function CertCard({
   item,
-  credentialLabel,
   onOpen,
 }: {
   item: CertificationItem;
-  credentialLabel: string;
   onOpen: () => void;
 }) {
   return (
@@ -235,45 +275,29 @@ function CertCard({
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpen()}
       aria-label={item.name}
     >
-      <CertVisual imageUrl={item.imageUrl} name={item.name} />
+      <CertVisual id={item.id} imageUrl={item.imageUrl} name={item.name} />
 
-      <div className="min-w-0 flex-1 py-0.5">
-        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-0.5">
-          <h3 className="font-label-md text-[14px] font-semibold leading-snug text-on-surface">
-            {item.name}
-          </h3>
-          {item.issueDate && (
-            <span className="shrink-0 text-[12px] text-on-surface-variant">
-              {formatDate(item.issueDate)}
-            </span>
-          )}
-        </div>
-
-        <p className="mt-0.5 text-[13px] text-primary">{item.issuer}</p>
-
-        {item.description && (
-          <p className="mt-1.5 hidden line-clamp-2 text-[12px] leading-snug text-on-surface-variant sm:block">
-            {item.description}
-          </p>
-        )}
-
-        {item.skills.length > 0 && (
-          <div className="mt-2 hidden flex-wrap gap-1.5 sm:flex">
-            {item.skills.slice(0, 4).map((skill) => (
-              <span
-                key={skill}
-                className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-on-surface-variant"
-              >
-                {skill.replace(/^skill-/, "").replaceAll("-", " ")}
-              </span>
-            ))}
-            {item.skills.length > 4 && (
-              <span className="text-[11px] text-on-surface-variant">
-                +{item.skills.length - 4}
+      <div className="min-w-0 flex-1 py-0.5 flex flex-col justify-between">
+        <div>
+          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-0.5">
+            <h3 className="font-label-md text-[14px] font-semibold leading-snug text-on-surface">
+              {item.name}
+            </h3>
+            {item.issueDate && (
+              <span className="shrink-0 text-[12px] text-on-surface-variant">
+                {formatDate(item.issueDate)}
               </span>
             )}
           </div>
-        )}
+
+          <p className="mt-0.5 text-[13px] text-primary">{item.issuer}</p>
+
+          {item.description && (
+            <p className="mt-1.5 hidden line-clamp-2 text-[12px] leading-snug text-on-surface-variant sm:block">
+              {item.description}
+            </p>
+          )}
+        </div>
       </div>
     </article>
   );
@@ -283,7 +307,6 @@ function CertCard({
 export function CertificationsWidget({ widget }: { widget: Widget }) {
   const locale = useResponseLocale();
   const defaultTitle = locale === "en" ? "Certifications" : "Certificaciones";
-  const credentialLabel = locale === "en" ? "View credential" : "Ver credencial";
   const closeLabel = locale === "en" ? "Close" : "Cerrar";
 
   const items = asArray(widget.data.items).map(parseItem);
@@ -300,7 +323,6 @@ export function CertificationsWidget({ widget }: { widget: Widget }) {
             <CertCard
               key={item.id}
               item={item}
-              credentialLabel={credentialLabel}
               onOpen={() => setSelectedId(item.id)}
             />
           ))}
@@ -310,7 +332,6 @@ export function CertificationsWidget({ widget }: { widget: Widget }) {
       {selectedItem && (
         <CertDetailModal
           item={selectedItem}
-          credentialLabel={credentialLabel}
           closeLabel={closeLabel}
           onClose={() => setSelectedId(null)}
         />

@@ -25,7 +25,7 @@ const t = getTranslations(locale);
   <main class="relative z-20 flex min-h-screen flex-grow items-center justify-center px-margin-edge pb-24 pt-32">
     <div id="parallax-container" class="flex w-full max-w-container-max flex-col items-center text-center">
       <HeroIntro locale={locale} receded />
-      <SubmittedPrompt question="" />
+      <SubmittedPrompt locale={locale} question="" />
       <LoadingPanel loading={t.loading} demo />
     </div>
   </main>

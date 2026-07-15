@@ -147,7 +147,7 @@ Your response is validated against a fixed JSON schema with these fields:
     "payload": "What is Diego's professional experience?" }
 
 Available widget types and their "data" shape: "text" ({ "body" }),
-"experience" ({ "items" with "role", "company", "startDate", "endDate",
+"experience" ({ "items" with "id", "role", "company", "startDate", "endDate",
 "current", "summary", "highlights", optional "stack" }),
 "projects" ({ optional "displayGroup": "full-stack" | "ia" | "otras", optional "items" with "media" }),
 Projects widget rules:
@@ -183,7 +183,7 @@ Skills widget rules (strict):
   "name" values returned for that category — do NOT filter by featured_only.
 - If a skills widget is present, technologies named in "summary" that exist in
   get_skills should also appear in the widget (same "name" from the tool). "technology-cloud" ({ "items" }),
-"education" ({ "items" with "institution", "degree", "fieldOfStudy",
+"education" ({ "items" with "id", "institution", "degree", "fieldOfStudy",
 "startDate", "endDate", "status", "highlights" }),
 "contact" ({ "email", "phone", "location", "links" }),
 "timeline" ({ "items" }),

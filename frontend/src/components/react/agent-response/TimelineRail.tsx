@@ -11,7 +11,8 @@ export interface TimelineRailItem {
   id: string;
   title: string;
   subtitle?: string;
-  dateLabel: string;
+  dateLabel: ReactNode;
+  logoUrl?: string;
   /** Contenido que se revela al expandir. Si está vacío, el nodo no es interactivo. */
   details?: ReactNode;
 }
@@ -248,30 +249,42 @@ function TimelineRailHeader({
   item: TimelineRailItem;
   layout: "inline" | "stacked";
 }) {
+  const logo = item.logoUrl ? (
+    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 bg-white/5 shadow-sm flex items-center justify-center">
+      <img src={item.logoUrl} alt={item.subtitle || item.title} className="h-full w-full object-cover" />
+    </div>
+  ) : null;
+
   if (layout === "stacked") {
     return (
-      <div className="min-w-0 flex-1 space-y-2">
-        <p className="font-label-sm uppercase tracking-wide text-on-surface-variant">{item.dateLabel}</p>
-        <h3 className="font-headline-md text-on-surface">{item.title}</h3>
-        {item.subtitle && <p className="font-body-md text-primary">{item.subtitle}</p>}
+      <div className="flex items-start gap-3 min-w-0 flex-1">
+        {logo}
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="font-label-sm text-on-surface-variant">{item.dateLabel}</div>
+          <h3 className="font-headline-md text-on-surface">{item.title}</h3>
+          {item.subtitle && <p className="font-body-md text-primary">{item.subtitle}</p>}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <p className="font-label-md text-body-md font-semibold text-on-surface">
-          {item.title}
-          {item.subtitle ? (
-            <>
-              {" "}
-              <span className="text-on-surface-variant">·</span>{" "}
-              <span className="text-primary">{item.subtitle}</span>
-            </>
-          ) : null}
-        </p>
-        <span className="whitespace-nowrap font-label-sm text-on-surface-variant">{item.dateLabel}</span>
+    <div className="flex items-center gap-3 min-w-0 flex-1">
+      {logo}
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <p className="font-label-md text-body-md font-semibold text-on-surface">
+            {item.title}
+            {item.subtitle ? (
+              <>
+                {" "}
+                <span className="text-on-surface-variant">·</span>{" "}
+                <span className="text-primary">{item.subtitle}</span>
+              </>
+            ) : null}
+          </p>
+          <div className="font-label-sm text-on-surface-variant">{item.dateLabel}</div>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   ArrowLeft,
@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import type { PortfolioProject } from "@/lib/projectCatalog";
 import { formatStackLabel } from "@/lib/projectCatalog";
-import { ProjectVisual, parseProjectMedia } from "./ProjectVisual";
+import { ProjectVisual, parseAllProjectMedia } from "./ProjectVisual";
 
 interface ProjectDetailModalProps {
   project: PortfolioProject | null;
@@ -59,9 +59,16 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [project, onClose]);
 
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [project]);
+
   if (!project || typeof document === "undefined") return null;
 
-  const media = project.media[0] ? parseProjectMedia(project.media) : null;
+  const allMedia = parseAllProjectMedia(project.media);
+  const media = allMedia[activeMediaIndex] || null;
 
   return createPortal(
     <div
@@ -123,6 +130,21 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
 
         <section className="fade-in-up mb-section-gap-desktop overflow-hidden rounded-3xl border border-white/10">
           <ProjectVisual media={media} name={project.name} variant="split" />
+          {allMedia.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto bg-surface-container-highest/50 p-4 border-t border-white/10 scrollbar-thin">
+              {allMedia.map((m, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveMediaIndex(index)}
+                  className={`relative h-16 w-28 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300 ${
+                    activeMediaIndex === index ? "border-primary scale-95 shadow-md" : "border-transparent opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <img src={m.url} alt={m.alt} className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="fade-in-up mb-section-gap-desktop grid grid-cols-1 gap-6 md:grid-cols-12">

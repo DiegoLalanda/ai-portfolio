@@ -4,11 +4,11 @@
     "name": "Desarrollador Web Full Stack Jr",
     "issuer": "Argentina Programa",
     "issuerUrl": null,
-    "imageUrl": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
+    "imageUrl": "/images/logos/logo-arg-programa.png",
     "issueDate": "2023-12",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/1I1nG65tjlgnvyB73R1QDB86A6u219ahl/view?usp=sharing",
     "skills": [
       "skill-javascript",
       "skill-html5",
@@ -16,7 +16,11 @@
       "skill-nodejs",
       "skill-react"
     ],
-    "tags": ["course", "full-stack", "argentina-programa"],
+    "tags": [
+      "course",
+      "full-stack",
+      "argentina-programa"
+    ],
     "featured": false,
     "order": 1,
     "visible": true
@@ -26,13 +30,17 @@
     "name": "Desarrollador de videojuegos avanzado",
     "issuer": "Argentina Programa",
     "issuerUrl": null,
-    "imageUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80",
+    "imageUrl": "/images/logos/logo-arg-programa.png",
     "issueDate": "2023-12",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/1jyJq7lIdJoO0JEXIBAIOeLvUFvNiXxTB/view?usp=drive_link",
     "skills": [],
-    "tags": ["course", "game-development", "argentina-programa"],
+    "tags": [
+      "course",
+      "game-development",
+      "argentina-programa"
+    ],
     "featured": false,
     "order": 2,
     "visible": true
@@ -46,9 +54,14 @@
     "issueDate": "2024-12",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/1E1YooNsbc3nBw25swqUP7uWUwiTKRZwe/view?usp=sharing",
     "skills": [],
-    "tags": ["diploma", "robotics", "education", "utn"],
+    "tags": [
+      "diploma",
+      "robotics",
+      "education",
+      "utn"
+    ],
     "featured": false,
     "order": 3,
     "visible": true
@@ -62,9 +75,13 @@
     "issueDate": "2024-06",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/1VStlfH-DKmZS2VooP805SpxQA5EGROtu/view?usp=drive_link",
     "skills": [],
-    "tags": ["course", "odoo", "erp"],
+    "tags": [
+      "course",
+      "odoo",
+      "erp"
+    ],
     "featured": false,
     "order": 4,
     "visible": true
@@ -78,13 +95,17 @@
     "issueDate": "2024-06",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/18Y5k5eR9utRnh1SbkzM-PRMC6Cs9AeCj/view?usp=drive_link",
     "skills": [
       "skill-nginx",
       "skill-pm2",
       "skill-docker"
     ],
-    "tags": ["course", "devops", "deployment"],
+    "tags": [
+      "course",
+      "devops",
+      "deployment"
+    ],
     "featured": false,
     "order": 5,
     "visible": true
@@ -98,13 +119,39 @@
     "issueDate": "2024-12",
     "expirationDate": null,
     "credentialId": null,
-    "credentialUrl": null,
+    "credentialUrl": "https://drive.google.com/file/d/1Vj7WmZzhyjgynq_wZtjokprMOdhiCnZF/view?usp=drive_link",
     "skills": [
       "skill-docker"
     ],
-    "tags": ["course", "docker", "devops"],
+    "tags": [
+      "course",
+      "docker",
+      "devops"
+    ],
     "featured": false,
     "order": 6,
+    "visible": true
+  },
+  {
+    "id": "cert-python-data-analysis",
+    "name": "Curso de introducción al análisis de datos con Python",
+    "issuer": "Formación profesional",
+    "issuerUrl": null,
+    "imageUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
+    "issueDate": "2024-11",
+    "expirationDate": null,
+    "credentialId": null,
+    "credentialUrl": "https://drive.google.com/file/d/1hSBmkMunr0IeiA6heWAPnvztIdI75B_H/view?usp=drive_link",
+    "skills": [
+      "skill-python"
+    ],
+    "tags": [
+      "course",
+      "python",
+      "data-analysis"
+    ],
+    "featured": false,
+    "order": 7,
     "visible": true
   }
 ]

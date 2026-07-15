@@ -14,7 +14,7 @@ const EDUCATION_EN: Record<string, EducationCopy> = {
     status: "Completed",
     highlights: [
       "Degree awarded in November 2025.",
-      "Final project: CachiBache — mobile urban reporting app with a scalable backend and production deployment.",
+      "Final GPA of 9.21.",
     ],
   },
   "edu-isdica-physics-teaching": {

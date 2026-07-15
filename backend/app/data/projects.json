@@ -39,7 +39,14 @@
     "startDate": "2025-07",
     "endDate": null,
     "current": true,
-    "tags": ["ai", "agents", "finnegans", "finni", "llm", "rag"],
+    "tags": [
+      "ai",
+      "agents",
+      "finnegans",
+      "finni",
+      "llm",
+      "rag"
+    ],
     "displayGroup": "ia",
     "featured": true,
     "order": 1,
@@ -76,14 +83,20 @@
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
-        "alt": "Red neuronal abstracta"
+        "url": "/images/logos/logo-portfolio.png",
+        "alt": "Logo de Portfolio IA"
       }
     ],
     "startDate": "2025-01",
     "endDate": null,
     "current": true,
-    "tags": ["ai", "portfolio", "agents", "gemini", "astro"],
+    "tags": [
+      "ai",
+      "portfolio",
+      "agents",
+      "gemini",
+      "astro"
+    ],
     "displayGroup": "ia",
     "featured": true,
     "order": 2,
@@ -104,20 +117,53 @@
       "Meta Pixel y API de Conversiones para optimización de campañas.",
       "WordPress + WooCommerce con enfoque en marketing digital."
     ],
-    "stack": ["skill-wordpress", "skill-woocommerce"],
+    "stack": [
+      "skill-wordpress",
+      "skill-woocommerce"
+    ],
     "team": [],
     "links": [],
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1465447142348-e9952c393450?w=800&q=80",
-        "alt": "Montañas y valle al amanecer"
+        "url": "/images/projects/en-un-toke/1.png",
+        "alt": "Captura 1 de En un Toke"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/en-un-toke/2.png",
+        "alt": "Captura 2 de En un Toke"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/en-un-toke/3.png",
+        "alt": "Captura 3 de En un Toke"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/en-un-toke/4.png",
+        "alt": "Captura 4 de En un Toke"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/en-un-toke/5.png",
+        "alt": "Captura 5 de En un Toke"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/en-un-toke/6.png",
+        "alt": "Captura 6 de En un Toke"
       }
     ],
     "startDate": "2024-01",
     "endDate": "2024-06",
     "current": false,
-    "tags": ["ecommerce", "wordpress", "marketing", "freelance"],
+    "tags": [
+      "ecommerce",
+      "wordpress",
+      "marketing",
+      "freelance"
+    ],
     "displayGroup": "full-stack",
     "featured": true,
     "order": 3,
@@ -151,14 +197,38 @@
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
-        "alt": "Automóvil en estudio para cotización de seguros"
+        "url": "/images/projects/tu-seguro-online/1.png",
+        "alt": "Captura 1 de Tu Seguro Online"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/tu-seguro-online/2.png",
+        "alt": "Captura 2 de Tu Seguro Online"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/tu-seguro-online/3.png",
+        "alt": "Captura 3 de Tu Seguro Online"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/tu-seguro-online/4.png",
+        "alt": "Captura 4 de Tu Seguro Online"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/tu-seguro-online/5.png",
+        "alt": "Captura 5 de Tu Seguro Online"
       }
     ],
     "startDate": "2025-03",
     "endDate": "2025-08",
     "current": false,
-    "tags": ["freelance", "insurance", "api-integration"],
+    "tags": [
+      "freelance",
+      "insurance",
+      "api-integration"
+    ],
     "displayGroup": "full-stack",
     "featured": true,
     "order": 4,
@@ -193,14 +263,74 @@
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
-        "alt": "Espacio de trabajo moderno"
+        "url": "/images/projects/easy-survey/1.png",
+        "alt": "Captura 1 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/2.png",
+        "alt": "Captura 2 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/3.png",
+        "alt": "Captura 3 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/4.png",
+        "alt": "Captura 4 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/5.png",
+        "alt": "Captura 5 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/6.png",
+        "alt": "Captura 6 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/7.png",
+        "alt": "Captura 7 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/8.png",
+        "alt": "Captura 8 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/9.png",
+        "alt": "Captura 9 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/10.png",
+        "alt": "Captura 10 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/11.png",
+        "alt": "Captura 11 de Easy Survey"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/easy-survey/12.png",
+        "alt": "Captura 12 de Easy Survey"
       }
     ],
     "startDate": "2025-01",
     "endDate": "2025-06",
     "current": false,
-    "tags": ["freelance", "surveys", "angular", "nestjs"],
+    "tags": [
+      "freelance",
+      "surveys",
+      "angular",
+      "nestjs"
+    ],
     "displayGroup": "full-stack",
     "featured": false,
     "order": 5,
@@ -221,20 +351,50 @@
       "PostgreSQL con Sequelize ORM.",
       "Documentación Swagger para integración."
     ],
-    "stack": ["skill-nodejs", "skill-express", "skill-postgresql", "skill-sequelize"],
+    "stack": [
+      "skill-nodejs",
+      "skill-express",
+      "skill-postgresql",
+      "skill-sequelize"
+    ],
     "team": [],
     "links": [],
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
-        "alt": "Tierra desde el espacio con luces de red"
+        "url": "/images/projects/api-reclamos/1.png",
+        "alt": "Captura 1 de API de Gestión de Reclamos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/api-reclamos/2.png",
+        "alt": "Captura 2 de API de Gestión de Reclamos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/api-reclamos/3.png",
+        "alt": "Captura 3 de API de Gestión de Reclamos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/api-reclamos/4.png",
+        "alt": "Captura 4 de API de Gestión de Reclamos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/api-reclamos/5.png",
+        "alt": "Captura 5 de API de Gestión de Reclamos"
       }
     ],
     "startDate": "2024-03",
     "endDate": "2024-08",
     "current": false,
-    "tags": ["api", "backend", "automotive", "university"],
+    "tags": [
+      "api",
+      "backend",
+      "automotive",
+      "university"
+    ],
     "displayGroup": "full-stack",
     "featured": false,
     "order": 6,
@@ -255,20 +415,85 @@
       "Catálogo interactivo con filtros avanzados.",
       "CRUD de administrador sobre API externa."
     ],
-    "stack": ["skill-react", "skill-nodejs", "skill-mysql", "skill-figma"],
+    "stack": [
+      "skill-react",
+      "skill-nodejs",
+      "skill-mysql",
+      "skill-figma"
+    ],
     "team": [],
     "links": [],
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-        "alt": "Resort con piscina y palmeras"
+        "url": "/images/projects/verde-nido/1.png",
+        "alt": "Captura 1 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/2.png",
+        "alt": "Captura 2 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/3.png",
+        "alt": "Captura 3 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/4.png",
+        "alt": "Captura 4 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/5.png",
+        "alt": "Captura 5 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/6.png",
+        "alt": "Captura 6 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/7.png",
+        "alt": "Captura 7 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/8.png",
+        "alt": "Captura 8 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/9.png",
+        "alt": "Captura 9 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/10.png",
+        "alt": "Captura 10 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/11.png",
+        "alt": "Captura 11 de Verde Nido"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/verde-nido/12.png",
+        "alt": "Captura 12 de Verde Nido"
       }
     ],
     "startDate": "2024-01",
     "endDate": "2024-06",
     "current": false,
-    "tags": ["frontend", "hospitality", "react", "university"],
+    "tags": [
+      "frontend",
+      "hospitality",
+      "react",
+      "university"
+    ],
     "displayGroup": "full-stack",
     "featured": false,
     "order": 7,
@@ -301,9 +526,21 @@
       "skill-railway"
     ],
     "team": [
-      { "name": "Diego Lalanda", "role": "Full-Stack Developer", "url": "https://github.com/DiegoLalanda" },
-      { "name": "Enrique Alejandro Pierotti Castillo", "role": "Team Member", "url": null },
-      { "name": "Fernanda Elola", "role": "Team Member", "url": null }
+      {
+        "name": "Diego Lalanda",
+        "role": "Full-Stack Developer",
+        "url": "https://github.com/DiegoLalanda"
+      },
+      {
+        "name": "Enrique Alejandro Pierotti Castillo",
+        "role": "Team Member",
+        "url": null
+      },
+      {
+        "name": "Fernanda Elola",
+        "role": "Team Member",
+        "url": null
+      }
     ],
     "links": [
       {
@@ -322,7 +559,13 @@
     "startDate": "2025-01",
     "endDate": "2025-11",
     "current": false,
-    "tags": ["mobile", "react-native", "expo", "nestjs", "university"],
+    "tags": [
+      "mobile",
+      "react-native",
+      "expo",
+      "nestjs",
+      "university"
+    ],
     "displayGroup": "otras",
     "featured": false,
     "order": 8,
@@ -343,12 +586,30 @@
       "Controles simples e intuitivos con sistema de puntos y monedas.",
       "Arte 2D estilo cartoon, jugable directamente en navegador vía Itch.io."
     ],
-    "stack": ["skill-gdevelop"],
+    "stack": [
+      "skill-gdevelop"
+    ],
     "team": [
-      { "name": "Fernanda Elola", "role": "Team Member", "url": null },
-      { "name": "Diego Lalanda", "role": "Game Developer", "url": "https://github.com/DiegoLalanda" },
-      { "name": "Manuel Alejandro García", "role": "Team Member", "url": null },
-      { "name": "Enrique Alejandro Pierotti Castillo", "role": "Team Member", "url": null }
+      {
+        "name": "Fernanda Elola",
+        "role": "Team Member",
+        "url": null
+      },
+      {
+        "name": "Diego Lalanda",
+        "role": "Game Developer",
+        "url": "https://github.com/DiegoLalanda"
+      },
+      {
+        "name": "Manuel Alejandro García",
+        "role": "Team Member",
+        "url": null
+      },
+      {
+        "name": "Enrique Alejandro Pierotti Castillo",
+        "role": "Team Member",
+        "url": null
+      }
     ],
     "links": [
       {
@@ -367,7 +628,12 @@
     "startDate": "2025-03",
     "endDate": "2025-11",
     "current": false,
-    "tags": ["game", "gdevelop", "arcade", "2d"],
+    "tags": [
+      "game",
+      "gdevelop",
+      "arcade",
+      "2d"
+    ],
     "displayGroup": "otras",
     "featured": false,
     "order": 9,

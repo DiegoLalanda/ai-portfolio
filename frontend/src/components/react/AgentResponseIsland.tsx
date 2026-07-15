@@ -10,6 +10,8 @@ import {
 import { normalizeResponseLanguage } from "@/lib/responseLanguage";
 import { AgentResponseView } from "@/components/react/agent-response/AgentResponseView";
 
+type PendingAgentResponse = { response: AgentResponse; question: string };
+
 function withResponseLanguage(response: AgentResponse, question: string): AgentResponse {
   return {
     ...response,
@@ -36,6 +38,10 @@ export default function AgentResponseIsland() {
       : "…";
 
   useEffect(() => {
+    const responseBridge = window as Window & {
+      __portfolioPendingAgentResponse?: PendingAgentResponse;
+    };
+
     function handleReady(event: Event) {
       const detail = (event as CustomEvent<{ response?: AgentResponse; question?: string }>).detail;
       const response = detail?.response ?? (detail as unknown as AgentResponse);
@@ -54,9 +60,11 @@ export default function AgentResponseIsland() {
       setAskedQuestions(initialQuestion.trim() ? [initialQuestion.trim()] : []);
       setIsLoading(false);
       setPendingQuestion(null);
+      delete responseBridge.__portfolioPendingAgentResponse;
     }
 
     function handleReset() {
+      delete responseBridge.__portfolioPendingAgentResponse;
       setResponses([]);
       setAskedQuestions([]);
       setIsLoading(false);
@@ -66,6 +74,12 @@ export default function AgentResponseIsland() {
     window.addEventListener("agent-response:ready", handleReady);
     window.addEventListener("mock-chat:submit", handleReset);
     window.addEventListener("portfolio:reset", handleReset);
+
+    const pending = responseBridge.__portfolioPendingAgentResponse;
+    if (pending) {
+      handleReady(new CustomEvent("agent-response:ready", { detail: pending }));
+    }
+
     return () => {
       window.removeEventListener("agent-response:ready", handleReady);
       window.removeEventListener("mock-chat:submit", handleReset);

@@ -20,9 +20,3 @@ const t = getTranslations(locale);
     resetAriaLabel={t.dashboard.askAgainAriaLabel}
   />
 </div>
-
-<script>
-  document.getElementById("submitted-prompt-reset")?.addEventListener("click", () => {
-    window.dispatchEvent(new CustomEvent("portfolio:ask-again"));
-  });
-</script>

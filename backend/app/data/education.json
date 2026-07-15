@@ -9,15 +9,20 @@
     "startDate": "2023-03",
     "endDate": "2025-11",
     "status": "completed",
-    "gpa": 9.35,
+    "gpa": 9.21,
     "highlights": [
       "Título obtenido en noviembre de 2025.",
-      "Proyecto final: CachiBache — app móvil de reportes urbanos con backend escalable y despliegue en producción."
+      "Promedio final de 9.21."
     ],
-    "tags": ["education", "web-development", "uner"],
+    "tags": [
+      "education",
+      "web-development",
+      "uner"
+    ],
     "featured": true,
     "order": 1,
-    "visible": true
+    "visible": true,
+    "credentialUrl": "https://drive.google.com/file/d/17cyaPDr4Txz4DVQGDGYPO4gVckZo0jmc/view?usp=sharing"
   },
   {
     "id": "edu-isdica-physics-teaching",
@@ -34,9 +39,14 @@
       "Formación docente en Física para nivel secundario.",
       "Promedio general de 9.46."
     ],
-    "tags": ["education", "physics", "teaching"],
+    "tags": [
+      "education",
+      "physics",
+      "teaching"
+    ],
     "featured": true,
     "order": 2,
-    "visible": true
+    "visible": true,
+    "credentialUrl": "https://drive.google.com/file/d/1RDLc9KPkjcApTKCm3afeMq-_QQKq64x3/view?usp=drive_link"
   }
 ]

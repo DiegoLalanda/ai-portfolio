@@ -60,7 +60,7 @@ const t = getTranslations(locale);
         data-ask-again-label={t.dashboard.askAgain}
         data-ask-again-aria-label={t.dashboard.askAgainAriaLabel}
       >
-        <AgentResponseIsland client:idle />
+        <AgentResponseIsland client:load />
       </div>
     </section>
 
@@ -90,6 +90,10 @@ const t = getTranslations(locale);
   const dashboardPhase = document.getElementById("phase-dashboard");
 
   let agentResponse: AgentResponse | null = null;
+  type PendingAgentResponse = { response: AgentResponse; question: string };
+  const responseBridge = window as Window & {
+    __portfolioPendingAgentResponse?: PendingAgentResponse;
+  };
 
   function dispatchStreamEvent(event: ChatStreamEvent) {
     window.dispatchEvent(new CustomEvent("loading:stream", { detail: event }));
@@ -97,6 +101,7 @@ const t = getTranslations(locale);
 
   function resetPortfolio() {
     agentResponse = null;
+    delete responseBridge.__portfolioPendingAgentResponse;
 
     dashboardPhase?.classList.add("hidden", "opacity-0", "translate-y-10");
     dashboardPhase?.classList.remove("is-revealed");
@@ -172,6 +177,7 @@ const t = getTranslations(locale);
     streamChatMessage(question, dispatchStreamEvent)
       .then((data) => {
         agentResponse = data;
+        responseBridge.__portfolioPendingAgentResponse = { response: data, question };
         window.dispatchEvent(new CustomEvent("loading:finish"));
         window.dispatchEvent(
           new CustomEvent("agent-response:ready", { detail: { response: data, question } }),
@@ -207,6 +213,7 @@ const t = getTranslations(locale);
           suggested_actions: [],
         };
         agentResponse = fallback;
+        responseBridge.__portfolioPendingAgentResponse = { response: fallback, question };
         window.dispatchEvent(new CustomEvent("loading:finish"));
         window.dispatchEvent(
           new CustomEvent("agent-response:ready", { detail: { response: fallback, question } }),
