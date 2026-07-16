@@ -77,6 +77,18 @@
   }
 }
 
+/* Prompt compacto cuando el dashboard ya está visible */
+#suggestion-capsules-root.is-compact {
+  height: auto;
+  min-height: 0;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+#suggestion-capsules-root.is-compact #suggestion-capsules-layer {
+  display: none;
+}
+
 /* Google Material Symbols: sin esto, los íconos se muestran como texto plano. */
 .material-symbols-outlined {
   font-variation-settings:
@@ -280,6 +292,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.project-visual {
+  background-color: transparent;
 }
 
 .project-visual img {

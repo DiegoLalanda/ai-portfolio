@@ -1,39 +1,85 @@
 [
   {
     "id": "proj-finni",
-    "name": "Finni — Plataforma de agentes IA",
+    "name": "Finni — Orquestador de agentes IA (Finnegans)",
     "type": "professional",
     "role": "AI Developer",
-    "summary": "Plataforma de agentes de IA en Finnegans para procesos internos y productos orientados a clientes.",
-    "description": "Finni es la plataforma de agentes de inteligencia artificial que Diego desarrolla en Finnegans. Integra LLMs, RAG, bots y orquestación de agentes para automatizar procesos internos y habilitar capacidades de IA en productos de la empresa.",
-    "problem": "Finnegans necesitaba escalar la adopción de IA con agentes reutilizables, integraciones entre sistemas y respuestas confiables apoyadas en datos de la organización.",
-    "solution": "Diseño e implementación de agentes con Python (FastAPI), servicios en AWS (Bedrock, DynamoDB, S3), RAG, MCP y observabilidad, integrados con el ecosistema Angular de la empresa.",
+    "summary": "Orquestador de agentes IA para procesos internos y productos orientados a clientes.",
+    "description": "Orquestador de agentes conversacionales con LLMs, RAG, tools y sub-agentes, integrado al ecosistema GO. Participo como AI Developer del equipo de IA.",
+    "problem": "Se necesitaba una plataforma de agentes reutilizable, multi-modelo y contextualizada por dominio (empresa cliente), integrada al ERP.",
+    "solution": "Backend con FastAPI + Strands Agents, Amazon Bedrock, Knowledge Bases (RAG), DynamoDB, Redis, streaming SSE y paneles Angular de chat/administración.",
     "result": "Plataforma en evolución continua que centraliza agentes de IA para uso interno y funcionalidades orientadas a clientes.",
     "highlights": [
-      "Agentes de IA y bots para procesos internos y productos para clientes.",
-      "LLMs, RAG, embeddings, prompt engineering y protocolo MCP.",
-      "Stack Python, FastAPI, Angular, AWS (Bedrock, DynamoDB, S3) y observabilidad con Grafana."
+      "Orquestación de agentes (Strands) con tools, sub-agentes, RAG y streaming SSE.",
+      "Stack: Python/FastAPI, Angular, AWS Bedrock, DynamoDB, Redis, S3, MCP y Langfuse.",
+      "Chat, administración de bots y Knowledge Bases en el ecosistema GO."
     ],
     "stack": [
       "skill-python",
       "skill-fastapi",
       "skill-angular",
       "skill-typescript",
+      "skill-strands",
       "skill-amazon-bedrock",
       "skill-dynamodb",
+      "skill-redis",
+      "skill-aws-s3",
+      "skill-aws-lambda",
       "skill-ai-agents",
       "skill-rag",
       "skill-llms",
       "skill-mcp",
-      "skill-grafana"
+      "skill-langfuse"
     ],
-    "team": [],
-    "links": [],
+    "team": [
+      {
+        "name": "Finnegans",
+        "role": "Empresa",
+        "url": "https://finneg.com/ar/"
+      },
+      {
+        "name": "Diego Lalanda",
+        "role": "AI Developer",
+        "url": "https://github.com/DiegoLalanda"
+      }
+    ],
+    "links": [
+      {
+        "label": "Finnegans",
+        "url": "https://finneg.com/ar/",
+        "type": "other"
+      }
+    ],
     "media": [
       {
         "type": "image",
-        "url": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
-        "alt": "Visual abstracto de inteligencia artificial"
+        "url": "/images/projects/finni/finni_1.png",
+        "alt": "Captura de la interfaz de Finni"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/finni/finni_2.png",
+        "alt": "Captura de Finni — experiencia de chat"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/finni/finni_3.png",
+        "alt": "Captura de Finni — flujo de agente"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/finni/finni_4.png",
+        "alt": "Captura de Finni — respuesta del asistente"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/finni/finni_5.png",
+        "alt": "Captura de Finni — herramientas y orquestación"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/finni/finni_6.png",
+        "alt": "Captura de Finni — interfaz del producto"
       }
     ],
     "startDate": "2025-07",
@@ -83,8 +129,28 @@
     "media": [
       {
         "type": "image",
-        "url": "/images/logos/logo-portfolio.png",
-        "alt": "Logo de Portfolio IA"
+        "url": "/images/projects/ai-portfolio/1.png",
+        "alt": "Captura del Portfolio IA — pantalla principal"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/ai-portfolio/2.png",
+        "alt": "Captura del Portfolio IA — experiencia conversacional"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/ai-portfolio/3.png",
+        "alt": "Captura del Portfolio IA — widgets de respuesta"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/ai-portfolio/4.png",
+        "alt": "Captura del Portfolio IA — detalle de proyecto"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/ai-portfolio/5.png",
+        "alt": "Captura del Portfolio IA — interfaz del asistente"
       }
     ],
     "startDate": "2025-01",
@@ -122,7 +188,13 @@
       "skill-woocommerce"
     ],
     "team": [],
-    "links": [],
+    "links": [
+      {
+        "label": "Sitio web",
+        "url": "https://enuntoke.com/",
+        "type": "live"
+      }
+    ],
     "media": [
       {
         "type": "image",
@@ -193,7 +265,13 @@
       "skill-neon"
     ],
     "team": [],
-    "links": [],
+    "links": [
+      {
+        "label": "Repositorio",
+        "url": "https://github.com/DiegoLalanda/cotiza-seguro-facil",
+        "type": "repo"
+      }
+    ],
     "media": [
       {
         "type": "image",
@@ -259,7 +337,18 @@
       "skill-neon"
     ],
     "team": [],
-    "links": [],
+    "links": [
+      {
+        "label": "Demo",
+        "url": "https://encuestas-anonimas-frontend.onrender.com/",
+        "type": "live"
+      },
+      {
+        "label": "Repositorio",
+        "url": "https://github.com/DiegoLalanda/encuestas-anonimas",
+        "type": "repo"
+      }
+    ],
     "media": [
       {
         "type": "image",
@@ -358,7 +447,18 @@
       "skill-sequelize"
     ],
     "team": [],
-    "links": [],
+    "links": [
+      {
+        "label": "Swagger",
+        "url": "https://api-reclamos-prog3.onrender.com/api/v1/api-docs/",
+        "type": "demo"
+      },
+      {
+        "label": "Repositorio",
+        "url": "https://github.com/DiegoLalanda/api_reclamos_prog3",
+        "type": "repo"
+      }
+    ],
     "media": [
       {
         "type": "image",
@@ -422,7 +522,13 @@
       "skill-figma"
     ],
     "team": [],
-    "links": [],
+    "links": [
+      {
+        "label": "Repositorio",
+        "url": "https://github.com/DiegoLalanda/verdeNido--React",
+        "type": "repo"
+      }
+    ],
     "media": [
       {
         "type": "image",
@@ -504,17 +610,17 @@
     "name": "CachiBache — App móvil de reportes urbanos",
     "type": "academic",
     "role": "Full-Stack Developer",
-    "summary": "App móvil para reportar baches con fotos, geolocalización y panel administrativo en tiempo real.",
-    "description": "Proyecto Final de la Tecnicatura Universitaria en Desarrollo Web (UNER). App móvil para que los ciudadanos reporten baches desde su celular, con seguimiento en tiempo real mediante un backend robusto y escalable desplegado en producción.",
-    "problem": "Varias funcionalidades nativas (Google Auth, notificaciones push, mapas) no funcionaban en el entorno estándar de Expo, impidiendo obtener una build real conectada al backend en producción.",
-    "solution": "Se configuró EAS Build desde cero y se generaron credenciales en Google Cloud (OAuth, Cloudinary, Firebase Cloud Messaging) para obtener una APK funcional conectada al backend en Railway.",
-    "result": "Aplicación móvil completa con autenticación, roles, reportes con fotos y voz, panel admin, notificaciones push y generación de PDF, entregada como proyecto final universitario.",
+    "summary": "Proyecto Final UNER — app móvil para reportar baches con fotos, geolocalización y panel administrativo en tiempo real.",
+    "description": "Proyecto Final de la Tecnicatura Universitaria en Desarrollo Web (UNER). CachiBache permite a los ciudadanos reportar baches desde el celular con seguimiento en tiempo real mediante un backend NestJS desplegado en Railway.",
+    "problem": "Funcionalidades nativas clave (Google Auth, notificaciones push, mapas) no funcionaban en el entorno estándar de Expo. Tampoco se podía probar el flujo completo JWT + Refresh Token en un entorno similar a un dispositivo físico.",
+    "solution": "Configuré EAS Build desde cero y generé credenciales en Google Cloud para OAuth, mapas, Cloudinary e Firebase Cloud Messaging. Implementé autenticación JWT + Refresh Tokens en el AuthContext y arquitectura modular en NestJS con principios SOLID.",
+    "result": "APK real y funcional conectada al backend en producción, con flujo de usuario sólido, seguro y arquitectura preparada para escalar.",
     "highlights": [
-      "Registro/login con verificación por email y login con Google.",
-      "Gestión de roles (usuario/administrador) con panel administrativo y filtros.",
-      "Reporte de baches con fotos, ubicación y dictado por voz.",
-      "Notificaciones push y generación de PDF de reportes.",
-      "Autenticación JWT + Refresh Token persistidos."
+      "Registro, login y recuperación de contraseña con verificación por email e inicio con Google.",
+      "Gestión de roles (usuario/administrador) con panel admin, filtros y actualización de estados.",
+      "Reportes con fotos, geolocalización, mapa interactivo y dictado por voz.",
+      "Notificaciones push, generación de PDF y sincronización móvil/backend en tiempo real.",
+      "Stack: React Native + Expo, NestJS, TypeORM, PostgreSQL, JWT, Cloudinary y Railway."
     ],
     "stack": [
       "skill-react-native-expo",
@@ -540,21 +646,31 @@
         "name": "Fernanda Elola",
         "role": "Team Member",
         "url": null
+      },
+      {
+        "name": "Manuel Alejandro García",
+        "role": "Team Member",
+        "url": null
       }
     ],
     "links": [
       {
         "label": "Repositorio",
-        "url": "https://lnkd.in/dEYt3T5h",
+        "url": "https://github.com/Manuelgarcia1/CachiBache",
         "type": "repo"
       }
     ],
     "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80",
-        "alt": "Vista urbana al atardecer"
-      }
+      { "type": "image", "url": "/images/projects/cachibache-app/app-1.jpg", "alt": "CachiBache — pantalla principal de la app" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-2.jpg", "alt": "CachiBache — mapa de reportes urbanos" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-3.jpg", "alt": "CachiBache — reporte de bache con foto" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-4.jpg", "alt": "CachiBache — flujo de autenticación" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-5.jpg", "alt": "CachiBache — detalle de reporte" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-6.jpg", "alt": "CachiBache — panel administrador" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-7.jpg", "alt": "CachiBache — gestión de estados" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-8.jpg", "alt": "CachiBache — perfil de usuario" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-9.jpg", "alt": "CachiBache — notificaciones push" },
+      { "type": "image", "url": "/images/projects/cachibache-app/app-10.jpg", "alt": "CachiBache — interfaz móvil" }
     ],
     "startDate": "2025-01",
     "endDate": "2025-11",
@@ -564,7 +680,8 @@
       "react-native",
       "expo",
       "nestjs",
-      "university"
+      "university",
+      "uner"
     ],
     "displayGroup": "otras",
     "featured": false,
@@ -576,15 +693,16 @@
     "name": "CachiBache — Videojuego arcade (GDevelop)",
     "type": "game",
     "role": "Game Developer",
-    "summary": "Juego arcade 2D estilo cartoon jugable en navegador vía Itch.io.",
-    "description": "Juego arcade 2D desarrollado con GDevelop. Acompañás a Juan Carlos, un empleado administrativo que debe abrirse paso entre baches, autos, vacas y caos urbano para llegar al hospital a tiempo para el nacimiento de su hijo.",
-    "problem": "Crear una experiencia arcade divertida y accesible que complemente la identidad del proyecto CachiBache con una narrativa latinoamericana.",
-    "solution": "Diseño de mecánicas simples con obstáculos procedurales, dificultad progresiva y publicación web en Itch.io para máxima accesibilidad.",
-    "result": "Juego jugable en navegador con sistema de puntos, vidas limitadas y arte 2D estilo cartoon.",
+    "summary": "Videojuego web arcade 2D estilo cartoon, jugable en navegador vía Itch.io.",
+    "description": "Trabajo práctico integrador de Desarrollo de Multimedia y Juegos en la Web (UNER). Acompañás a Juan Carlos, un empleado administrativo que debe abrirse paso entre baches, autos, vacas y caos urbano para llegar al hospital a tiempo para el nacimiento de su hijo.",
+    "problem": "Crear una experiencia arcade divertida y accesible que complemente la identidad CachiBache con una narrativa latinoamericana, publicable en navegador sin instalación.",
+    "solution": "Desarrollo con GDevelop: mecánicas simples, obstáculos procedurales, dificultad progresiva, sistema de puntos y monedas, y publicación web en Itch.io.",
+    "result": "Juego jugable en navegador con controles intuitivos, vidas limitadas, arte 2D cartoon y acción arcade de reflejos.",
     "highlights": [
       "Obstáculos generados proceduralmente con dificultad progresiva.",
-      "Controles simples e intuitivos con sistema de puntos y monedas.",
-      "Arte 2D estilo cartoon, jugable directamente en navegador vía Itch.io."
+      "Controles simples, sistema de puntos y recolección de monedas.",
+      "Arte 2D estilo cartoon, jugable directamente en navegador vía Itch.io.",
+      "Trabajo en equipo — materia Desarrollo de Multimedia y Juegos en la Web (UNER)."
     ],
     "stack": [
       "skill-gdevelop"
@@ -614,16 +732,17 @@
     "links": [
       {
         "label": "Jugar en Itch.io",
-        "url": "https://lnkd.in/dNYrj8QV",
+        "url": "https://manuelgarcia1.itch.io/cachibache-game",
         "type": "demo"
       }
     ],
     "media": [
-      {
-        "type": "image",
-        "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80",
-        "alt": "Paisaje nocturno con luces de ciudad"
-      }
+      { "type": "image", "url": "/images/projects/cachibache-game/0.jpg", "alt": "CachiBache Game — portada del juego" },
+      { "type": "image", "url": "/images/projects/cachibache-game/1.png", "alt": "CachiBache Game — gameplay arcade" },
+      { "type": "image", "url": "/images/projects/cachibache-game/2.png", "alt": "CachiBache Game — obstáculos urbanos" },
+      { "type": "image", "url": "/images/projects/cachibache-game/3.png", "alt": "CachiBache Game — personaje Juan Carlos" },
+      { "type": "image", "url": "/images/projects/cachibache-game/4.png", "alt": "CachiBache Game — acción en calle" },
+      { "type": "image", "url": "/images/projects/cachibache-game/5.png", "alt": "CachiBache Game — pantalla de juego" }
     ],
     "startDate": "2025-03",
     "endDate": "2025-11",

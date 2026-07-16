@@ -11,6 +11,8 @@ export interface TimelineRailItem {
   id: string;
   title: string;
   subtitle?: string;
+  /** Descripción breve visible en la tarjeta (sin expandir). */
+  description?: string;
   dateLabel: ReactNode;
   logoUrl?: string;
   /** Contenido que se revela al expandir. Si está vacío, el nodo no es interactivo. */
@@ -263,6 +265,11 @@ function TimelineRailHeader({
           <div className="font-label-sm text-on-surface-variant">{item.dateLabel}</div>
           <h3 className="font-headline-md text-on-surface">{item.title}</h3>
           {item.subtitle && <p className="font-body-md text-primary">{item.subtitle}</p>}
+          {item.description && (
+            <p className="text-[13px] leading-relaxed text-on-surface-variant">
+              {item.description}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -271,7 +278,7 @@ function TimelineRailHeader({
   return (
     <div className="flex items-center gap-3 min-w-0 flex-1">
       {logo}
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 space-y-1.5">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="font-label-md text-body-md font-semibold text-on-surface">
             {item.title}
@@ -285,6 +292,11 @@ function TimelineRailHeader({
           </p>
           <div className="font-label-sm text-on-surface-variant">{item.dateLabel}</div>
         </div>
+        {item.description && (
+          <p className="text-[13px] leading-relaxed text-on-surface-variant">
+            {item.description}
+          </p>
+        )}
       </div>
     </div>
   );

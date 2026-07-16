@@ -2,6 +2,8 @@
 interface Props {
   /** `editable`: input activo + botón enviar. `readonly`: pregunta enviada + indicador de check. */
   mode?: "editable" | "readonly";
+  /** En readonly: permite editar al tocar y mostrar enviar solo si se modifica el texto. */
+  reeditable?: boolean;
   inputId: string;
   value?: string;
   placeholder?: string;
@@ -13,6 +15,7 @@ interface Props {
 
 const {
   mode = "editable",
+  reeditable = false,
   inputId,
   value = "",
   placeholder,
@@ -26,7 +29,10 @@ const initialPlaceholder = placeholder ?? placeholderCycle[0];
 const isReadonly = mode === "readonly";
 ---
 
-<div class:list={["glass-input-container z-10 flex w-full items-center rounded-full px-6 py-2 md:py-4", className]}>
+<div
+  class:list={["glass-input-container z-10 flex w-full items-center rounded-full px-6 py-2 md:py-4", className]}
+  data-reeditable={reeditable ? "true" : undefined}
+>
   <span
     class="material-symbols-outlined mr-4 text-primary"
     aria-hidden="true"
@@ -46,13 +52,32 @@ const isReadonly = mode === "readonly";
   />
   {
     isReadonly ? (
-      <div
-        class="prompt-pill-status ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary"
-      >
-        <span class="material-symbols-outlined text-[20px] leading-none" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">
-          check
-        </span>
-      </div>
+      <>
+        <div
+          data-prompt-status
+          class="prompt-pill-status ml-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-all duration-300"
+        >
+          <span class="material-symbols-outlined text-[20px] leading-none" aria-hidden="true" style="font-variation-settings: 'FILL' 1;">
+            check
+          </span>
+        </div>
+        {
+          reeditable && (
+            <button
+              type="button"
+              id={`${inputId}-submit`}
+              data-prompt-submit
+              disabled
+              aria-label={sendAriaLabel}
+              class="scale-0 w-0 opacity-0 pointer-events-none ml-0 overflow-hidden flex h-10 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all duration-300 origin-center disabled:pointer-events-none disabled:opacity-40 enabled:bg-white enabled:text-black enabled:opacity-100 enabled:shadow-lg hover:enabled:scale-105 active:enabled:scale-95"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true" style="font-variation-settings: 'FILL' 0;">
+                arrow_forward
+              </span>
+            </button>
+          )
+        }
+      </>
     ) : (
       <button
         type="button"
@@ -293,6 +318,127 @@ const isReadonly = mode === "readonly";
           updateButtonStates(input);
         });
       });
+    </script>
+  )
+}
+
+{
+  isReadonly && reeditable && (
+    <script>
+      function setActionVisible(el: HTMLElement | null, visible: boolean, marginClass: string) {
+        if (!el) return;
+        if (visible) {
+          el.classList.remove(
+            "scale-0",
+            "w-0",
+            "opacity-0",
+            "pointer-events-none",
+            "ml-0",
+            "overflow-hidden",
+            "hidden",
+          );
+          el.classList.add("scale-100", "w-10", "opacity-100", marginClass);
+        } else {
+          el.classList.remove("scale-100", "w-10", "opacity-100", marginClass);
+          el.classList.add(
+            "scale-0",
+            "w-0",
+            "opacity-0",
+            "pointer-events-none",
+            "ml-0",
+            "overflow-hidden",
+          );
+        }
+      }
+
+      function initReeditablePill(container: HTMLElement) {
+        const input = container.querySelector("input") as HTMLInputElement | null;
+        const status = container.querySelector("[data-prompt-status]") as HTMLElement | null;
+        const submitBtn = container.querySelector("[data-prompt-submit]") as HTMLButtonElement | null;
+        if (!input || !status || !submitBtn) return;
+
+        let baseline = input.value;
+
+        function showCommitted() {
+          input!.setAttribute("readonly", "");
+          status!.classList.remove("hidden");
+          setActionVisible(status, true, "ml-4");
+          setActionVisible(submitBtn, false, "ml-4");
+          submitBtn!.disabled = true;
+        }
+
+        function showSend() {
+          status!.classList.add("hidden");
+          setActionVisible(status, false, "ml-4");
+          setActionVisible(submitBtn, true, "ml-4");
+          submitBtn!.disabled = !input!.value.trim();
+        }
+
+        function unlock() {
+          if (container.dataset.reeditEnabled !== "true") return;
+          input!.removeAttribute("readonly");
+        }
+
+        function syncFromEdit() {
+          if (container.dataset.reeditEnabled !== "true") return;
+          unlock();
+          const dirty = input!.value.trim() !== baseline.trim();
+          if (dirty && input!.value.trim()) {
+            showSend();
+          } else {
+            showCommitted();
+            // Seguir editable mientras reedit está activo, pero con check.
+            input!.removeAttribute("readonly");
+          }
+        }
+
+        input.addEventListener("pointerdown", unlock);
+        input.addEventListener("focus", unlock);
+        input.addEventListener("input", syncFromEdit);
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" && !submitBtn.disabled) {
+            submitBtn.click();
+          }
+        });
+
+        submitBtn.addEventListener("click", () => {
+          const question = input.value.trim();
+          if (!question) return;
+          window.dispatchEvent(new CustomEvent("mock-chat:submit", { detail: { question } }));
+        });
+
+        window.addEventListener("prompt:enable-reedit", () => {
+          container.dataset.reeditEnabled = "true";
+          baseline = input.value;
+          showCommitted();
+          // Listo para tocar y editar; el check se mantiene hasta que cambie el texto.
+        });
+
+        window.addEventListener("prompt:lock-reedit", () => {
+          container.dataset.reeditEnabled = "false";
+          baseline = input.value;
+          showCommitted();
+        });
+
+        window.addEventListener("mock-chat:submit", ((event: CustomEvent<{ question: string }>) => {
+          const question = event.detail?.question ?? input.value;
+          container.dataset.reeditEnabled = "false";
+          input.value = question;
+          baseline = question;
+          showCommitted();
+        }) as EventListener);
+
+        window.addEventListener("portfolio:reset", () => {
+          container.dataset.reeditEnabled = "false";
+          input.value = "";
+          baseline = "";
+          showCommitted();
+        });
+
+        showCommitted();
+      }
+
+      document.querySelectorAll<HTMLElement>("[data-reeditable='true']").forEach(initReeditablePill);
     </script>
   )
 }

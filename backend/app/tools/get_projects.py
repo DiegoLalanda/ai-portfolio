@@ -20,6 +20,8 @@ def get_projects(
     """Devuelve proyectos visibles del portfolio.
 
     Usa `display_group` para filtrar por sección del board (full-stack, ia, otras).
+    Sin filtro (None) → todas las secciones; usalo en preguntas amplias
+    ("proyectos", freelance+universidad+personales, más de un tipo).
     Con `featured_only=True` devuelve solo los destacados.
 
     El frontend arma el board agrupado desde el catálogo; incluí el widget

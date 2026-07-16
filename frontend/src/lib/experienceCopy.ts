@@ -8,8 +8,7 @@ interface ExperienceCopy {
 
 const EXPERIENCE_EN: Record<string, ExperienceCopy> = {
   "exp-finnegans-ai-developer": {
-    summary:
-      "Member of the Artificial Intelligence team: research and development of AI agents and bots for internal use and customer-facing products.",
+    summary: "Research and development of AI agents and bots for internal use and products.",
     highlights: [
       "Research and development of AI agents and bots for internal processes and customer products.",
       "Internal improvements, system integrations, and AI-based features (LLMs, RAG, intelligent agents).",
@@ -19,8 +18,7 @@ const EXPERIENCE_EN: Record<string, ExperienceCopy> = {
   },
   "exp-freelance-fullstack": {
     role: "Full-Stack Web Developer",
-    summary:
-      "End-to-end development of full-stack platforms for different clients: UI/UX design, frontend, backend, database, and deployment.",
+    summary: "End-to-end full-stack platforms: UI/UX, frontend, backend, and deployment.",
     highlights: [
       "End-to-end development of full-stack platforms for different clients.",
       "UI/UX design, frontend, backend, database, and production deployment.",
@@ -29,8 +27,7 @@ const EXPERIENCE_EN: Record<string, ExperienceCopy> = {
   },
   "exp-cge-physics-teacher": {
     role: "Secondary School Physics Teacher",
-    summary:
-      "Secondary-level Physics teaching focused on strategic planning, instructional communication, and research.",
+    summary: "Physics teaching focused on planning, instructional communication, and research.",
     highlights: [
       "Strategic planning: designing annual study plans.",
       "Communication and teaching: breaking down abstract technical topics into clear explanations for different audiences.",

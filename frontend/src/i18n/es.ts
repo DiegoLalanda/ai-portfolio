@@ -98,7 +98,7 @@ export const es: Translations = {
     {
       id: "projects",
       label: "Proyectos",
-      question: "Mostrame tus proyectos: freelance, universidad y personales...",
+      question: "Mostrame todos tus proyectos...",
     },
     {
       id: "teaching",
@@ -176,6 +176,7 @@ export const es: Translations = {
       results: "Resultados",
       highlights: "Puntos clave",
       role: "Rol",
+      team: "Equipo y atribución",
     },
   },
 };

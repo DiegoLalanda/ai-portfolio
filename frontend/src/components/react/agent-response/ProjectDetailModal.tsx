@@ -22,6 +22,7 @@ interface ProjectDetailModalProps {
     results: string;
     highlights: string;
     role: string;
+    team: string;
   };
   onClose: () => void;
 }
@@ -136,11 +137,11 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
                 <button
                   key={index}
                   onClick={() => setActiveMediaIndex(index)}
-                  className={`relative h-16 w-28 shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-300 ${
+                  className={`relative aspect-video h-14 shrink-0 overflow-hidden rounded-lg border-2 bg-transparent transition-all duration-300 ${
                     activeMediaIndex === index ? "border-primary scale-95 shadow-md" : "border-transparent opacity-60 hover:opacity-100"
                   }`}
                 >
-                  <img src={m.url} alt={m.alt} className="h-full w-full object-cover" />
+                  <img src={m.url} alt={m.alt} className="h-full w-full object-contain" />
                 </button>
               ))}
             </div>
@@ -183,6 +184,34 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
                 <li key={highlight} className="flex gap-3 text-body-md text-on-surface-variant">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
                   <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {project.team.length > 0 && (
+          <section className="fade-in-up mb-section-gap-desktop">
+            <h2 className="font-headline-lg text-headline-lg mb-6 text-white">{labels.team}</h2>
+            <ul className="glass-card space-y-3 p-6 md:p-8">
+              {project.team.map((member) => (
+                <li
+                  key={`${member.name}-${member.role}`}
+                  className="flex flex-col gap-0.5 border-b border-white/5 pb-3 last:border-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
+                >
+                  {member.url ? (
+                    <a
+                      href={member.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-label-md text-primary hover:underline"
+                    >
+                      {member.name}
+                    </a>
+                  ) : (
+                    <span className="font-label-md text-on-surface">{member.name}</span>
+                  )}
+                  <span className="text-body-md text-on-surface-variant">{member.role}</span>
                 </li>
               ))}
             </ul>

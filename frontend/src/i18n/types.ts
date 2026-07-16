@@ -63,6 +63,7 @@ export interface Translations {
       results: string;
       highlights: string;
       role: string;
+      team: string;
     };
   };
 }

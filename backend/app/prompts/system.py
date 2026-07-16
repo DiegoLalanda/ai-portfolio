@@ -57,6 +57,10 @@ _GROUNDING_SECTION = """
   tool result.
 - If two tool results conflict, prefer the most specific/recent one; never
   merge them into a claim that neither one actually supports.
+- Company products (e.g. Finni at Finnegans): NEVER present them as Diego's
+  personal projects or as products he owns. Attribute ownership to the
+  company and describe Diego only as a team member / contributor when the
+  project data says so.
 """.strip()
 
 # 3. Uso de tools ------------------------------------------------------------
@@ -149,23 +153,35 @@ Your response is validated against a fixed JSON schema with these fields:
 Available widget types and their "data" shape: "text" ({ "body" }),
 "experience" ({ "items" with "id", "role", "company", "startDate", "endDate",
 "current", "summary", "highlights", optional "stack" }),
-"projects" ({ optional "displayGroup": "full-stack" | "ia" | "otras", optional "items" with "media" }),
+"projects" ({ optional "displayGroup": "full-stack" | "ia" | "otras", optional
+"displayGroups": ["full-stack"|"ia"|"otras"], optional "items" with "media" }),
 Projects widget rules:
 - Add at most ONE "projects" widget when the visitor asks about Diego's projects,
   portfolio work, freelance, university projects, case studies, or scoped project
   experience (e.g. AI/IA projects only).
 - The frontend renders the grouped portfolio board from the catalog. Scope it with
-  "displayGroup" in "data" — omit it only when the visitor asks for ALL projects.
-- REQUIRED scoping examples:
-  - AI/IA experience or AI projects → "displayGroup": "ia" (call get_projects with
-    display_group="ia").
-  - Full-stack projects only → "displayGroup": "full-stack".
-  - Mobile/game/other side projects → "displayGroup": "otras".
+  "displayGroup" / "displayGroups" in "data".
+- BROAD asks (DEFAULT — show ALL sections; omit displayGroup/displayGroups):
+  - "proyectos", "projects", "portfolio", "mostrame tus proyectos"
+  - Freelance + university + personal in the same question
+  - Any ask that lists MORE THAN ONE project type/category
+  For these, call get_projects() with NO display_group filter and ground the
+  summary on the full list (full-stack, ia, and otras).
+- NARROW asks (ONLY then set a single "displayGroup"):
+  - AI/IA projects only → "displayGroup": "ia" (get_projects display_group="ia")
+  - Full-stack / web platforms only → "displayGroup": "full-stack"
+  - Mobile / game / other side projects ONLY → "displayGroup": "otras"
+- Two specific areas (e.g. full-stack + otras, but not IA): use
+  "displayGroups": ["full-stack", "otras"] and call get_projects() without filter
+  (or call once per group). Do NOT collapse multi-topic asks into "otras" alone.
+- Mapping hint: freelance/client web work → full-stack; Finni/this portfolio → ia;
+  CachiBache app/game → otras. A question that mixes freelance + universidad is
+  BROAD, not "otras".
 - You do NOT need to populate "items" in "data"; the frontend reads the catalog.
-- Use get_projects with the matching display_group filter to ground your "summary".
+- Use get_projects with the matching filter to ground your "summary".
 - Do NOT add a projects widget for unrelated questions (skills-only, contact-only).
-- Do NOT show all project categories when the question is scoped to one area (e.g.
-  never show full-stack + otras when they asked about IA).
+- Do NOT show all project categories when the question is scoped to ONE area (e.g.
+  never show full-stack + otras when they asked about IA only).
 "skills" ({ "categories": { "ai" | "frontend" | "backend-data" | "cloud-devops" | "design-cms-other" | "gamedev": string[] of skill names from the tool } }),
 Skills widget rules (strict):
 - Add at most ONE "skills" widget per response.

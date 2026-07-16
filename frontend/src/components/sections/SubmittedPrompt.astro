@@ -15,8 +15,10 @@ const t = getTranslations(locale);
 <div class="relative mx-auto mb-12 w-full max-w-2xl fade-in-up">
   <PromptPill
     mode="readonly"
+    reeditable
     inputId="submitted-question"
     value={question}
+    sendAriaLabel={t.prompts.sendAriaLabel}
     resetAriaLabel={t.dashboard.askAgainAriaLabel}
   />
 </div>

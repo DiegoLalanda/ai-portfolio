@@ -81,7 +81,6 @@ function formatDateRange(item: ExperienceItem, presentLabel: string) {
 function ExperienceDetails({ item }: { item: ExperienceItem }) {
   return (
     <div className="space-y-3">
-      {item.summary && <p className="font-body-md text-on-surface-variant">{item.summary}</p>}
       {item.highlights.length > 0 && (
         <ul className="space-y-1.5">
           {item.highlights.map((highlight, i) => (
@@ -109,7 +108,7 @@ function ExperienceDetails({ item }: { item: ExperienceItem }) {
 }
 
 function hasDetails(item: ExperienceItem) {
-  return Boolean(item.summary || item.highlights.length > 0 || item.stack.length > 0);
+  return Boolean(item.highlights.length > 0 || item.stack.length > 0);
 }
 
 /** data: { items: [{ id, role, company, startDate, endDate, current, summary?, highlights, stack? }] } */
@@ -127,6 +126,7 @@ export function ExperienceWidget({ widget }: { widget: Widget }) {
     id: item.id,
     title: item.role,
     subtitle: item.company,
+    description: item.summary || undefined,
     dateLabel: formatDateRange(item, presentLabel),
     logoUrl: item.logoUrl,
     details: hasDetails(item) ? <ExperienceDetails item={item} /> : undefined,

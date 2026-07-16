@@ -12,22 +12,31 @@ type ProjectTextFields = Pick<
 /** Copy en inglés para el board/modal de proyectos (el JSON fuente está en español). */
 const PROJECT_EN: Record<string, ProjectTextFields> = {
   "proj-finni": {
-    name: "Finni — AI agents platform",
-    summary: "AI agents platform at Finnegans for internal workflows and customer-facing products.",
+    name: "Finni — AI agent orchestrator (Finnegans)",
+    summary:
+      "AI agent orchestrator for internal workflows and customer-facing products.",
     description:
-      "Finni is the AI agents platform Diego builds at Finnegans. It combines LLMs, RAG, bots, and agent orchestration to automate internal processes and bring AI capabilities into the company's products.",
+      "Conversational agent orchestrator with LLMs, RAG, tools, and sub-agents, integrated into the GO ecosystem. I contribute as an AI Developer on the AI team.",
     problem:
-      "Finnegans needed to scale AI adoption with reusable agents, cross-system integrations, and reliable answers grounded in organization data.",
+      "A reusable, multi-model agent platform was needed, contextualized by customer domain and integrated into the ERP.",
     solution:
-      "Design and implementation of agents with Python (FastAPI), AWS services (Bedrock, DynamoDB, S3), RAG, MCP, and observability, integrated with the company's Angular ecosystem.",
+      "Backend with FastAPI + Strands Agents, Amazon Bedrock, Knowledge Bases (RAG), DynamoDB, Redis, SSE streaming, and Angular chat/admin panels.",
     result:
       "An evolving platform that centralizes AI agents for internal use and customer-oriented features.",
     highlights: [
-      "AI agents and bots for internal processes and customer products.",
-      "LLMs, RAG, embeddings, prompt engineering, and MCP.",
-      "Stack: Python, FastAPI, Angular, AWS (Bedrock, DynamoDB, S3), and Grafana observability.",
+      "Agent orchestration (Strands) with tools, sub-agents, RAG, and SSE streaming.",
+      "Stack: Python/FastAPI, Angular, AWS Bedrock, DynamoDB, Redis, S3, MCP, and Langfuse.",
+      "Chat, bot administration, and Knowledge Bases in the GO ecosystem.",
     ],
-    mediaAlts: ["Abstract artificial intelligence visual"],
+    linkLabels: { Finnegans: "Finnegans" },
+    mediaAlts: [
+      "Screenshot of the Finni UI",
+      "Finni screenshot — chat experience",
+      "Finni screenshot — agent flow",
+      "Finni screenshot — assistant response",
+      "Finni screenshot — tools and orchestration",
+      "Finni screenshot — product interface",
+    ],
   },
   "proj-ai-portfolio": {
     name: "AI Portfolio — Conversational assistant",
@@ -46,7 +55,13 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "Dynamic widgets: skills, grouped projects, experience/education timelines.",
       "Stack: Astro, React, TypeScript, Tailwind, FastAPI, Python, and Gemini.",
     ],
-    mediaAlts: ["Abstract neural network"],
+    mediaAlts: [
+      "AI Portfolio screenshot — main screen",
+      "AI Portfolio screenshot — conversational experience",
+      "AI Portfolio screenshot — response widgets",
+      "AI Portfolio screenshot — project detail",
+      "AI Portfolio screenshot — assistant interface",
+    ],
   },
   "proj-en-un-toke": {
     name: "En un Toke",
@@ -63,6 +78,7 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "Meta Pixel and Conversions API for campaign optimization.",
       "WordPress + WooCommerce with a digital marketing focus.",
     ],
+    linkLabels: { "Sitio web": "Website" },
     mediaAlts: ["Mountains and valley at sunrise"],
   },
   "proj-tu-seguro-online": {
@@ -80,6 +96,7 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "Client management and vehicle quoting.",
       "Stack: NestJS, Angular, PostgreSQL, TypeORM, Render, and Neon.",
     ],
+    linkLabels: { Repositorio: "Repository" },
     mediaAlts: ["Car in studio for insurance quoting"],
   },
   "proj-easy-survey": {
@@ -97,6 +114,7 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "Angular frontend and NestJS + TypeORM backend.",
       "Deployed on Render and Neon.",
     ],
+    linkLabels: { Demo: "Demo", Repositorio: "Repository" },
     mediaAlts: ["Modern workspace"],
   },
   "proj-claims-api": {
@@ -113,6 +131,7 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "PostgreSQL with Sequelize ORM.",
       "Swagger documentation for integration.",
     ],
+    linkLabels: { Swagger: "Swagger", Repositorio: "Repository" },
     mediaAlts: ["Earth from space with network lights"],
   },
   "proj-verde-nido": {
@@ -129,47 +148,68 @@ const PROJECT_EN: Record<string, ProjectTextFields> = {
       "Interactive catalog with advanced filters.",
       "Admin CRUD over an external API.",
     ],
+    linkLabels: { Repositorio: "Repository" },
     mediaAlts: ["Resort with pool and palm trees"],
   },
   "proj-cachibache-app": {
     name: "CachiBache — Mobile urban reporting app",
     summary:
-      "Mobile app to report potholes with photos, geolocation, and a real-time admin panel.",
+      "UNER Final Project — mobile app to report potholes with photos, geolocation, and a real-time admin panel.",
     description:
-      "Final project for the University Web Development Technician program (UNER). Mobile app for citizens to report potholes from their phones, with real-time tracking via a production backend.",
+      "Final project for the University Web Development Technician program (UNER). CachiBache lets citizens report potholes from their phones with real-time tracking via a NestJS backend deployed on Railway.",
     problem:
-      "Several native features (Google Auth, push notifications, maps) failed in the standard Expo environment, blocking a real build connected to the production backend.",
+      "Key native features (Google Auth, push notifications, maps) did not work in the standard Expo environment. The full JWT + Refresh Token flow could not be tested on a device-like build.",
     solution:
-      "Configured EAS Build from scratch and set up Google Cloud credentials (OAuth, Cloudinary, Firebase Cloud Messaging) to ship a working APK connected to Railway.",
+      "Configured EAS Build from scratch and set up Google Cloud credentials for OAuth, maps, Cloudinary, and Firebase Cloud Messaging. Implemented JWT + Refresh Tokens in AuthContext and a modular NestJS architecture with SOLID principles.",
     result:
-      "Complete mobile app with auth, roles, photo/voice reports, admin panel, push notifications, and PDF generation — delivered as the university final project.",
+      "A real, working APK connected to the production backend, with a solid user flow, secure auth, and scalable architecture.",
     highlights: [
-      "Email verification signup/login and Google login.",
-      "Role management (user/admin) with admin panel and filters.",
-      "Pothole reports with photos, location, and voice dictation.",
-      "Push notifications and PDF report generation.",
-      "JWT + Refresh Token authentication.",
+      "Signup, login, and password recovery with email verification and Google login.",
+      "Role management (user/admin) with admin panel, filters, and status updates.",
+      "Reports with photos, geolocation, interactive map, and voice dictation.",
+      "Push notifications, PDF generation, and real-time mobile/backend sync.",
+      "Stack: React Native + Expo, NestJS, TypeORM, PostgreSQL, JWT, Cloudinary, and Railway.",
     ],
     linkLabels: { Repositorio: "Repository" },
-    mediaAlts: ["Urban view at sunset"],
+    mediaAlts: [
+      "CachiBache — app main screen",
+      "CachiBache — urban reports map",
+      "CachiBache — pothole report with photo",
+      "CachiBache — authentication flow",
+      "CachiBache — report detail",
+      "CachiBache — admin panel",
+      "CachiBache — status management",
+      "CachiBache — user profile",
+      "CachiBache — push notifications",
+      "CachiBache — mobile interface",
+    ],
   },
   "proj-cachibache-game": {
     name: "CachiBache — Arcade game (GDevelop)",
-    summary: "2D cartoon-style arcade game playable in the browser via Itch.io.",
+    summary: "2D cartoon-style web arcade game playable in the browser via Itch.io.",
     description:
-      "2D arcade game built with GDevelop. You follow Juan Carlos, an office worker navigating potholes, cars, cows, and urban chaos to reach the hospital in time for his child's birth.",
+      "Integrative project for Web Multimedia and Game Development (UNER). You follow Juan Carlos, an office worker navigating potholes, cars, cows, and urban chaos to reach the hospital in time for his child's birth.",
     problem:
-      "Create a fun, accessible arcade experience that complements the CachiBache identity with a Latin American narrative.",
+      "Create a fun, accessible arcade experience that complements the CachiBache identity with a Latin American narrative, playable in the browser without installation.",
     solution:
-      "Simple mechanics with procedural obstacles, progressive difficulty, and web publishing on Itch.io for maximum accessibility.",
-    result: "Browser-playable game with points, limited lives, and 2D cartoon art.",
+      "Built with GDevelop: simple mechanics, procedural obstacles, progressive difficulty, points and coins, and web publishing on Itch.io.",
+    result:
+      "Browser-playable game with intuitive controls, limited lives, 2D cartoon art, and reflex-based arcade action.",
     highlights: [
       "Procedurally generated obstacles with progressive difficulty.",
-      "Simple controls with points and coin systems.",
-      "2D cartoon art, playable in the browser via Itch.io.",
+      "Simple controls, points system, and coin collection.",
+      "2D cartoon art, playable directly in the browser via Itch.io.",
+      "Team project — Web Multimedia and Game Development course (UNER).",
     ],
     linkLabels: { "Jugar en Itch.io": "Play on Itch.io" },
-    mediaAlts: ["Night cityscape with lights"],
+    mediaAlts: [
+      "CachiBache Game — game cover",
+      "CachiBache Game — arcade gameplay",
+      "CachiBache Game — urban obstacles",
+      "CachiBache Game — Juan Carlos character",
+      "CachiBache Game — street action",
+      "CachiBache Game — game screen",
+    ],
   },
 };
 

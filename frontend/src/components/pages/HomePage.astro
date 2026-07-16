@@ -39,13 +39,16 @@ const t = getTranslations(locale);
     >
       <div id="phase-landing" class="flex w-full max-w-container-max flex-col items-center text-center">
         <HeroIntro locale={locale} compact />
-        <AiPromptCapsules locale={locale} />
       </div>
 
       <div id="phase-processing" class="hidden flex w-full max-w-container-max flex-col items-center text-center">
         <HeroIntro locale={locale} receded />
         <SubmittedPrompt locale={locale} question="" />
         <LoadingPanel loading={t.loading} />
+      </div>
+
+      <div id="prompt-dock" class="relative z-20 w-full max-w-container-max">
+        <AiPromptCapsules locale={locale} />
       </div>
     </main>
 
@@ -88,6 +91,30 @@ const t = getTranslations(locale);
   const landingPhase = document.getElementById("phase-landing");
   const processingPhase = document.getElementById("phase-processing");
   const dashboardPhase = document.getElementById("phase-dashboard");
+  const promptDock = document.getElementById("prompt-dock");
+  const capsulesRoot = document.getElementById("suggestion-capsules-root");
+
+  type PromptDockMode = "landing" | "processing" | "dashboard";
+
+  function setPromptDockMode(mode: PromptDockMode) {
+    if (!promptDock || !capsulesRoot) return;
+
+    promptDock.classList.remove("hidden");
+    capsulesRoot.classList.remove("is-compact");
+
+    const input = document.getElementById("ai-input") as HTMLInputElement | null;
+
+    if (mode === "processing" || mode === "dashboard") {
+      // Un solo input visible: el de SubmittedPrompt (con check / re-edición).
+      promptDock.classList.add("hidden");
+      return;
+    }
+
+    if (input) {
+      input.disabled = false;
+      input.removeAttribute("readonly");
+    }
+  }
 
   function syncLandingViewportLock() {
     const dashboardVisible =
@@ -100,6 +127,7 @@ const t = getTranslations(locale);
   }
 
   syncLandingViewportLock();
+  setPromptDockMode("landing");
 
   const aiInput = document.getElementById("ai-input");
   if (aiInput) {
@@ -110,7 +138,9 @@ const t = getTranslations(locale);
     });
     aiInput.addEventListener("blur", () => {
       document.body.classList.remove("portfolio-keyboard-open");
-      window.scrollTo(0, 0);
+      if (document.body.classList.contains("portfolio-landing-lock")) {
+        window.scrollTo(0, 0);
+      }
     });
   }
 
@@ -148,54 +178,55 @@ const t = getTranslations(locale);
     window.dispatchEvent(new CustomEvent("portfolio:reset"));
     window.scrollTo({ top: 0, behavior: "smooth" });
     syncLandingViewportLock();
+    setPromptDockMode("landing");
   }
 
   window.addEventListener("portfolio:ask-again", resetPortfolio);
 
-  function revealDashboard() {
-    if (!dashboardPhase || !pageRoot || !main || agentResponse === null) return;
+  function prepareRestartFromDashboard() {
+    agentResponse = null;
+    delete responseBridge.__portfolioPendingAgentResponse;
 
-    // Main deja de absorber altura; el footer sigue abajo vía mt-auto + min-h-dvh.
-    main.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center", "justify-start");
-    main.classList.add("shrink-0");
+    dashboardPhase?.classList.add("hidden", "opacity-0", "translate-y-10");
+    dashboardPhase?.classList.remove("is-revealed");
+    processingPhase?.classList.add("hidden");
+    landingPhase?.classList.remove("hidden", "phase-exiting");
 
-    dashboardPhase.classList.remove("hidden");
-    dashboardPhase.classList.add("is-revealed");
-    requestAnimationFrame(() => {
-      dashboardPhase.classList.remove("opacity-0", "translate-y-10");
-      dashboardPhase.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    document.body.classList.remove("portfolio-landing-lock", "portfolio-keyboard-open");
+    main?.classList.add("flex-1", "min-h-0", "overflow-y-auto", "justify-center");
+    main?.classList.remove("shrink-0", "justify-start");
+
+    pageRoot?.classList.remove("is-thinking");
+    clearAbsorbHiddenElements();
+
+    window.dispatchEvent(new CustomEvent("portfolio:reset"));
+    syncLandingViewportLock();
+    setPromptDockMode("landing");
   }
 
-  window.addEventListener("mock-chat:submit", (event) => {
-    if (!landingPhase || !processingPhase) return;
-
-    // Si el dashboard ya está visible, los follow-ups los maneja AgentResponseIsland.
-    if (dashboardPhase && !dashboardPhase.classList.contains("hidden")) return;
-
-    const question = (event as CustomEvent<{ question: string }>).detail?.question ?? "";
+  function beginQueryFlow(question: string) {
     const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
     if (submittedQuestion) submittedQuestion.value = question;
 
     agentResponse = null;
     pageRoot?.classList.add("is-thinking");
+    setPromptDockMode("processing");
+    window.dispatchEvent(new CustomEvent("prompt:lock-reedit"));
+    document.getElementById("loading-panel")?.classList.remove("hidden");
 
     const tagline = document.getElementById("hero-tagline");
     if (tagline instanceof HTMLElement) {
       void absorbIntoBlackHole([tagline], { delay: 40, stagger: 0 });
     }
 
-    landingPhase.classList.add("phase-exiting");
+    landingPhase?.classList.add("phase-exiting");
     window.setTimeout(() => {
-      landingPhase.classList.add("hidden");
-      landingPhase.classList.remove("phase-exiting");
-      processingPhase.classList.remove("hidden");
-      processingPhase.classList.add("phase-entering");
-      requestAnimationFrame(() => processingPhase.classList.remove("phase-entering"));
+      landingPhase?.classList.add("hidden");
+      landingPhase?.classList.remove("phase-exiting");
+      processingPhase?.classList.remove("hidden");
+      processingPhase?.classList.add("phase-entering");
+      requestAnimationFrame(() => processingPhase?.classList.remove("phase-entering"));
     }, BLACK_HOLE_LANDING_EXIT_MS);
 
-    // Mantener main como flex-1 para empujar el footer al fondo del viewport.
     main?.classList.add("flex-1", "min-h-0");
     main?.classList.remove("shrink-0", "justify-center");
     main?.classList.add("justify-start");
@@ -214,9 +245,9 @@ const t = getTranslations(locale);
       })
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
-        
+
         const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
-        const title = isRateLimit 
+        const title = isRateLimit
           ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
           : (pageRoot?.dataset.errorTitle ?? "Connection issue");
         const summary = isRateLimit
@@ -227,16 +258,18 @@ const t = getTranslations(locale);
           language: pageRoot?.dataset.locale === "en" ? "en" : "es",
           title,
           summary,
-          widgets: isRateLimit ? [
-            {
-              id: "rate-limit-cv-download",
-              type: "text" as any,
-              title: null,
-              data: {
-                text: "",
-              }
-            }
-          ] : [],
+          widgets: isRateLimit
+            ? [
+                {
+                  id: "rate-limit-cv-download",
+                  type: "text" as any,
+                  title: null,
+                  data: {
+                    text: "",
+                  },
+                },
+              ]
+            : [],
           suggested_actions: [],
         };
         agentResponse = fallback;
@@ -248,5 +281,39 @@ const t = getTranslations(locale);
         pageRoot?.classList.remove("is-thinking");
         revealDashboard();
       });
+  }
+
+  function revealDashboard() {
+    if (!dashboardPhase || !pageRoot || !main || agentResponse === null) return;
+
+    // Main deja de absorber altura; el footer sigue abajo vía mt-auto + min-h-dvh.
+    main.classList.remove("flex-1", "min-h-0", "overflow-y-auto", "justify-center", "justify-start");
+    main.classList.add("shrink-0");
+
+    dashboardPhase.classList.remove("hidden");
+    dashboardPhase.classList.add("is-revealed");
+    requestAnimationFrame(() => {
+      dashboardPhase.classList.remove("opacity-0", "translate-y-10");
+      dashboardPhase.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.body.classList.remove("portfolio-landing-lock", "portfolio-keyboard-open");
+    setPromptDockMode("dashboard");
+    window.dispatchEvent(new CustomEvent("prompt:enable-reedit"));
+  }
+
+  window.addEventListener("mock-chat:submit", (event) => {
+    if (!landingPhase || !processingPhase) return;
+
+    const question = (event as CustomEvent<{ question: string }>).detail?.question ?? "";
+    if (!question.trim()) return;
+
+    const dashboardVisible =
+      dashboardPhase !== null && !dashboardPhase.classList.contains("hidden");
+
+    if (dashboardVisible) {
+      prepareRestartFromDashboard();
+    }
+
+    beginQueryFlow(question);
   });
 </script>
