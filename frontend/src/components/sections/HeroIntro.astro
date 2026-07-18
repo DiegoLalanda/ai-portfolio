@@ -11,7 +11,7 @@ interface Props {
 
 const { receded = false, compact = false, locale } = Astro.props;
 const t = getTranslations(locale);
-const [roleOne, roleTwo, roleThree] = t.hero.roles;
+const roles = t.hero.roles;
 ---
 
 {
@@ -27,11 +27,14 @@ const [roleOne, roleTwo, roleThree] = t.hero.roles;
         class="font-display-xl text-display-xl mb-3 gradient-text-primary fade-in-up delay-200"
       />
       <p class="font-headline-md text-headline-md max-w-2xl text-on-surface-variant fade-in-up delay-300">
-        <span class="hero-role">{roleOne}</span>
-        <span class="mx-2 text-outline-variant">•</span>
-        <span class="hero-role">{roleTwo}</span>
-        <span class="mx-2 text-outline-variant">•</span>
-        <span class="hero-role">{roleThree}</span>
+        {
+          roles.map((role, index) => (
+            <>
+              {index > 0 && <span class="mx-2 text-outline-variant">|</span>}
+              <span class="hero-role">{role}</span>
+            </>
+          ))
+        }
       </p>
     </div>
   ) : (
@@ -54,11 +57,14 @@ const [roleOne, roleTwo, roleThree] = t.hero.roles;
           compact ? "mb-3 text-lg leading-snug md:text-headline-md" : "mb-8 font-headline-md text-headline-md",
         ]}
       >
-        <span class="hero-role">{roleOne}</span>
-        <span class="mx-2 text-outline-variant">•</span>
-        <span class="hero-role">{roleTwo}</span>
-        <span class="mx-2 text-outline-variant">•</span>
-        <span class="hero-role">{roleThree}</span>
+        {
+          roles.map((role, index) => (
+            <>
+              {index > 0 && <span class="mx-2 text-outline-variant">|</span>}
+              <span class="hero-role">{role}</span>
+            </>
+          ))
+        }
       </p>
       <p
         id="hero-tagline"

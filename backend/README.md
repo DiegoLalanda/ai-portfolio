@@ -14,7 +14,7 @@ backend/
 │   ├── data/                      # Contenido del portfolio en JSON local
 │   ├── api/
 │   │   └── v1/
-│   │       ├── endpoints/           # Routers por recurso (aún vacío)
+│   │       ├── endpoints/           # Routers por recurso (chat.py: /chat y /chat/stream)
 │   │       └── router.py            # Router agregador de la v1
 │   ├── core/
 │   │   └── config.py                 # Configuración y variables de entorno (Settings)
@@ -81,7 +81,23 @@ La API queda disponible en `http://127.0.0.1:8000`:
 - `GET /health` → chequeo de estado
 - `GET /docs` → documentación interactiva (Swagger UI)
 
-## Estado del proyecto
+## Endpoints
 
-Esta carpeta contiene únicamente la arquitectura inicial. Todavía no hay
-endpoints, modelos ni lógica de negocio implementados.
+Bajo el prefijo `/api/v1` (ver `app/api/v1/endpoints/chat.py`):
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/v1/chat` | Respuesta estructurada completa (`AgentResponse`) |
+| `POST` | `/api/v1/chat/stream` | Respuesta por **SSE** con eventos de progreso (tool calls incluidos) |
+
+Ambos aplican rate limiting (10 req/min por IP, `app/core/rate_limiter.py`).
+
+## Agente
+
+El asistente usa **Google Gemini** (`gemini-3.1-flash-lite`) con *function calling*
+manual sobre 9 tools (`app/tools/get_*.py`), cada una leyendo un JSON de
+`app/data/`. La respuesta se valida contra el schema `AgentResponse`
+(`app/schemas/agent_response.py`).
+
+El flujo completo (loop de tools, eventos SSE, contrato de widgets) está
+documentado en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).

@@ -261,8 +261,7 @@
       "skill-angular",
       "skill-postgresql",
       "skill-typeorm",
-      "skill-render",
-      "skill-neon"
+      "skill-render"
     ],
     "team": [],
     "links": [
@@ -333,8 +332,7 @@
       "skill-angular",
       "skill-postgresql",
       "skill-figma",
-      "skill-render",
-      "skill-neon"
+      "skill-render"
     ],
     "team": [],
     "links": [
@@ -628,7 +626,6 @@
       "skill-typeorm",
       "skill-postgresql",
       "skill-typescript",
-      "skill-eas-build",
       "skill-railway"
     ],
     "team": [
@@ -661,16 +658,56 @@
       }
     ],
     "media": [
-      { "type": "image", "url": "/images/projects/cachibache-app/app-1.jpg", "alt": "CachiBache — pantalla principal de la app" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-2.jpg", "alt": "CachiBache — mapa de reportes urbanos" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-3.jpg", "alt": "CachiBache — reporte de bache con foto" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-4.jpg", "alt": "CachiBache — flujo de autenticación" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-5.jpg", "alt": "CachiBache — detalle de reporte" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-6.jpg", "alt": "CachiBache — panel administrador" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-7.jpg", "alt": "CachiBache — gestión de estados" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-8.jpg", "alt": "CachiBache — perfil de usuario" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-9.jpg", "alt": "CachiBache — notificaciones push" },
-      { "type": "image", "url": "/images/projects/cachibache-app/app-10.jpg", "alt": "CachiBache — interfaz móvil" }
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-1.jpg",
+        "alt": "CachiBache — pantalla principal de la app"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-2.jpg",
+        "alt": "CachiBache — mapa de reportes urbanos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-3.jpg",
+        "alt": "CachiBache — reporte de bache con foto"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-4.jpg",
+        "alt": "CachiBache — flujo de autenticación"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-5.jpg",
+        "alt": "CachiBache — detalle de reporte"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-6.jpg",
+        "alt": "CachiBache — panel administrador"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-7.jpg",
+        "alt": "CachiBache — gestión de estados"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-8.jpg",
+        "alt": "CachiBache — perfil de usuario"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-9.jpg",
+        "alt": "CachiBache — notificaciones push"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-app/app-10.jpg",
+        "alt": "CachiBache — interfaz móvil"
+      }
     ],
     "startDate": "2025-01",
     "endDate": "2025-11",
@@ -737,12 +774,36 @@
       }
     ],
     "media": [
-      { "type": "image", "url": "/images/projects/cachibache-game/0.jpg", "alt": "CachiBache Game — portada del juego" },
-      { "type": "image", "url": "/images/projects/cachibache-game/1.png", "alt": "CachiBache Game — gameplay arcade" },
-      { "type": "image", "url": "/images/projects/cachibache-game/2.png", "alt": "CachiBache Game — obstáculos urbanos" },
-      { "type": "image", "url": "/images/projects/cachibache-game/3.png", "alt": "CachiBache Game — personaje Juan Carlos" },
-      { "type": "image", "url": "/images/projects/cachibache-game/4.png", "alt": "CachiBache Game — acción en calle" },
-      { "type": "image", "url": "/images/projects/cachibache-game/5.png", "alt": "CachiBache Game — pantalla de juego" }
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/0.jpg",
+        "alt": "CachiBache Game — portada del juego"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/1.png",
+        "alt": "CachiBache Game — gameplay arcade"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/2.png",
+        "alt": "CachiBache Game — obstáculos urbanos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/3.png",
+        "alt": "CachiBache Game — personaje Juan Carlos"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/4.png",
+        "alt": "CachiBache Game — acción en calle"
+      },
+      {
+        "type": "image",
+        "url": "/images/projects/cachibache-game/5.png",
+        "alt": "CachiBache Game — pantalla de juego"
+      }
     ],
     "startDate": "2025-03",
     "endDate": "2025-11",

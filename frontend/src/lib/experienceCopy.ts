@@ -14,6 +14,7 @@ const EXPERIENCE_EN: Record<string, ExperienceCopy> = {
       "Internal improvements, system integrations, and AI-based features (LLMs, RAG, intelligent agents).",
       "Work with Angular, Python (FastAPI), and cloud services (AWS), with a focus on scalable, data-oriented systems.",
       "Prompt engineering, tokenization, embeddings, and model context protocols (MCP) applied to intelligent agents.",
+      "Internal Python and AI tutor: one-on-one mentoring for developers from other teams and tutor in bootcamps on AI, agents, and architecture.",
     ],
   },
   "exp-freelance-fullstack": {

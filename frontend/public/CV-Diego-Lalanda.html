@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Diego Lalanda — CV</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm 10mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    font-size: 9.4pt;
+    line-height: 1.38;
+    background: #fff;
+  }
+
+  a {
+    color: #0f766e;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  a:hover { text-decoration: underline; }
+
+  .page {
+    max-width: 960px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #134e4a 100%);
+    color: #f1f5f9;
+    padding: 20px 28px 18px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .photo-wrap {
+    flex-shrink: 0;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(45, 212, 191, 0.55);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.35);
+    background: #334155;
+  }
+
+  .photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 18%;
+    transform: scale(1.15);
+    transform-origin: center 20%;
+    display: block;
+  }
+
+  .header-text { flex: 1; min-width: 0; }
+
+  header h1 {
+    margin: 0 0 3px;
+    font-size: 20pt;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  header .title {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #5eead4;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+
+  header .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 8.5pt;
+    color: #cbd5e1;
+  }
+
+  header .contact-row a {
+    color: #e2e8f0;
+    font-weight: 500;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 62% 38%;
+  }
+
+  .main-col {
+    padding: 18px 22px 22px;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .side-col {
+    padding: 18px 18px 22px;
+    background: #fff;
+  }
+
+  section { margin-bottom: 14px; }
+  section:last-child { margin-bottom: 0; }
+
+  h2.section-title {
+    font-size: 9.8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0f766e;
+    margin: 0 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #99f6e4;
+  }
+
+  .side-col h2.section-title {
+    color: #115e59;
+    border-bottom-color: #5eead4;
+  }
+
+  .perfil-text {
+    margin: 0 0 6px;
+    text-align: justify;
+    color: #334155;
+    font-size: 9pt;
+    line-height: 1.42;
+  }
+  .perfil-text:last-child { margin-bottom: 0; }
+
+  .entry {
+    margin-bottom: 11px;
+    page-break-inside: avoid;
+  }
+  .entry:last-child { margin-bottom: 0; }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .entry-head .role {
+    font-weight: 700;
+    font-size: 9.8pt;
+    color: #0f172a;
+  }
+
+  .entry-head .org {
+    font-weight: 600;
+    color: #0f766e;
+  }
+
+  .entry-head .dates {
+    font-size: 8.3pt;
+    color: #64748b;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  ul.bullets {
+    margin: 4px 0 0;
+    padding-left: 16px;
+  }
+  ul.bullets li { margin-bottom: 2px; }
+
+  .stack-line {
+    margin-top: 3px;
+    font-size: 8.2pt;
+    color: #475569;
+  }
+  .stack-line strong { color: #334155; }
+
+  .project {
+    margin-bottom: 8px;
+    padding: 7px 9px;
+    background: #f0fdfa;
+    border-left: 3px solid #2dd4bf;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+  .project:last-child { margin-bottom: 0; }
+
+  .project-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .project-head .name {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 9.3pt;
+  }
+  .project-head .year {
+    font-size: 8.2pt;
+    color: #64748b;
+    font-weight: 600;
+  }
+  .project p { margin: 3px 0 0; font-size: 8.8pt; }
+  .project .links {
+    font-size: 8.2pt;
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+
+  .edu-entry { margin-bottom: 10px; page-break-inside: avoid; }
+  .edu-entry:last-child { margin-bottom: 0; }
+  .edu-entry .school { font-weight: 700; font-size: 9.3pt; color: #0f172a; }
+  .edu-entry .degree { color: #334155; }
+  .edu-entry .meta { font-size: 8.2pt; color: #64748b; }
+
+  .status-pill {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-top: 2px;
+    background: #d7f5df;
+    color: #196b3a;
+  }
+
+  .skill-group { margin-bottom: 8px; }
+  .skill-group:last-child { margin-bottom: 0; }
+  .skill-group .label {
+    font-weight: 700;
+    font-size: 8.4pt;
+    color: #115e59;
+    margin-bottom: 3px;
+    display: block;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip {
+    background: #e2e8f0;
+    color: #1e293b;
+    font-size: 7.6pt;
+    padding: 1px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .chip.ai {
+    background: #ccfbf1;
+    color: #115e59;
+  }
+
+  ul.plain-list { margin: 0; padding-left: 15px; }
+  ul.plain-list li { margin-bottom: 2px; font-size: 8.8pt; }
+
+  .lang-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.8pt;
+    margin-bottom: 3px;
+  }
+  .lang-row .pct { color: #64748b; font-weight: 600; }
+
+  .course {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 8.4pt;
+    margin-bottom: 4px;
+    page-break-inside: avoid;
+  }
+  .course .yr { color: #64748b; white-space: nowrap; }
+  .course a { font-weight: 600; }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="header-inner">
+      <div class="photo-wrap">
+        <img src="images/diego-lalanda-cv.png" alt="Diego Lalanda" />
+      </div>
+      <div class="header-text">
+        <h1>Diego Javier Lalanda</h1>
+        <div class="title">Desarrollador de Software &amp; IA &nbsp;|&nbsp; Profesor</div>
+        <div class="contact-row">
+          <span>Concordia, Entre Ríos, Argentina</span>
+          <a href="mailto:lala.dev.tech@gmail.com">lala.dev.tech@gmail.com</a>
+          <a href="tel:+5493456023111">+54 9 3456 023111</a>
+          <a href="https://diegolalanda.pages.dev/" target="_blank" rel="noopener">diegolalanda.pages.dev</a>
+          <a href="https://www.linkedin.com/in/diego-lalanda-9576b21b8/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/DiegoLalanda" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="body-grid">
+    <div class="main-col">
+
+      <section>
+        <h2 class="section-title">Perfil profesional</h2>
+        <p class="perfil-text">
+          Técnico Universitario en Desarrollo Web y AI Developer. Desarrollo agentes de IA, bots y soluciones full stack con
+          Python (FastAPI), Angular y servicios AWS. Experiencia previa freelance en plataformas web end-to-end y formación
+          docente que aporta comunicación clara y trabajo en equipo.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="section-title">Experiencia profesional</h2>
+
+        <div class="entry">
+          <div class="entry-head">
+            <div>
+              <span class="role">AI Developer</span>
+              · <span class="org"><a href="https://finneg.com/ar/" target="_blank" rel="noopener">Finnegans</a></span>
+            </div>
+            <div class="dates">Jul 2025 — Actualidad</div>
+          </div>
+          <ul class="bullets">
+            <li>Investigación y desarrollo de agentes de IA y bots para procesos internos y productos orientados a clientes.</li>
+            <li>Implementación de mejoras, integraciones y funcionalidades con LLMs, RAG y agentes inteligentes.</li>
+            <li>Trabajo con Python (FastAPI), Angular, TypeScript y servicios AWS (Bedrock, DynamoDB, S3, Lambda, etc.).</li>
+            <li>Prompt engineering, embeddings, tokenización y protocolos MCP aplicados a agentes.</li>
+            <li>Tutor interno de Python e IA: tutorías personalizadas a otros equipos y tutor en bootcamps de IA, agentes y arquitectura.</li>
+          </ul>
+          <div class="stack-line"><strong>Stack:</strong> Python, FastAPI, Angular, AWS Bedrock, DynamoDB, Redis, Strands, MCP, Langfuse, SonarQube</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-head">
+            <div>
+              <span class="role">Desarrollador Web Full-Stack</span>
+              · <span class="org">Freelance</span>
+            </div>
+            <div class="dates">Ene 2025 — Dic 2025</div>
+          </div>
+          <ul class="bullets">
+            <li>Desarrollo end-to-end de plataformas full-stack para distintos clientes.</li>
+            <li>Diseño UI/UX, frontend, backend, base de datos y despliegue en producción.</li>
+            <li>Integración de APIs externas (aseguradoras, pagos, envíos) y herramientas de marketing digital.</li>
+          </ul>
+          <div class="stack-line"><strong>Stack:</strong> NestJS, Angular, React, TypeScript, PostgreSQL, TypeORM, Figma, Render, WordPress</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-head">
+            <div>
+              <span class="role">Profesor de Física de Nivel Secundario</span>
+              · <span class="org">Consejo General de Educación</span>
+            </div>
+            <div class="dates">Mar 2023 — Dic 2025</div>
+          </div>
+          <ul class="bullets">
+            <li>Planificación estratégica y diseño de planes de estudio anuales.</li>
+            <li>Comunicación didáctica: desglose de temas abstractos en explicaciones claras.</li>
+            <li>Liderazgo y gestión de grupos en ambientes colaborativos orientados a metas.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Proyectos destacados</h2>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">Finni — Orquestador de agentes IA (Finnegans)</span>
+            <span class="year">2025</span>
+          </div>
+          <p>Orquestador de agentes conversacionales con LLMs, RAG, tools y sub-agentes en el ecosistema Finnegans GO. Participación como AI Developer del equipo de IA.</p>
+          <div class="links">
+            <a href="https://finneg.com/ar/" target="_blank" rel="noopener">Finnegans →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">Portfolio IA — Asistente conversacional</span>
+            <span class="year">2025–2026</span>
+          </div>
+          <p>Portfolio interactivo con asistente Gemini, function calling, streaming SSE y widgets dinámicos (Astro + React + FastAPI).</p>
+          <div class="links">
+            <a href="https://diegolalanda.pages.dev/" target="_blank" rel="noopener">Sitio live →</a>
+            <a href="https://github.com/DiegoLalanda" target="_blank" rel="noopener">GitHub →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">CachiBache — App móvil de reportes urbanos</span>
+            <span class="year">2025</span>
+          </div>
+          <p>Proyecto Final UNER. App React Native + Expo + NestJS para reportar baches con fotos, geolocalización, push y panel admin. APK con EAS Build.</p>
+          <div class="links">
+            <a href="https://github.com/Manuelgarcia1/CachiBache" target="_blank" rel="noopener">Repositorio →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">CachiBache — Videojuego arcade (GDevelop)</span>
+            <span class="year">2025</span>
+          </div>
+          <p>Juego web 2D arcade jugable en navegador (Itch.io). Obstáculos procedurales, puntos, monedas y narrativa latinoamericana.</p>
+          <div class="links">
+            <a href="https://manuelgarcia1.itch.io/cachibache-game" target="_blank" rel="noopener">Jugar en Itch.io →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">Easy Survey — Encuestas anónimas</span>
+            <span class="year">2025</span>
+          </div>
+          <p>Plataforma NestJS + Angular + PostgreSQL con UI/UX en Figma, desplegada en Render.</p>
+          <div class="links">
+            <a href="https://encuestas-anonimas-frontend.onrender.com/" target="_blank" rel="noopener">Demo →</a>
+            <a href="https://github.com/DiegoLalanda/encuestas-anonimas" target="_blank" rel="noopener">Repositorio →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">Tu Seguro Online</span>
+            <span class="year">2025</span>
+          </div>
+          <p>Gestión de clientes y cotización de vehículos con APIs de aseguradoras. NestJS + Angular + PostgreSQL.</p>
+          <div class="links">
+            <a href="https://github.com/DiegoLalanda/cotiza-seguro-facil" target="_blank" rel="noopener">Repositorio →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">En un Toke</span>
+            <span class="year">2024</span>
+          </div>
+          <p>E-commerce WordPress/WooCommerce con Mercado Pago, Correo Argentino y Meta Pixel / Conversions API.</p>
+          <div class="links">
+            <a href="https://enuntoke.com/" target="_blank" rel="noopener">Sitio web →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">API de Gestión de Reclamos</span>
+            <span class="year">2024</span>
+          </div>
+          <p>API REST Node.js + Express + PostgreSQL/Sequelize con JWT y documentación Swagger (UNER).</p>
+          <div class="links">
+            <a href="https://api-reclamos-prog3.onrender.com/api/v1/api-docs/" target="_blank" rel="noopener">Swagger →</a>
+            <a href="https://github.com/DiegoLalanda/api_reclamos_prog3" target="_blank" rel="noopener">Repositorio →</a>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="project-head">
+            <span class="name">Verde Nido</span>
+            <span class="year">2024</span>
+          </div>
+          <p>Plataforma de alojamientos en React con catálogo, filtros avanzados, CRUD admin y diseño Figma.</p>
+          <div class="links">
+            <a href="https://github.com/DiegoLalanda/verdeNido--React" target="_blank" rel="noopener">Repositorio →</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="side-col">
+
+      <section>
+        <h2 class="section-title">Educación</h2>
+
+        <div class="edu-entry">
+          <div class="school">Universidad Nacional de Entre Ríos</div>
+          <div class="degree">Tecnicatura Universitaria en Desarrollo Web</div>
+          <div class="meta">Mar 2023 — Nov 2025 · Promedio 9.21</div>
+          <div><span class="status-pill">Título obtenido</span></div>
+          <div class="meta" style="margin-top:3px">
+            <a href="https://drive.google.com/file/d/17cyaPDr4Txz4DVQGDGYPO4gVckZo0jmc/view?usp=sharing" target="_blank" rel="noopener">Ver título →</a>
+          </div>
+        </div>
+
+        <div class="edu-entry">
+          <div class="school">ISDICA</div>
+          <div class="degree">Profesorado de Educación Secundaria en Física</div>
+          <div class="meta">Mar 2019 — Dic 2022 · Promedio 9.46</div>
+          <div><span class="status-pill">Título obtenido</span></div>
+          <div class="meta" style="margin-top:3px">
+            <a href="https://drive.google.com/file/d/1RDLc9KPkjcApTKCm3afeMq-_QQKq64x3/view?usp=drive_link" target="_blank" rel="noopener">Ver título →</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Skills</h2>
+
+        <div class="skill-group">
+          <span class="label">IA</span>
+          <div class="chips">
+            <span class="chip ai">Python</span>
+            <span class="chip ai">FastAPI</span>
+            <span class="chip ai">LLMs</span>
+            <span class="chip ai">RAG</span>
+            <span class="chip ai">Agentes</span>
+            <span class="chip ai">Bedrock</span>
+            <span class="chip ai">MCP</span>
+            <span class="chip ai">Strands</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <span class="label">Frontend</span>
+          <div class="chips">
+            <span class="chip">React</span>
+            <span class="chip">Angular</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">React Native</span>
+            <span class="chip">Tailwind</span>
+            <span class="chip">Astro</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <span class="label">Backend &amp; datos</span>
+          <div class="chips">
+            <span class="chip">NestJS</span>
+            <span class="chip">Node.js</span>
+            <span class="chip">Express</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">TypeORM</span>
+            <span class="chip">DynamoDB</span>
+            <span class="chip">Redis</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <span class="label">Cloud &amp; DevOps</span>
+          <div class="chips">
+            <span class="chip">AWS</span>
+            <span class="chip">Docker</span>
+            <span class="chip">Railway</span>
+            <span class="chip">Render</span>
+            <span class="chip">SonarQube</span>
+            <span class="chip">NGINX</span>
+            <span class="chip">Git</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <span class="label">Diseño &amp; CMS</span>
+          <div class="chips">
+            <span class="chip">Figma</span>
+            <span class="chip">WordPress</span>
+            <span class="chip">WooCommerce</span>
+            <span class="chip">GDevelop</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Certificaciones</h2>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1ShWjjC3qQOC-aHXecntMEzy-Mfvb3rOj/view?usp=drive_link" target="_blank" rel="noopener">Diplomatura en Robótica Educativa — UTN</a>
+          <span class="yr">2024</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1Vj7WmZzhyjgynq_wZtjokprMOdhiCnZF/view?usp=drive_link" target="_blank" rel="noopener">Profesional de Docker</a>
+          <span class="yr">2024</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1hSBmkMunr0IeiA6heWAPnvztIdI75B_H/view?usp=drive_link" target="_blank" rel="noopener">Análisis de datos con Python</a>
+          <span class="yr">2024</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1VStlfH-DKmZS2VooP805SpxQA5EGROtu/view?usp=drive_link" target="_blank" rel="noopener">Consultor y Desarrollador Odoo</a>
+          <span class="yr">2024</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/18Y5k5eR9utRnh1SbkzM-PRMC6Cs9AeCj/view?usp=drive_link" target="_blank" rel="noopener">Deploy en servidores</a>
+          <span class="yr">2024</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1I1nG65tjlgnvyB73R1QDB86A6u219ahl/view?usp=sharing" target="_blank" rel="noopener">Full Stack Jr — Argentina Programa</a>
+          <span class="yr">2023</span>
+        </div>
+        <div class="course">
+          <a href="https://drive.google.com/file/d/1jyJq7lIdJoO0JEXIBAIOeLvUFvNiXxTB/view?usp=drive_link" target="_blank" rel="noopener">Game Dev avanzado — Argentina Programa</a>
+          <span class="yr">2023</span>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Idiomas</h2>
+        <div class="lang-row"><span>Español</span><span class="pct">Nativo</span></div>
+        <div class="lang-row"><span>Portugués</span><span class="pct">B1</span></div>
+        <div class="lang-row"><span>Inglés</span><span class="pct">A2</span></div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Soft skills</h2>
+        <ul class="plain-list">
+          <li>Planificación estratégica</li>
+          <li>Resolución de problemas</li>
+          <li>Comunicación efectiva</li>
+          <li>Trabajo en equipo</li>
+          <li>Liderazgo y gestión de grupos</li>
+          <li>Proactividad e investigación</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

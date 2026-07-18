@@ -5,7 +5,11 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["ai", "backend", "python"],
+    "tags": [
+      "ai",
+      "backend",
+      "python"
+    ],
     "featured": true,
     "order": 1,
     "visible": true
@@ -16,7 +20,12 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "backend", "python", "api"],
+    "tags": [
+      "ai",
+      "backend",
+      "python",
+      "api"
+    ],
     "featured": true,
     "order": 2,
     "visible": true
@@ -27,7 +36,11 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "agents", "llm"],
+    "tags": [
+      "ai",
+      "agents",
+      "llm"
+    ],
     "featured": true,
     "order": 3,
     "visible": true
@@ -38,7 +51,11 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "llm", "genai"],
+    "tags": [
+      "ai",
+      "llm",
+      "genai"
+    ],
     "featured": true,
     "order": 4,
     "visible": true
@@ -49,7 +66,11 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "rag", "llm"],
+    "tags": [
+      "ai",
+      "rag",
+      "llm"
+    ],
     "featured": true,
     "order": 5,
     "visible": true
@@ -60,7 +81,11 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "embeddings", "llm"],
+    "tags": [
+      "ai",
+      "embeddings",
+      "llm"
+    ],
     "featured": true,
     "order": 6,
     "visible": true
@@ -71,10 +96,14 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "prompts", "llm"],
-    "featured": true,
+    "tags": [
+      "ai",
+      "prompts",
+      "llm"
+    ],
+    "featured": false,
     "order": 7,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-tokenization",
@@ -82,7 +111,11 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "llm", "nlp"],
+    "tags": [
+      "ai",
+      "llm",
+      "nlp"
+    ],
     "featured": false,
     "order": 8,
     "visible": true
@@ -93,7 +126,11 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "agents", "mcp"],
+    "tags": [
+      "ai",
+      "agents",
+      "mcp"
+    ],
     "featured": false,
     "order": 9,
     "visible": true
@@ -104,7 +141,11 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "agents", "aws"],
+    "tags": [
+      "ai",
+      "agents",
+      "aws"
+    ],
     "featured": false,
     "order": 10,
     "visible": true
@@ -115,7 +156,11 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "aws", "llm"],
+    "tags": [
+      "ai",
+      "aws",
+      "llm"
+    ],
     "featured": true,
     "order": 11,
     "visible": true
@@ -126,10 +171,14 @@
     "category": "ai",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["ai", "bots", "agents"],
-    "featured": true,
+    "tags": [
+      "ai",
+      "bots",
+      "agents"
+    ],
+    "featured": false,
     "order": 12,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-aws-lambda",
@@ -137,10 +186,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["aws", "cloud", "serverless"],
+    "tags": [
+      "aws",
+      "cloud",
+      "serverless"
+    ],
     "featured": false,
     "order": 13,
-    "visible": false
+    "visible": true
   },
   {
     "id": "skill-aws-s3",
@@ -148,7 +201,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["aws", "cloud", "storage"],
+    "tags": [
+      "aws",
+      "cloud",
+      "storage"
+    ],
     "featured": false,
     "order": 14,
     "visible": true
@@ -159,7 +216,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["aws", "database", "nosql"],
+    "tags": [
+      "aws",
+      "database",
+      "nosql"
+    ],
     "featured": true,
     "order": 15,
     "visible": true
@@ -170,10 +231,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["aws", "database", "sql"],
+    "tags": [
+      "aws",
+      "database",
+      "sql"
+    ],
     "featured": false,
     "order": 16,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-amazon-athena",
@@ -181,10 +246,14 @@
     "category": "cloud-devops",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["aws", "analytics", "data"],
+    "tags": [
+      "aws",
+      "analytics",
+      "data"
+    ],
     "featured": false,
     "order": 17,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-aws-glue",
@@ -192,10 +261,14 @@
     "category": "cloud-devops",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["aws", "etl", "data"],
+    "tags": [
+      "aws",
+      "etl",
+      "data"
+    ],
     "featured": false,
     "order": 18,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-docker",
@@ -203,7 +276,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["devops", "containers", "docker"],
+    "tags": [
+      "devops",
+      "containers",
+      "docker"
+    ],
     "featured": false,
     "order": 19,
     "visible": true
@@ -214,7 +291,11 @@
     "category": "cloud-devops",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["git", "devops", "version-control"],
+    "tags": [
+      "git",
+      "devops",
+      "version-control"
+    ],
     "featured": false,
     "order": 20,
     "visible": true
@@ -225,7 +306,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["devops", "web-server", "nginx"],
+    "tags": [
+      "devops",
+      "web-server",
+      "nginx"
+    ],
     "featured": false,
     "order": 21,
     "visible": true
@@ -236,10 +321,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["devops", "nodejs", "process-manager"],
+    "tags": [
+      "devops",
+      "nodejs",
+      "process-manager"
+    ],
     "featured": false,
     "order": 22,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-render",
@@ -247,7 +336,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cloud", "deployment", "paas"],
+    "tags": [
+      "cloud",
+      "deployment",
+      "paas"
+    ],
     "featured": false,
     "order": 23,
     "visible": true
@@ -258,10 +351,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cloud", "postgresql", "database"],
+    "tags": [
+      "cloud",
+      "postgresql",
+      "database"
+    ],
     "featured": false,
     "order": 24,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-railway",
@@ -269,7 +366,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cloud", "deployment", "paas"],
+    "tags": [
+      "cloud",
+      "deployment",
+      "paas"
+    ],
     "featured": false,
     "order": 25,
     "visible": true
@@ -280,7 +381,11 @@
     "category": "cloud-devops",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["devops", "ci-cd", "jenkins"],
+    "tags": [
+      "devops",
+      "ci-cd",
+      "jenkins"
+    ],
     "featured": false,
     "order": 26,
     "visible": true
@@ -291,7 +396,11 @@
     "category": "cloud-devops",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["devops", "monitoring", "observability"],
+    "tags": [
+      "devops",
+      "monitoring",
+      "observability"
+    ],
     "featured": false,
     "order": 27,
     "visible": true
@@ -302,10 +411,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["mobile", "expo", "deployment"],
+    "tags": [
+      "mobile",
+      "expo",
+      "deployment"
+    ],
     "featured": false,
     "order": 28,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-react",
@@ -313,7 +426,11 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["frontend", "react", "javascript"],
+    "tags": [
+      "frontend",
+      "react",
+      "javascript"
+    ],
     "featured": true,
     "order": 29,
     "visible": true
@@ -324,7 +441,11 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["frontend", "angular", "typescript"],
+    "tags": [
+      "frontend",
+      "angular",
+      "typescript"
+    ],
     "featured": true,
     "order": 30,
     "visible": true
@@ -335,7 +456,12 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 1,
-    "tags": ["frontend", "mobile", "react-native", "expo"],
+    "tags": [
+      "frontend",
+      "mobile",
+      "react-native",
+      "expo"
+    ],
     "featured": true,
     "order": 31,
     "visible": true
@@ -346,7 +472,11 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["frontend", "backend", "typescript"],
+    "tags": [
+      "frontend",
+      "backend",
+      "typescript"
+    ],
     "featured": true,
     "order": 32,
     "visible": true
@@ -357,7 +487,10 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["frontend", "javascript"],
+    "tags": [
+      "frontend",
+      "javascript"
+    ],
     "featured": true,
     "order": 33,
     "visible": true
@@ -368,7 +501,10 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["frontend", "html"],
+    "tags": [
+      "frontend",
+      "html"
+    ],
     "featured": true,
     "order": 34,
     "visible": true
@@ -379,7 +515,10 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["frontend", "css"],
+    "tags": [
+      "frontend",
+      "css"
+    ],
     "featured": true,
     "order": 35,
     "visible": true
@@ -390,7 +529,11 @@
     "category": "frontend",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["frontend", "css", "tailwind"],
+    "tags": [
+      "frontend",
+      "css",
+      "tailwind"
+    ],
     "featured": true,
     "order": 36,
     "visible": true
@@ -401,7 +544,12 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["backend", "nodejs", "nestjs", "api"],
+    "tags": [
+      "backend",
+      "nodejs",
+      "nestjs",
+      "api"
+    ],
     "featured": true,
     "order": 37,
     "visible": true
@@ -412,7 +560,11 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["backend", "nodejs", "javascript"],
+    "tags": [
+      "backend",
+      "nodejs",
+      "javascript"
+    ],
     "featured": false,
     "order": 38,
     "visible": true
@@ -423,7 +575,12 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["backend", "nodejs", "express", "api"],
+    "tags": [
+      "backend",
+      "nodejs",
+      "express",
+      "api"
+    ],
     "featured": false,
     "order": 39,
     "visible": true
@@ -434,7 +591,11 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["database", "sql", "postgresql"],
+    "tags": [
+      "database",
+      "sql",
+      "postgresql"
+    ],
     "featured": false,
     "order": 40,
     "visible": true
@@ -445,7 +606,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["database", "sql", "mysql"],
+    "tags": [
+      "database",
+      "sql",
+      "mysql"
+    ],
     "featured": true,
     "order": 41,
     "visible": true
@@ -456,7 +621,11 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["backend", "orm", "typescript"],
+    "tags": [
+      "backend",
+      "orm",
+      "typescript"
+    ],
     "featured": false,
     "order": 42,
     "visible": true
@@ -467,7 +636,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["backend", "orm", "nodejs"],
+    "tags": [
+      "backend",
+      "orm",
+      "nodejs"
+    ],
     "featured": false,
     "order": 43,
     "visible": true
@@ -478,7 +651,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["backend", "cache", "redis"],
+    "tags": [
+      "backend",
+      "cache",
+      "redis"
+    ],
     "featured": true,
     "order": 44,
     "visible": true
@@ -489,7 +666,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["backend", "realtime", "websockets"],
+    "tags": [
+      "backend",
+      "realtime",
+      "websockets"
+    ],
     "featured": false,
     "order": 45,
     "visible": true
@@ -500,7 +681,11 @@
     "category": "design-cms-other",
     "proficiency": 4,
     "yearsOfExperience": 2,
-    "tags": ["design", "ui-ux", "figma"],
+    "tags": [
+      "design",
+      "ui-ux",
+      "figma"
+    ],
     "featured": false,
     "order": 46,
     "visible": true
@@ -511,7 +696,10 @@
     "category": "design-cms-other",
     "proficiency": 3,
     "yearsOfExperience": 3,
-    "tags": ["design", "photoshop"],
+    "tags": [
+      "design",
+      "photoshop"
+    ],
     "featured": false,
     "order": 47,
     "visible": true
@@ -522,7 +710,11 @@
     "category": "design-cms-other",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cms", "wordpress", "ecommerce"],
+    "tags": [
+      "cms",
+      "wordpress",
+      "ecommerce"
+    ],
     "featured": false,
     "order": 48,
     "visible": true
@@ -533,7 +725,11 @@
     "category": "design-cms-other",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cms", "ecommerce", "wordpress"],
+    "tags": [
+      "cms",
+      "ecommerce",
+      "wordpress"
+    ],
     "featured": false,
     "order": 49,
     "visible": true
@@ -544,7 +740,10 @@
     "category": "design-cms-other",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["project-management", "jira"],
+    "tags": [
+      "project-management",
+      "jira"
+    ],
     "featured": false,
     "order": 50,
     "visible": true
@@ -555,7 +754,10 @@
     "category": "design-cms-other",
     "proficiency": 4,
     "yearsOfExperience": 4,
-    "tags": ["productivity", "google"],
+    "tags": [
+      "productivity",
+      "google"
+    ],
     "featured": false,
     "order": 51,
     "visible": true
@@ -566,10 +768,14 @@
     "category": "design-cms-other",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["it", "audit", "security"],
+    "tags": [
+      "it",
+      "audit",
+      "security"
+    ],
     "featured": false,
     "order": 52,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-astro",
@@ -577,7 +783,11 @@
     "category": "frontend",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["frontend", "astro", "ssg"],
+    "tags": [
+      "frontend",
+      "astro",
+      "ssg"
+    ],
     "featured": true,
     "order": 53,
     "visible": true
@@ -588,7 +798,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 3,
-    "tags": ["linux", "zorin", "devops"],
+    "tags": [
+      "linux",
+      "zorin",
+      "devops"
+    ],
     "featured": false,
     "order": 54,
     "visible": true
@@ -599,7 +813,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["architecture", "microservices", "backend"],
+    "tags": [
+      "architecture",
+      "microservices",
+      "backend"
+    ],
     "featured": true,
     "order": 55,
     "visible": true
@@ -610,10 +828,14 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["architecture", "distributed-systems", "backend"],
-    "featured": true,
+    "tags": [
+      "architecture",
+      "distributed-systems",
+      "backend"
+    ],
+    "featured": false,
     "order": 56,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-rest-apis",
@@ -621,7 +843,11 @@
     "category": "backend-data",
     "proficiency": 4,
     "yearsOfExperience": 3,
-    "tags": ["api", "rest", "backend"],
+    "tags": [
+      "api",
+      "rest",
+      "backend"
+    ],
     "featured": true,
     "order": 57,
     "visible": true
@@ -632,10 +858,14 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["python", "async", "concurrency"],
+    "tags": [
+      "python",
+      "async",
+      "concurrency"
+    ],
     "featured": false,
     "order": 58,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-langfuse",
@@ -643,7 +873,12 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "observability", "langfuse", "llm"],
+    "tags": [
+      "ai",
+      "observability",
+      "langfuse",
+      "llm"
+    ],
     "featured": true,
     "order": 59,
     "visible": true
@@ -654,7 +889,11 @@
     "category": "backend-data",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["testing", "unit-testing", "quality"],
+    "tags": [
+      "testing",
+      "unit-testing",
+      "quality"
+    ],
     "featured": false,
     "order": 60,
     "visible": true
@@ -665,10 +904,15 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "vector-search", "embeddings", "rag"],
-    "featured": true,
+    "tags": [
+      "ai",
+      "vector-search",
+      "embeddings",
+      "rag"
+    ],
+    "featured": false,
     "order": 61,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-semantic-search",
@@ -676,10 +920,14 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "semantic-search", "rag"],
-    "featured": true,
+    "tags": [
+      "ai",
+      "semantic-search",
+      "rag"
+    ],
+    "featured": false,
     "order": 62,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-knowledge-bases",
@@ -687,7 +935,12 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "kb", "rag", "knowledge"],
+    "tags": [
+      "ai",
+      "kb",
+      "rag",
+      "knowledge"
+    ],
     "featured": true,
     "order": 63,
     "visible": true
@@ -698,10 +951,15 @@
     "category": "ai",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["ai", "ollama", "llm", "local"],
-    "featured": true,
+    "tags": [
+      "ai",
+      "ollama",
+      "llm",
+      "local"
+    ],
+    "featured": false,
     "order": 64,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-aws",
@@ -709,7 +967,11 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["aws", "cloud", "devops"],
+    "tags": [
+      "aws",
+      "cloud",
+      "devops"
+    ],
     "featured": true,
     "order": 65,
     "visible": true
@@ -720,7 +982,12 @@
     "category": "cloud-devops",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["kubernetes", "k8s", "devops", "containers"],
+    "tags": [
+      "kubernetes",
+      "k8s",
+      "devops",
+      "containers"
+    ],
     "featured": true,
     "order": 66,
     "visible": true
@@ -731,10 +998,14 @@
     "category": "cloud-devops",
     "proficiency": 3,
     "yearsOfExperience": 2,
-    "tags": ["cicd", "jenkins", "devops"],
-    "featured": true,
+    "tags": [
+      "cicd",
+      "jenkins",
+      "devops"
+    ],
+    "featured": false,
     "order": 67,
-    "visible": true
+    "visible": false
   },
   {
     "id": "skill-gdevelop",
@@ -742,7 +1013,11 @@
     "category": "gamedev",
     "proficiency": 3,
     "yearsOfExperience": 1,
-    "tags": ["gamedev", "gdevelop", "2d"],
+    "tags": [
+      "gamedev",
+      "gdevelop",
+      "2d"
+    ],
     "featured": true,
     "order": 68,
     "visible": true
@@ -753,9 +1028,29 @@
     "category": "gamedev",
     "proficiency": 2,
     "yearsOfExperience": 1,
-    "tags": ["gamedev", "unity", "3d"],
+    "tags": [
+      "gamedev",
+      "unity",
+      "3d"
+    ],
     "featured": true,
     "order": 69,
+    "visible": true
+  },
+  {
+    "id": "skill-sonarqube",
+    "name": "SonarQube",
+    "category": "cloud-devops",
+    "proficiency": 3,
+    "yearsOfExperience": 1,
+    "tags": [
+      "sonarqube",
+      "quality",
+      "code-analysis",
+      "devops"
+    ],
+    "featured": true,
+    "order": 70,
     "visible": true
   }
 ]

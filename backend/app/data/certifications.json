@@ -98,7 +98,6 @@
     "credentialUrl": "https://drive.google.com/file/d/18Y5k5eR9utRnh1SbkzM-PRMC6Cs9AeCj/view?usp=drive_link",
     "skills": [
       "skill-nginx",
-      "skill-pm2",
       "skill-docker"
     ],
     "tags": [

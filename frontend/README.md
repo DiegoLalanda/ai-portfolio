@@ -69,3 +69,11 @@ cp .env.example .env
 | Variable | Descripción |
 |---|---|
 | `PUBLIC_API_URL` | URL base del backend (FastAPI) |
+
+> Las variables `PUBLIC_*` de Astro se inyectan en el bundle en build time; no poner secretos ahí.
+
+## Despliegue
+
+El frontend se buildea como sitio **estático** (`npm run build` → `dist/`) y se
+despliega en **Cloudflare Pages**. En producción, `PUBLIC_API_URL` debe apuntar
+al backend en Railway. Ver [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).

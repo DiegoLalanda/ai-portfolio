@@ -15,7 +15,8 @@
       "Investigación y desarrollo de agentes de IA y bots para procesos internos y productos para clientes.",
       "Implementación de mejoras internas, integraciones entre sistemas y funcionalidades basadas en IA (LLMs, RAG, agentes inteligentes).",
       "Trabajo con Angular, Python (FastAPI) y servicios en la nube (AWS), ampliando la visión hacia sistemas escalables orientados a datos.",
-      "Ingeniería de prompts, tokenización, embeddings y protocolos de contexto de modelo (MCP) aplicados a agentes inteligentes."
+      "Ingeniería de prompts, tokenización, embeddings y protocolos de contexto de modelo (MCP) aplicados a agentes inteligentes.",
+      "Tutor interno de Python e IA: tutorías personalizadas a desarrolladores de otros equipos y tutor en bootcamps de IA, agentes y arquitectura."
     ],
     "stack": [
       "skill-python",
@@ -25,9 +26,6 @@
       "skill-aws-lambda",
       "skill-aws-s3",
       "skill-dynamodb",
-      "skill-amazon-aurora",
-      "skill-amazon-athena",
-      "skill-aws-glue",
       "skill-amazon-bedrock",
       "skill-redis",
       "skill-strands",
@@ -35,12 +33,11 @@
       "skill-llms",
       "skill-rag",
       "skill-ai-agents",
-      "skill-bot-development",
-      "skill-prompt-engineering",
       "skill-embeddings",
       "skill-tokenization",
       "skill-grafana",
       "skill-jenkins",
+      "skill-sonarqube",
       "skill-websockets"
     ],
     "tags": ["ai", "full-time", "finnegans", "agents", "llm", "aws"],
@@ -74,7 +71,6 @@
       "skill-typeorm",
       "skill-figma",
       "skill-render",
-      "skill-neon",
       "skill-wordpress",
       "skill-woocommerce"
     ],

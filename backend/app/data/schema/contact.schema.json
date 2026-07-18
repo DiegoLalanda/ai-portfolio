@@ -8,7 +8,7 @@
     "fullName": { "type": "string" },
     "headline": {
       "type": "string",
-      "description": "Short professional tagline, e.g. \"Full-Stack Developer | AI Engineer | Teacher\"."
+      "description": "Short professional tagline, e.g. \"AI & Software Developer | Professor\"."
     },
     "email": { "type": "string", "format": "email" },
     "phone": { "type": ["string", "null"] },

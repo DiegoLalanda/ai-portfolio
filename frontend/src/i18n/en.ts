@@ -2,12 +2,12 @@ import type { Translations } from "@/i18n/types";
 
 export const en: Translations = {
   meta: {
-    title: "Diego - AI Engineer & Physics Professor",
+    title: "Diego - AI & Software Developer | Professor",
   },
   hero: {
     greeting: "Hi",
     name: "I'm Diego",
-    roles: ["Software Developer", "AI Engineer", "Professor"],
+    roles: ["AI & Software Developer", "Professor"],
     tagline: "Get to know me by asking anything.",
   },
   prompts: {

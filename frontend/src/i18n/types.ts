@@ -16,7 +16,7 @@ export interface Translations {
   hero: {
     greeting: string;
     name: string;
-    roles: [string, string, string];
+    roles: string[];
     tagline: string;
   };
   prompts: {
