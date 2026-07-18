@@ -634,5 +634,139 @@
     </div>
   </div>
 </div>
+<script>
+  if (new URLSearchParams(window.location.search).get("lang") === "en") {
+    document.documentElement.lang = "en";
+    document.title = "Diego Lalanda — Resume";
+
+    const setText = (selector, text) => {
+      const element = document.querySelector(selector);
+      if (element) element.textContent = text;
+    };
+    const setTexts = (selector, texts) => {
+      document.querySelectorAll(selector).forEach((element, index) => {
+        if (texts[index]) element.textContent = texts[index];
+      });
+    };
+
+    setText("header .title", "AI & Software Developer | Professor");
+    setText("header .contact-row span", "Concordia, Entre Ríos, Argentina");
+
+    setTexts(".main-col > section > .section-title", [
+      "Professional profile",
+      "Professional experience",
+      "Featured projects",
+    ]);
+    setText(
+      ".perfil-text",
+      "AI Developer with a University Technical Degree in Web Development. I build AI agents, bots, and full-stack solutions with Python (FastAPI), Angular, and AWS services. Previous freelance experience delivering end-to-end web platforms, supported by a teaching background that brings clear communication and strong teamwork skills.",
+    );
+
+    setTexts(".entry .role", [
+      "AI Developer",
+      "Full-Stack Web Developer",
+      "Secondary School Physics Teacher",
+    ]);
+    setTexts(".entry .org", ["Finnegans", "Freelance", "General Council of Education"]);
+    setTexts(".entry .dates", [
+      "Jul 2025 — Present",
+      "Jan 2025 — Dec 2025",
+      "Mar 2023 — Dec 2025",
+    ]);
+    setTexts(".entry:nth-of-type(1) .bullets li", [
+      "Research and development of AI agents and bots for internal processes and customer-facing products.",
+      "Implementation of improvements, integrations, and features using LLMs, RAG, and intelligent agents.",
+      "Development with Python (FastAPI), Angular, TypeScript, and AWS services (Bedrock, DynamoDB, S3, Lambda, etc.).",
+      "Prompt engineering, embeddings, tokenization, and MCP protocols applied to AI agents.",
+      "Internal Python and AI tutor: one-on-one mentoring for other teams and tutor in bootcamps on AI, agents, and architecture.",
+    ]);
+    setTexts(".entry:nth-of-type(2) .bullets li", [
+      "End-to-end development of full-stack platforms for different clients.",
+      "UI/UX design, frontend, backend, database, and production deployment.",
+      "Integration of external APIs (insurance providers, payments, shipping) and digital marketing tools.",
+    ]);
+    setTexts(".entry:nth-of-type(3) .bullets li", [
+      "Strategic planning and design of annual curricula.",
+      "Instructional communication: breaking down abstract topics into clear explanations.",
+      "Leadership and group management in collaborative, goal-oriented environments.",
+    ]);
+
+    setTexts(".project .name", [
+      "Finni — AI Agent Orchestrator (Finnegans)",
+      "AI Portfolio — Conversational Assistant",
+      "CachiBache — Urban Reporting Mobile App",
+      "CachiBache — Arcade Game (GDevelop)",
+      "Easy Survey — Anonymous Surveys",
+      "Tu Seguro Online",
+      "En un Toke",
+      "Claims Management API",
+      "Verde Nido",
+    ]);
+    setTexts(".project p", [
+      "Conversational agent orchestrator using LLMs, RAG, tools, and sub-agents within the Finnegans GO ecosystem. Contributor as an AI Developer on the AI team.",
+      "Interactive portfolio powered by a Gemini assistant, function calling, SSE streaming, and dynamic widgets (Astro + React + FastAPI).",
+      "UNER final project. React Native + Expo + NestJS app for reporting potholes with photos, geolocation, push notifications, and an admin dashboard.",
+      "Browser-playable 2D arcade game. Procedural obstacles, scoring, coins, and a Latin American-inspired narrative.",
+      "NestJS + Angular + PostgreSQL platform with UI/UX designed in Figma and deployed on Render.",
+      "Customer management and vehicle insurance quoting platform integrated with insurance provider APIs. NestJS + Angular + PostgreSQL.",
+      "WordPress/WooCommerce e-commerce with Mercado Pago, Correo Argentino, and Meta Pixel / Conversions API.",
+      "Node.js + Express + PostgreSQL/Sequelize REST API with JWT authentication and Swagger documentation (UNER).",
+      "React accommodation platform with catalog, advanced filtering, admin CRUD, and Figma design.",
+    ]);
+    setTexts(".project .links a", [
+      "Finnegans →",
+      "Live site →", "GitHub →",
+      "Repository →",
+      "Play on Itch.io →",
+      "Demo →", "Repository →",
+      "Repository →",
+      "Website →",
+      "Swagger →", "Repository →",
+      "Repository →",
+    ]);
+
+    setTexts(".side-col > section > .section-title", [
+      "Education",
+      "Skills",
+      "Certifications",
+      "Languages",
+      "Soft skills",
+    ]);
+    setTexts(".edu-entry .degree", [
+      "University Technical Degree in Web Development",
+      "Secondary Education Teaching Degree in Physics",
+    ]);
+    setTexts(".edu-entry > .meta:not([style])", [
+      "Mar 2023 — Nov 2025 · GPA 9.21/10",
+      "Mar 2019 — Dec 2022 · GPA 9.46/10",
+    ]);
+    setTexts(".status-pill", ["Degree completed", "Degree completed"]);
+    setTexts(".edu-entry .meta a", ["View degree →", "View degree →"]);
+    setText(".skill-group:first-of-type .label", "AI");
+    setText(".skill-group:first-of-type .chip:nth-child(5)", "AI Agents");
+    setText(".skill-group:nth-of-type(3) .label", "Backend & Data");
+    setText(".skill-group:nth-of-type(5) .label", "Design & CMS");
+
+    setTexts(".course a", [
+      "Diploma in Educational Robotics — UTN",
+      "Docker Professional",
+      "Data Analysis with Python",
+      "Odoo Consultant and Developer",
+      "Server Deployment",
+      "Full Stack Jr — Argentina Programa",
+      "Advanced Game Development — Argentina Programa",
+    ]);
+    setTexts(".lang-row span:first-child", ["Spanish", "Portuguese", "English"]);
+    setTexts(".lang-row .pct", ["Native", "B1", "A2"]);
+    setTexts(".plain-list li", [
+      "Strategic planning",
+      "Problem solving",
+      "Effective communication",
+      "Teamwork",
+      "Leadership and group management",
+      "Proactivity and research",
+    ]);
+  }
+</script>
 </body>
 </html>

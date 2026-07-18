@@ -35,6 +35,10 @@ export function AgentResponseView({
     id.startsWith("cv-download") || id.startsWith("rate-limit-cv-download");
   const showCvDownload = response.widgets.some((widget) => isCvDownloadWidget(widget.id));
   const filteredWidgets = response.widgets.filter((widget) => !isCvDownloadWidget(widget.id));
+  const cvFile =
+    locale === "en" ? "/CV-Diego-Lalanda-Resume-EN.pdf" : "/CV-Diego Lalanda-2025.pdf";
+  const cvDownloadName =
+    locale === "en" ? "Diego-Lalanda-Resume-EN.pdf" : "CV-Diego Lalanda-2025.pdf";
 
   const itemVariants = {
     hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
@@ -63,8 +67,8 @@ export function AgentResponseView({
         {showCvDownload && (
           <div className="mt-5">
             <a
-              href="/CV-Diego Lalanda-2025.pdf"
-              download="CV-Diego Lalanda-2025.pdf"
+              href={cvFile}
+              download={cvDownloadName}
               className="primary-btn inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 font-label-md text-label-sm text-on-primary bg-primary hover:bg-primary/95 transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg"
             >
               <Download size={15} aria-hidden="true" />
