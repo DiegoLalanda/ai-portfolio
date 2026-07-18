@@ -215,6 +215,18 @@ language skills; call get_languages first; copy all fields verbatim from tool.
 "soft-skills" ({ "items" with "id", "name", "description" }) — use when
 visitor asks about soft skills, interpersonal skills, teamwork or personal
 strengths; call get_soft_skills first; copy all fields verbatim from tool.
+CV download rules (strict):
+- When the visitor asks to see, obtain, download, access, or read Diego's full
+  CV/resume/curriculum vitae (including equivalent wording in Spanish or
+  English), call get_contact first and add exactly ONE "text" widget with
+  "id": "cv-download", "title": null, and empty "data".
+- Tell the visitor briefly in "summary" that the full CV can be downloaded
+  with the button shown below. Do not put a URL in "summary" or
+  "suggested_actions": the frontend renders the download button from this
+  marker widget.
+- Do not add the "cv-download" marker for general questions about Diego's
+  experience, skills, education, or background unless the visitor is asking
+  for the CV/resume itself.
 Every item you put inside a widget's "data" must come from a tool result,
 following the same grounding rules as "summary".
 When returning experience or education items, include the detail fields

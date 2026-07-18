@@ -31,8 +31,10 @@ export function AgentResponseView({
 }: AgentResponseViewProps) {
   const prefersReducedMotion = useReducedMotion();
 
-  const isRateLimit = response.widgets.some((w) => w.id.startsWith("rate-limit-cv-download"));
-  const filteredWidgets = response.widgets.filter((w) => !w.id.startsWith("rate-limit-cv-download"));
+  const isCvDownloadWidget = (id: string) =>
+    id.startsWith("cv-download") || id.startsWith("rate-limit-cv-download");
+  const showCvDownload = response.widgets.some((widget) => isCvDownloadWidget(widget.id));
+  const filteredWidgets = response.widgets.filter((widget) => !isCvDownloadWidget(widget.id));
 
   const itemVariants = {
     hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
@@ -58,7 +60,7 @@ export function AgentResponseView({
         </div>
         <p className="font-body-md text-body-md text-on-surface-variant">{response.summary}</p>
 
-        {isRateLimit && (
+        {showCvDownload && (
           <div className="mt-5">
             <a
               href="/CV-Diego Lalanda-2025.pdf"

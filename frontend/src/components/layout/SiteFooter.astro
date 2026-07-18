@@ -25,7 +25,7 @@ const t = getTranslations(locale);
   >
     <div class="hidden font-label-md text-label-md uppercase tracking-widest text-on-surface md:block">DIEGO</div>
     <div class="hidden text-center text-outline-variant md:block">{t.footer.tagline}</div>
-    <div class="site-footer__actions flex w-full flex-nowrap items-center justify-center gap-2 md:w-auto md:gap-6">
+    <div class="site-footer__actions flex w-full flex-nowrap items-center justify-center gap-4 md:w-auto md:gap-6">
       <LanguageSwitcher locale={locale} />
       <a
         class="site-footer__link text-outline-variant transition-colors hover:text-primary"
@@ -66,6 +66,7 @@ const t = getTranslations(locale);
     flex-shrink: 0;
     font-size: 11px;
     letter-spacing: 0.02em;
+    padding: 0.5rem 0.25rem;
   }
 
   .site-footer__cta {
@@ -78,6 +79,7 @@ const t = getTranslations(locale);
     .site-footer__link {
       font-size: inherit;
       letter-spacing: inherit;
+      padding: 0;
     }
 
     .site-footer__cta {
