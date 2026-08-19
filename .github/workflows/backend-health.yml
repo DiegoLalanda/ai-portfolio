@@ -1,0 +1,22 @@
+name: Backend health check
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check backend health
+        env:
+          BACKEND_HEALTH_URL: ${{ secrets.BACKEND_HEALTH_URL }}
+        run: |
+          if [ -z "$BACKEND_HEALTH_URL" ]; then
+            echo "BACKEND_HEALTH_URL secret is not configured"
+            exit 1
+          fi
+
+          curl --fail --silent --show-error --retry 2 --max-time 30 \
+            "$BACKEND_HEALTH_URL/health"

@@ -174,6 +174,7 @@ Sitio en `http://localhost:4321`.
 
 - **Frontend → Cloudflare Pages.** Build `npm run build`, directorio de salida `dist/`. Configurar `PUBLIC_API_URL` con la URL pública del backend.
 - **Backend → Railway.** Start `python run.py` (lee `HOST`/`PORT` del entorno; Railway inyecta `PORT`). Configurar `GEMINI_API_KEY` y `BACKEND_CORS_ORIGINS` con el dominio de Cloudflare Pages.
+- **Health check → GitHub Actions.** El workflow `.github/workflows/backend-health.yml` consulta `GET /health` cada 10 minutos. Configurar el secreto `BACKEND_HEALTH_URL` con la URL pública del backend, sin `/health` al final.
 
 Guía paso a paso en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
