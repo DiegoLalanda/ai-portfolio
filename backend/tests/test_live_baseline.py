@@ -240,6 +240,89 @@ def test_live_nodes_use_two_chat_calls_for_ai_projects(nodes_report):
     assert "fase-0" in saved
 
 
+_FACTS_IDS = MEASURED_IDS - {"narrative-finni-cola"}
+
+
+def _fase4_report(row: dict) -> dict:
+    graph = get_portfolio_graph()
+    state = asyncio.run(
+        graph.ainvoke(
+            {
+                "question": build_agent_prompt(row["question"]),
+                "attempts": 0,
+                "passages": [],
+                "messages": [],
+            },
+            config={"configurable": {"thread_id": f"fase4-{row['id']}-{uuid4()}"}},
+        )
+    )
+    response = AgentResponse.model_validate(state["response"])
+    metrics = state["metrics"]
+    tools = [name for item in metrics for name in item["tools"]]
+    report = _totals(metrics, row, response.language, response.summary, tools, "langgraph")
+    report["calls"] = sum(1 for item in metrics if item["total_tokens"] >= 1)
+    report["embedding_tokens"] = sum(int(item.get("embedding_tokens") or 0) for item in metrics)
+    report["embedding_latency_ms"] = round(
+        sum(float(item.get("embedding_latency_ms") or 0) for item in metrics),
+        1,
+    )
+    return report
+
+
+def _store_fase4(report: list[dict]) -> None:
+    previous = json.loads(REPORT_PATH.read_text(encoding="utf-8")) if REPORT_PATH.is_file() else {}
+    if isinstance(previous, list):
+        previous = {"fase-0": previous}
+    elif not isinstance(previous, dict):
+        previous = {}
+    previous["fase-4"] = report
+    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_PATH.write_text(json.dumps(previous, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+@pytest.fixture(scope="module")
+def fase4_report():
+    if not settings.GEMINI_API_KEY.strip():
+        pytest.skip("GEMINI_API_KEY vacía")
+
+    from app.rag.hybrid import indice
+
+    settings.EMBEDDING_PROVIDER = "gemini"
+    loaded = indice.cargar()
+    assert loaded >= 4 and indice.rag_ready, "el corpus no quedó listo con Gemini"
+
+    rows = [row for row in load_questions() if row["id"] in MEASURED_IDS]
+    saved: dict[str, dict] = {}
+    if REPORT_PATH.is_file():
+        current = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+        block = current.get("fase-4") if isinstance(current, dict) else None
+        if isinstance(block, list):
+            saved = {item["id"]: item for item in block}
+    report: list[dict] = []
+    for row in rows:
+        if row["id"] not in saved and report:
+            time.sleep(10)
+        report.append(saved[row["id"]] if row["id"] in saved else _retry(_fase4_report, row))
+        _store_fase4(report)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return report
+
+
+def test_live_rag_keeps_facts_free_of_embeddings(fase4_report):
+    assert {item["id"] for item in fase4_report} == MEASURED_IDS
+    projects = next(item for item in fase4_report if item["id"] == "es-proyectos-ia")
+    assert projects["calls"] == 2
+    for item in fase4_report:
+        if item["id"] in _FACTS_IDS:
+            assert item["embedding_tokens"] == 0, item["id"]
+            assert item["embedding_latency_ms"] == 0, item["id"]
+    narrative = next(item for item in fase4_report if item["id"] == "narrative-finni-cola")
+    assert narrative["embedding_latency_ms"] > 0
+    saved = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+    assert saved["fase-4"] == fase4_report
+    assert "fase-0" in saved and "fase-3" in saved
+
+
 def test_live_baseline_covers_five_questions(live_report):
     legacy, langgraph = live_report
     assert {item["id"] for item in legacy} == MEASURED_IDS

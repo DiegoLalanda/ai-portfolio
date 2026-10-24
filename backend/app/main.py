@@ -1,17 +1,23 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.rag.hybrid import indice
 
-# Uvicorn no configura el logger raíz de la app por defecto: sin esto,
-# `logging.getLogger(__name__).info(...)` en cualquier módulo quedaría en
-# silencio aunque el access log de uvicorn siga mostrando cada request.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s: %(message)s")
 
-app = FastAPI(title=settings.PROJECT_NAME)
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    indice.cargar()
+    yield
+
+
+app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

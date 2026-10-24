@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     GRAPH_ENGINE: Literal["legacy", "langgraph"] = "langgraph"
     LLM_TIMEOUT_ROUTER_S: float = 12
     LLM_TIMEOUT_COMPOSER_S: float = 25
+    EMBEDDING_PROVIDER: Literal["gemini", "hash"] = "gemini"
+    GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
+    RAG_TOP_K: int = 4
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

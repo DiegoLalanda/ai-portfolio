@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from functools import lru_cache
 from typing import Any
 
@@ -22,8 +23,11 @@ from app.tools import __all__ as TOOL_NAMES
 from app.utils.json_loader import load_visible_items
 
 TOOL_MAP = {name: getattr(tools_module, name) for name in TOOL_NAMES}
+logger = logging.getLogger(__name__)
 _ROUTER_GUIDE = """
 Choose the route and the tool names. Do not answer the visitor and do not include portfolio JSON.
+Dates, roles, skills, contact and project lists are facts: leave retrieval_query empty.
+Use narrative or both only when the visitor asks how or why something was built beyond the JSON record.
 A question about a project still needs get_projects when the route is narrative or both.
 retrieval_query is the visitor question when the route is narrative or both, otherwise an empty string.
 Available tool names: {tools}
@@ -158,10 +162,34 @@ async def bibliotecario(state: PortfolioState, config: RunnableConfig) -> dict[s
 
 
 async def investigador(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
-    """Los pasajes llegan en la fase 4. Hoy el nodo existe y devuelve una lista vacía."""
+    """Lee el corpus markdown solo en narrative o both. Los hechos no embeddean."""
 
-    del state, config
-    return {"passages": []}
+    from app.rag.hybrid import indice
+
+    decision = _plan(state)
+    if decision.route not in {"narrative", "both"} or not indice.rag_ready:
+        return {"passages": []}
+    query = decision.retrieval_query.strip() or state["question"]
+    try:
+        passages = await asyncio.to_thread(indice.buscar, query)
+    except Exception:
+        logger.exception("La búsqueda del corpus falló")
+        return {"passages": []}
+    await _emit(config, {"type": "retrieval", "count": len(passages)})
+    return {
+        "passages": passages,
+        "metrics": [
+            {
+                "latency_ms": 0.0,
+                "prompt_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0,
+                "tools": [],
+                "embedding_tokens": indice.query_embedding_tokens,
+                "embedding_latency_ms": round(indice.query_embedding_latency_ms, 1),
+            }
+        ],
+    }
 
 
 def evidencia(state: PortfolioState) -> dict[str, Any]:
