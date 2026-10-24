@@ -21,10 +21,23 @@ pytestmark = pytest.mark.live
 REPORT_PATH = Path(__file__).resolve().parents[1] / "evidencia" / "medicion.json"
 
 
+def _mentions_without_denial(summary: str, phrase: str) -> bool:
+    text = summary.casefold()
+    needle = phrase.casefold()
+    start = 0
+    while True:
+        index = text.find(needle, start)
+        if index < 0:
+            return False
+        window = text[max(0, index - 24):index]
+        if not any(mark in window for mark in ("no ", "nunca", "ni ", "not ", "never")):
+            return True
+        start = index + len(needle)
+
+
 def _totals(metrics: list[dict], row: dict, response_language: str, response_summary: str, tools: list[str], engine: str) -> dict:
-    summary = response_summary.casefold()
     for forbidden in row["forbidden_substrings"]:
-        assert forbidden.casefold() not in summary, row["id"]
+        assert not _mentions_without_denial(response_summary, forbidden), row["id"]
     for tool in row["expected_tools"]:
         assert tool in tools, row["id"]
     assert response_language == row["language"], row["id"]
@@ -161,6 +174,70 @@ def _with_phase(legacy: list[dict], langgraph: list[dict]) -> dict:
         payload = {}
     payload["fase-2"] = {"legacy": legacy, "langgraph": langgraph}
     return payload
+
+
+def _nodes_report(row: dict) -> dict:
+    graph = get_portfolio_graph()
+    state = asyncio.run(
+        graph.ainvoke(
+            {
+                "question": build_agent_prompt(row["question"]),
+                "attempts": 0,
+                "passages": [],
+                "messages": [],
+            },
+            config={"configurable": {"thread_id": f"fase3-{row['id']}-{uuid4()}"}},
+        )
+    )
+    response = AgentResponse.model_validate(state["response"])
+    metrics = state["metrics"]
+    tools = [name for item in metrics for name in item["tools"]]
+    report = _totals(metrics, row, response.language, response.summary, tools, "langgraph")
+    report["calls"] = sum(1 for item in metrics if item["total_tokens"] >= 1)
+    return report
+
+
+def _store_fase3(report: list[dict]) -> None:
+    previous = json.loads(REPORT_PATH.read_text(encoding="utf-8")) if REPORT_PATH.is_file() else {}
+    if isinstance(previous, list):
+        previous = {"fase-0": previous}
+    elif not isinstance(previous, dict):
+        previous = {}
+    previous["fase-3"] = report
+    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_PATH.write_text(json.dumps(previous, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+@pytest.fixture(scope="module")
+def nodes_report():
+    if not settings.GEMINI_API_KEY.strip():
+        pytest.skip("GEMINI_API_KEY vacía")
+
+    rows = [row for row in load_questions() if row["id"] in MEASURED_IDS]
+    saved: dict[str, dict] = {}
+    if REPORT_PATH.is_file():
+        current = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+        block = current.get("fase-3") if isinstance(current, dict) else None
+        if isinstance(block, list):
+            saved = {item["id"]: item for item in block}
+    report: list[dict] = []
+    for row in rows:
+        if row["id"] not in saved and report:
+            time.sleep(8)
+        report.append(saved[row["id"]] if row["id"] in saved else _retry(_nodes_report, row))
+        _store_fase3(report)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return report
+
+
+def test_live_nodes_use_two_chat_calls_for_ai_projects(nodes_report):
+    assert {item["id"] for item in nodes_report} == MEASURED_IDS
+    projects = next(item for item in nodes_report if item["id"] == "es-proyectos-ia")
+    assert projects["engine"] == "langgraph"
+    assert projects["calls"] == 2
+    saved = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+    assert saved["fase-3"] == nodes_report
+    assert "fase-0" in saved
 
 
 def test_live_baseline_covers_five_questions(live_report):

@@ -96,6 +96,7 @@ def test_get_answer_maps_timeout_to_service_error(monkeypatch):
     async def boom(*_args, **_kwargs):
         raise TimeoutError
 
+    monkeypatch.setattr("app.services.chat.settings.GRAPH_ENGINE", "legacy")
     monkeypatch.setattr("app.services.chat.generate_async", boom)
     with pytest.raises(ChatServiceError, match="tardó demasiado"):
         asyncio.run(get_answer("hola"))

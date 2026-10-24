@@ -4,6 +4,8 @@ import pydantic
 from google.genai import errors as genai_errors
 
 from app.ai.gemini import generate_async
+from app.core.config import settings
+from app.graph.builder import get_portfolio_graph
 from app.prompts import SYSTEM_PROMPT
 from app.schemas.agent_response import AgentResponse
 from app.services.chat_context import build_agent_prompt
@@ -25,6 +27,14 @@ async def get_answer(
         prior_questions=prior_questions,
     )
     try:
+        if settings.GRAPH_ENGINE == "langgraph":
+            from uuid import uuid4
+
+            state = await get_portfolio_graph().ainvoke(
+                {"question": prompt, "attempts": 0, "passages": [], "messages": []},
+                config={"configurable": {"thread_id": str(uuid4())}},
+            )
+            return AgentResponse.model_validate(state["response"])
         return await generate_async(prompt, system_instruction=SYSTEM_PROMPT)
     except TimeoutError as error:
         raise ChatServiceError("El modelo tardó demasiado.") from error

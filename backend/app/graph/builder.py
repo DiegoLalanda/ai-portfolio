@@ -1,54 +1,35 @@
-"""Un nodo que ejecuta el loop actual. El checkpointer queda listo para la fase 5."""
+"""Grafo: router, dos lectores en paralelo, evidencia y compositor.
 
-from typing import Any
+    router -> bibliotecario -> evidencia -> compositor
+           -> investigador  /
+"""
 
-from langchain_core.callbacks import adispatch_custom_event
-from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from app.ai.gemini_agent import generate_with_events
+from app.graph.nodes import bibliotecario, compositor, evidencia, investigador, router
 from app.graph.state import PortfolioState
-from app.prompts import SYSTEM_PROMPT
 
-NODE_NAME = "agent"
+NODE_NAME = "compositor"
 
-
-async def run_current_agent(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
-    """Misma generación que el motor legacy. Los eventos salen por el stream del grafo."""
-
-    metrics: list[dict[str, Any]] = []
-
-    async def on_event(event: dict[str, Any]) -> None:
-        await adispatch_custom_event("portfolio", event, config=config)
-
-    response = await generate_with_events(
-        state["question"],
-        system_instruction=SYSTEM_PROMPT,
-        on_event=on_event,
-        metrics=metrics,
-    )
-    return {
-        "plan": state.get("plan", ""),
-        "facts": state.get("facts", {}),
-        "passages": state.get("passages", []),
-        "messages": state.get("messages", []),
-        "response": response.model_dump(),
-        "attempts": int(state.get("attempts") or 0) + 1,
-        "metrics": metrics,
-    }
+_GRAPH: CompiledStateGraph | None = None
 
 
 def build_portfolio_graph() -> CompiledStateGraph:
     graph = StateGraph(PortfolioState)
-    graph.add_node(NODE_NAME, run_current_agent)
-    graph.add_edge(START, NODE_NAME)
+    graph.add_node("router", router)
+    graph.add_node("bibliotecario", bibliotecario)
+    graph.add_node("investigador", investigador)
+    graph.add_node("evidencia", evidencia, defer=True)
+    graph.add_node(NODE_NAME, compositor)
+    graph.add_edge(START, "router")
+    graph.add_edge("router", "bibliotecario")
+    graph.add_edge("router", "investigador")
+    graph.add_edge(["bibliotecario", "investigador"], "evidencia")
+    graph.add_edge("evidencia", NODE_NAME)
     graph.add_edge(NODE_NAME, END)
     return graph.compile(checkpointer=MemorySaver())
-
-
-_GRAPH: CompiledStateGraph | None = None
 
 
 def get_portfolio_graph() -> CompiledStateGraph:

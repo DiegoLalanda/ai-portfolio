@@ -48,5 +48,5 @@ def test_golden_set_shape():
     assert "proj-finni" in ai_row["allowed_ids"]
 
 
-def test_graph_engine_defaults_to_legacy():
-    assert Settings.model_fields["GRAPH_ENGINE"].default == "legacy"
+def test_graph_engine_defaults_to_langgraph():
+    assert Settings.model_fields["GRAPH_ENGINE"].default == "langgraph"

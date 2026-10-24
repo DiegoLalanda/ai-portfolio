@@ -278,3 +278,15 @@ _SECTIONS: tuple[str, ...] = (
 )
 
 SYSTEM_PROMPT: str = "\n\n".join(_SECTIONS)
+
+ROUTER_PROMPT: str = "\n\n".join((_TOOLS_SECTION, _LANGUAGE_SECTION))
+COMPOSER_PROMPT: str = "\n\n".join(
+    (
+        _IDENTITY_SECTION,
+        _GROUNDING_SECTION,
+        _TONE_SECTION,
+        _OUTPUT_FORMAT_SECTION,
+        _FALLBACK_SECTION,
+        _BOUNDARIES_SECTION,
+    )
+)

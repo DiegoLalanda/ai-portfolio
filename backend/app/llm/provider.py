@@ -12,7 +12,7 @@ from typing import Any, Literal
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from app.ai.gemini_client import MODEL, TOOLS, client
 from app.core.config import settings
@@ -31,7 +31,7 @@ class Completion:
     prompt_tokens: int
     output_tokens: int
     total_tokens: int
-    parsed: AgentResponse | None = None
+    parsed: BaseModel | None = None
 
 
 class GenAIChatModel(BaseChatModel):
@@ -54,7 +54,15 @@ class GenAIChatModel(BaseChatModel):
         )
         return ChatResult(generations=[ChatGeneration(message=AIMessage(content=completion.text))])
 
-    async def acomplete(self, messages: list[BaseMessage], *, mode: Mode, timeout: float) -> Completion:
+    async def acomplete(
+        self,
+        messages: list[BaseMessage],
+        *,
+        mode: Mode,
+        timeout: float,
+        schema: type[BaseModel] | None = None,
+    ) -> Completion:
+        target = schema or AgentResponse
         system, contents = _to_genai(messages)
         config: dict[str, Any] = {
             "system_instruction": system,
@@ -64,7 +72,7 @@ class GenAIChatModel(BaseChatModel):
             config["tools"] = TOOLS
         else:
             config["response_mime_type"] = "application/json"
-            config["response_json_schema"] = AgentResponse.model_json_schema()
+            config["response_json_schema"] = target.model_json_schema()
 
         started = time.perf_counter()
         async with asyncio.timeout(timeout):
@@ -80,7 +88,7 @@ class GenAIChatModel(BaseChatModel):
         parsed = None
         if mode == "structured" and text:
             try:
-                parsed = AgentResponse.model_validate_json(text)
+                parsed = target.model_validate_json(text)
             except ValidationError:
                 parsed = None
         return Completion(
@@ -108,10 +116,18 @@ def get_chat_model() -> BaseChatModel:
         return GenAIChatModel()
 
 
-async def acomplete(model: BaseChatModel, messages: list[BaseMessage], *, mode: Mode, timeout: float) -> Completion:
+async def acomplete(
+    model: BaseChatModel,
+    messages: list[BaseMessage],
+    *,
+    mode: Mode,
+    timeout: float,
+    schema: type[BaseModel] | None = None,
+) -> Completion:
+    target = schema or AgentResponse
     if isinstance(model, GenAIChatModel):
-        return await model.acomplete(messages, mode=mode, timeout=timeout)
-    return await _complete_langchain(model, messages, mode=mode, timeout=timeout)
+        return await model.acomplete(messages, mode=mode, timeout=timeout, schema=target)
+    return await _complete_langchain(model, messages, mode=mode, timeout=timeout, schema=target)
 
 
 def model_was_rejected(error: Exception) -> bool:
@@ -119,11 +135,18 @@ def model_was_rejected(error: Exception) -> bool:
     return "not found" in text or "not supported" in text or "invalid model" in text or "is not found" in text
 
 
-async def _complete_langchain(model: BaseChatModel, messages: list[BaseMessage], *, mode: Mode, timeout: float) -> Completion:
+async def _complete_langchain(
+    model: BaseChatModel,
+    messages: list[BaseMessage],
+    *,
+    mode: Mode,
+    timeout: float,
+    schema: type[BaseModel],
+) -> Completion:
     if mode == "tools":
         runnable = model.bind_tools(TOOLS)
     else:
-        runnable = model.with_structured_output(AgentResponse, method="json_schema", include_raw=True)
+        runnable = model.with_structured_output(schema, method="json_schema", include_raw=True)
 
     started = time.perf_counter()
     async with asyncio.timeout(timeout):
@@ -131,11 +154,15 @@ async def _complete_langchain(model: BaseChatModel, messages: list[BaseMessage],
     latency_ms = (time.perf_counter() - started) * 1000
 
     if mode == "structured":
-        raw = result["raw"] if isinstance(result, dict) else result
-        parsed = result.get("parsed") if isinstance(result, dict) else None
-        if not isinstance(parsed, AgentResponse):
+        if isinstance(result, dict):
+            raw = result.get("raw")
+            parsed = result.get("parsed")
+        else:
+            raw = result
+            parsed = result if isinstance(result, schema) else None
+        if not isinstance(parsed, schema):
             parsed = None
-        text = parsed.model_dump_json() if parsed is not None else _message_text(raw)
+        text = parsed.model_dump_json() if isinstance(parsed, BaseModel) else _message_text(raw)
         prompt_tokens, output_tokens, total_tokens = _usage_from_message(raw)
         return Completion(
             text=text,

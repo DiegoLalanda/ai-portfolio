@@ -1,1 +1,1 @@
-"""Grafo del portfolio. En esta fase tiene un solo nodo."""
+"""Grafo del portfolio. Router, lectores, evidencia y compositor."""
