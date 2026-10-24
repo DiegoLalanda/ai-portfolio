@@ -21,6 +21,7 @@ def _context_kwargs(payload: ChatRequest) -> dict:
     return {
         "shown_widget_types": payload.shown_widget_types,
         "prior_questions": payload.prior_questions,
+        "thread_id": payload.thread_id,
     }
 
 

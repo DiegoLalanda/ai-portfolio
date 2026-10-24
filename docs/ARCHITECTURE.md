@@ -71,13 +71,35 @@ Definidos en `backend/app/api/v1/endpoints/chat.py`, bajo el prefijo `/api/v1`.
 
 Ambos endpoints de chat aplican **rate limiting** (`app/core/rate_limiter.py`): 10 peticiones por minuto por IP, en memoria.
 
+## Hilo de conversación (LangGraph)
+
+Con `GRAPH_ENGINE=langgraph`, el visitante puede mandar un `thread_id` opcional. El frontend lo genera una vez, lo guarda en `localStorage` y lo reenvía en cada POST. El backend usa ese id como clave del **checkpointer** de LangGraph y acumula `session_questions` en el servidor (las últimas se inyectan en el prompt). Si no hay `thread_id`, cada request sigue siendo independiente y el contexto de preguntas previas depende de `prior_questions` en el body, como antes. `shown_widget_types` siempre viene del cliente.
+
+Implementación: `AsyncSqliteSaver` en `CHECKPOINT_PATH` (por defecto `data/checkpoints.sqlite`), inicializado en el lifespan de FastAPI. Si el archivo no abre, el grafo cae a `MemorySaver` y el chat responde igual.
+
+### Por qué SQLite y no Redis
+
+La migración agentica del portfolio **no incluye Redis** como dependencia de producción. En el alcance del proyecto quedaron fuera colas, Pinecone, Redis como bus de respuestas y servicios extra de pago; el objetivo es **OSS y costo cero** con FastAPI en un solo proceso (Railway + Pages).
+
+Para la fase de hilo solo hace falta **persistir el checkpoint de LangGraph** (preguntas de la sesión y estado del grafo), no una cola ni pub/sub:
+
+| Criterio | SQLite (lo que usamos) | Redis |
+|---|---|---|
+| Infra | Un archivo en el mismo contenedor; `langgraph-checkpoint-sqlite` | Servicio aparte (URL, credenciales, red, costo o operación) |
+| Caso actual | Una réplica del API; follow-ups en la misma visita | Brilla con **varias réplicas** del API compartiendo el mismo checkpointer |
+| Desarrollo local | `python run.py` sin levantar nada más | Hay que tener Redis corriendo o mockearlo |
+| Persistencia en Railway | El archivo vive en disco **efímero**: un **redeploy borra** el hilo | Un Redis **gestionado y persistente** sobrevive deploys y escala horizontal |
+
+Elegimos SQLite porque encaja con “portfolio en un backend simple”: menos moving parts, tests offline con un path temporal, y el mismo patrón que el curso pero sin acoplar el sitio público a Redis. **No descartamos Redis para siempre**: tendría sentido si desplegáramos varias instancias del API o quisiéramos hilos que sobrevivan redeploys sin depender del disco del contenedor; eso sería una decisión de infra explícita, no un requisito de la fase 5.
+
 ### Request
 
 ```jsonc
 {
   "question": "¿Qué proyectos de IA hiciste?",
   "shown_widget_types": ["projects"],   // widgets ya visibles en la sesión (para no repetir)
-  "prior_questions": ["¿Quién es Diego?"] // historial de preguntas de la sesión
+  "prior_questions": ["¿Quién es Diego?"], // historial en el body si no hay thread_id
+  "thread_id": "550e8400-e29b-41d4-a716-446655440000" // opcional; hilo LangGraph en SQLite
 }
 ```
 

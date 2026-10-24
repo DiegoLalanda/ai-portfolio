@@ -250,8 +250,12 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
         metrics.append(second)
     if parsed is None:
         parsed = _insufficient(decision.language)
-    return {
+    result: dict[str, Any] = {
         "response": parsed.model_dump(),
         "attempts": len(metrics),
         "metrics": metrics,
     }
+    visitor = (state.get("visitor_question") or "").strip()
+    if visitor:
+        result["session_questions"] = [visitor]
+    return result

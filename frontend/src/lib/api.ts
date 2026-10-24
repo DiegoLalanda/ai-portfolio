@@ -6,6 +6,7 @@
 import type { AgentResponse } from "@/types/agent-response";
 import type { ChatStreamEvent } from "@/types/chat-stream";
 import type { DashboardSessionContext } from "@/lib/dashboard-context";
+import { getChatThreadId } from "@/lib/chat-thread";
 
 const API_BASE_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -15,6 +16,7 @@ export interface ChatRequestBody {
   question: string;
   shown_widget_types?: string[];
   prior_questions?: string[];
+  thread_id?: string;
 }
 
 export async function sendChatMessage(
@@ -28,6 +30,7 @@ export async function sendChatMessage(
       question,
       shown_widget_types: context.shownWidgetTypes,
       prior_questions: context.priorQuestions,
+      thread_id: getChatThreadId(),
     } satisfies ChatRequestBody),
   });
 
@@ -53,6 +56,7 @@ export async function streamChatMessage(
       question,
       shown_widget_types: context.shownWidgetTypes,
       prior_questions: context.priorQuestions,
+      thread_id: getChatThreadId(),
     } satisfies ChatRequestBody),
   });
 

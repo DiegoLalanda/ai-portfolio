@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     EMBEDDING_PROVIDER: Literal["gemini", "hash"] = "gemini"
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
     RAG_TOP_K: int = 4
+    CHECKPOINT_PATH: str = "data/checkpoints.sqlite"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

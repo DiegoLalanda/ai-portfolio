@@ -1,7 +1,6 @@
 """Servicio de chat con streaming SSE."""
 
 from collections.abc import AsyncIterator
-from uuid import uuid4
 
 import pydantic
 from google.genai import errors as genai_errors
@@ -11,6 +10,7 @@ from app.core.config import settings
 from app.graph.builder import NODE_NAME, get_portfolio_graph
 from app.prompts import SYSTEM_PROMPT
 from app.services.chat_context import build_agent_prompt
+from app.services.graph_session import prepare_graph_turn
 
 
 def _agent_output(event: dict) -> dict | None:
@@ -25,14 +25,13 @@ def _agent_output(event: dict) -> dict | None:
     return output["response"]
 
 
-async def _stream_graph(prompt: str) -> AsyncIterator[dict]:
+async def _stream_graph(graph_input: dict, config: dict) -> AsyncIterator[dict]:
     yield {"type": "started"}
     graph = get_portfolio_graph()
-    config = {"configurable": {"thread_id": str(uuid4())}}
     sent_done = False
     try:
         async for event in graph.astream_events(
-            {"question": prompt, "attempts": 0, "passages": [], "messages": []},
+            graph_input,
             config=config,
             version="v2",
         ):
@@ -60,16 +59,23 @@ async def stream_chat_events(
     *,
     shown_widget_types: list[str] | None = None,
     prior_questions: list[str] | None = None,
+    thread_id: str | None = None,
 ) -> AsyncIterator[dict]:
+    if settings.GRAPH_ENGINE == "langgraph":
+        _prompt, config, graph_input = await prepare_graph_turn(
+            question,
+            shown_widget_types=shown_widget_types,
+            prior_questions=prior_questions,
+            thread_id=thread_id,
+        )
+        async for event in _stream_graph(graph_input, config):
+            yield event
+        return
+
     prompt = build_agent_prompt(
         question,
         shown_widget_types=shown_widget_types,
         prior_questions=prior_questions,
     )
-    if settings.GRAPH_ENGINE == "langgraph":
-        async for event in _stream_graph(prompt):
-            yield event
-        return
-
     async for event in stream_answer_events(prompt, system_instruction=SYSTEM_PROMPT):
         yield event

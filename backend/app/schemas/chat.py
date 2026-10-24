@@ -15,6 +15,11 @@ class ChatRequest(BaseModel):
         default_factory=list,
         description="Preguntas previas del visitante en la misma sesión.",
     )
+    thread_id: str | None = Field(
+        default=None,
+        max_length=64,
+        description="Hilo LangGraph opcional. Si viene, el servidor recuerda preguntas previas en el checkpointer.",
+    )
 
 
 class ChatResponse(AgentResponse):

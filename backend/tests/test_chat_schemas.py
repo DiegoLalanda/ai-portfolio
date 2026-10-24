@@ -13,6 +13,12 @@ def test_chat_request_valid():
     assert request.question == "¿Cuáles son los proyectos de Diego?"
     assert request.shown_widget_types == ["skills", "projects"]
     assert request.prior_questions == ["¿Quién es Diego?"]
+    assert request.thread_id is None
+
+
+def test_chat_request_accepts_thread_id():
+    request = ChatRequest(question="Hola", thread_id="abc-123")
+    assert request.thread_id == "abc-123"
 
 
 def test_chat_request_empty_question():

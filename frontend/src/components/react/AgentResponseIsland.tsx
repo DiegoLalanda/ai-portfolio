@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { MessageCircleQuestion } from "lucide-react";
 import { streamChatMessage } from "@/lib/api";
+import { resetChatThreadId } from "@/lib/chat-thread";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
 import {
   collectShownWidgetTypes,
@@ -64,6 +65,7 @@ export default function AgentResponseIsland() {
     }
 
     function handleReset() {
+      resetChatThreadId();
       delete responseBridge.__portfolioPendingAgentResponse;
       setResponses([]);
       setAskedQuestions([]);

@@ -4,6 +4,7 @@
            -> investigador  /
 """
 
+from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -16,7 +17,7 @@ NODE_NAME = "compositor"
 _GRAPH: CompiledStateGraph | None = None
 
 
-def build_portfolio_graph() -> CompiledStateGraph:
+def build_portfolio_graph(checkpointer: BaseCheckpointSaver | None = None) -> CompiledStateGraph:
     graph = StateGraph(PortfolioState)
     graph.add_node("router", router)
     graph.add_node("bibliotecario", bibliotecario)
@@ -29,7 +30,12 @@ def build_portfolio_graph() -> CompiledStateGraph:
     graph.add_edge(["bibliotecario", "investigador"], "evidencia")
     graph.add_edge("evidencia", NODE_NAME)
     graph.add_edge(NODE_NAME, END)
-    return graph.compile(checkpointer=MemorySaver())
+    return graph.compile(checkpointer=checkpointer or MemorySaver())
+
+
+def set_portfolio_graph(graph: CompiledStateGraph) -> None:
+    global _GRAPH
+    _GRAPH = graph
 
 
 def get_portfolio_graph() -> CompiledStateGraph:

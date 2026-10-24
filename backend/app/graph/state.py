@@ -9,10 +9,12 @@ def _append(left: list[dict[str, Any]] | None, right: list[dict[str, Any]] | Non
 
 class PortfolioState(TypedDict, total=False):
     question: str
+    visitor_question: str
     plan: dict[str, Any]
     facts: dict[str, Any]
     passages: list[Any]
     response: dict[str, Any]
     attempts: int
     messages: list[Any]
+    session_questions: Annotated[list[str], _append]
     metrics: Annotated[list[dict[str, Any]], _append]
