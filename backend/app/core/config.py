@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,6 +14,7 @@ class Settings(BaseSettings):
 
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:4321"]
     GEMINI_API_KEY: str = ""
+    GRAPH_ENGINE: Literal["legacy", "langgraph"] = "legacy"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

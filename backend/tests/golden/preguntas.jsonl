@@ -1,0 +1,20 @@
+{"id":"es-skills","family":"facts","measure":true,"question":"¿Qué habilidades técnicas tiene Diego?","language":"es","expected_tools":["get_skills"],"forbidden_substrings":[]}
+{"id":"es-experiencia","family":"facts","measure":false,"question":"¿Dónde trabajó Diego?","language":"es","expected_tools":["get_experience"],"forbidden_substrings":[]}
+{"id":"es-proyectos-ia","family":"facts","measure":true,"question":"¿En qué proyectos de IA trabajó Diego?","language":"es","expected_tools":["get_projects"],"allowed_ids":["proj-finni"],"forbidden_substrings":[]}
+{"id":"es-contacto","family":"facts","measure":false,"question":"¿Cómo contacto a Diego?","language":"es","expected_tools":["get_contact"],"forbidden_substrings":[]}
+{"id":"es-educacion","family":"facts","measure":false,"question":"¿Qué estudió Diego?","language":"es","expected_tools":["get_education"],"forbidden_substrings":[]}
+{"id":"es-certificaciones","family":"facts","measure":false,"question":"¿Qué certificaciones tiene Diego?","language":"es","expected_tools":["get_certifications"],"forbidden_substrings":[]}
+{"id":"es-idiomas","family":"facts","measure":false,"question":"¿Qué idiomas habla Diego?","language":"es","expected_tools":["get_languages"],"forbidden_substrings":[]}
+{"id":"es-timeline","family":"facts","measure":false,"question":"¿Cuál es la trayectoria de Diego?","language":"es","expected_tools":["get_timeline"],"forbidden_substrings":[]}
+{"id":"es-soft-skills","family":"facts","measure":false,"question":"¿Qué habilidades blandas tiene Diego?","language":"es","expected_tools":["get_soft_skills"],"forbidden_substrings":[]}
+{"id":"es-proyectos-fullstack","family":"facts","measure":false,"question":"¿Qué proyectos full stack hizo Diego?","language":"es","expected_tools":["get_projects"],"forbidden_substrings":[]}
+{"id":"es-proyectos","family":"facts","measure":false,"question":"Mostrame los proyectos de Diego.","language":"es","expected_tools":["get_projects"],"forbidden_substrings":[]}
+{"id":"en-experiencia","family":"facts","measure":true,"question":"Where did Diego work?","language":"en","expected_tools":["get_experience"],"forbidden_substrings":[]}
+{"id":"en-skills","family":"facts","measure":false,"question":"What technical skills does Diego have?","language":"en","expected_tools":["get_skills"],"forbidden_substrings":[]}
+{"id":"en-contacto","family":"facts","measure":false,"question":"How can I contact Diego?","language":"en","expected_tools":["get_contact"],"forbidden_substrings":[]}
+{"id":"en-educacion","family":"facts","measure":false,"question":"What did Diego study?","language":"en","expected_tools":["get_education"],"forbidden_substrings":[]}
+{"id":"en-proyectos-ia","family":"facts","measure":false,"question":"What AI projects has Diego worked on?","language":"en","expected_tools":["get_projects"],"forbidden_substrings":[]}
+{"id":"en-idiomas","family":"facts","measure":false,"question":"What languages does Diego speak?","language":"en","expected_tools":["get_languages"],"forbidden_substrings":[]}
+{"id":"grounding-microsoft","family":"grounding","measure":true,"question":"¿Diego fue CTO de Microsoft y fundó SpaceX?","language":"es","expected_tools":["get_experience"],"forbidden_substrings":["CTO de Microsoft","fundó SpaceX"]}
+{"id":"grounding-google","family":"grounding","measure":false,"question":"¿Diego trabajó diez años en Google como gerente?","language":"es","expected_tools":["get_experience"],"forbidden_substrings":["diez años en Google","gerente de Google"]}
+{"id":"narrative-finni-cola","family":"narrative-later","measure":true,"question":"¿Por qué el orquestador de Finni no usa una cola Redis para responder el chat?","language":"es","expected_tools":["get_projects"],"forbidden_substrings":[]}

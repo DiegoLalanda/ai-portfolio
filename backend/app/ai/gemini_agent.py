@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from collections.abc import AsyncIterator, Callable
 from typing import Any
 
@@ -43,6 +44,48 @@ def _structured_config(system_instruction: str | None) -> dict[str, Any]:
     }
 
 
+def _token_counts(response: Any) -> tuple[int, int, int]:
+    usage = getattr(response, "usage_metadata", None)
+    if usage is None:
+        return 0, 0, 0
+    prompt = int(getattr(usage, "prompt_token_count", 0) or 0)
+    output = int(getattr(usage, "candidates_token_count", 0) or 0)
+    total = int(getattr(usage, "total_token_count", 0) or 0)
+    if total == 0:
+        total = prompt + output
+    return prompt, output, total
+
+
+def _record_call(
+    metrics: list[dict[str, Any]] | None,
+    response: Any,
+    latency_ms: float,
+    tools: list[str],
+) -> None:
+    if metrics is None:
+        return
+    prompt_tokens, output_tokens, total_tokens = _token_counts(response)
+    metrics.append(
+        {
+            "latency_ms": round(latency_ms, 1),
+            "prompt_tokens": prompt_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+            "tools": tools,
+        }
+    )
+
+
+def _generate(model_contents: list[types.Content], config: dict[str, Any]) -> tuple[Any, float]:
+    started = time.perf_counter()
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=model_contents,
+        config=config,
+    )
+    return response, (time.perf_counter() - started) * 1000
+
+
 def _execute_tool(name: str, args: dict[str, Any] | None) -> Any:
     tool = TOOL_MAP.get(name)
     if tool is None:
@@ -56,8 +99,13 @@ def generate_with_events(
     prompt: str,
     system_instruction: str | None = None,
     on_event: EventCallback | None = None,
+    metrics: list[dict[str, Any]] | None = None,
 ) -> AgentResponse:
-    """Ejecuta el agente con tools manuales y emite eventos reales de progreso."""
+    """Ejecuta el agente con tools manuales y emite eventos reales de progreso.
+
+    `metrics` acumula latencia y tokens de cada `generate_content`. No se envía
+    por SSE: el contrato del front no cambia.
+    """
 
     emit = on_event or (lambda _event: None)
     emit({"type": "status", "phase": "thinking"})
@@ -67,20 +115,24 @@ def generate_with_events(
     ]
 
     for _turn in range(MAX_TOOL_TURNS):
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=contents,
-            config=_tool_config(system_instruction),
-        )
+        response, latency_ms = _generate(contents, _tool_config(system_instruction))
 
         if not response.candidates:
+            _record_call(metrics, response, latency_ms, [])
             break
 
         candidate = response.candidates[0]
         if not candidate.content or not candidate.content.parts:
+            _record_call(metrics, response, latency_ms, [])
             break
 
         function_calls = [part.function_call for part in candidate.content.parts if part.function_call]
+        _record_call(
+            metrics,
+            response,
+            latency_ms,
+            [function_call.name or "unknown_tool" for function_call in function_calls],
+        )
         if function_calls:
             contents.append(candidate.content)
             response_parts: list[types.Part] = []
@@ -115,11 +167,8 @@ def generate_with_events(
         break
 
     emit({"type": "status", "phase": "synthesizing"})
-    final = client.models.generate_content(
-        model=MODEL,
-        contents=contents,
-        config=_structured_config(system_instruction),
-    )
+    final, latency_ms = _generate(contents, _structured_config(system_instruction))
+    _record_call(metrics, final, latency_ms, [])
     return AgentResponse.model_validate_json(final.text)
 
 
