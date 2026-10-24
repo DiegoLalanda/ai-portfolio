@@ -1,5 +1,6 @@
 """Línea de base real contra Gemini. No corre en `pytest` pelado ni en CI."""
 
+import asyncio
 import json
 from pathlib import Path
 
@@ -24,11 +25,13 @@ def _row_report(row: dict) -> dict:
         if event.get("type") == "tool_call":
             tools.append(event["tool"])
 
-    response = generate_with_events(
-        build_agent_prompt(row["question"]),
-        system_instruction=SYSTEM_PROMPT,
-        on_event=on_event,
-        metrics=metrics,
+    response = asyncio.run(
+        generate_with_events(
+            build_agent_prompt(row["question"]),
+            system_instruction=SYSTEM_PROMPT,
+            on_event=on_event,
+            metrics=metrics,
+        )
     )
     summary = response.summary.casefold()
     for forbidden in row["forbidden_substrings"]:
@@ -63,12 +66,26 @@ def live_report():
     assert {row["id"] for row in rows} == MEASURED_IDS
     report = [_row_report(row) for row in rows]
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    payload = _with_phase(report)
+    REPORT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(payload["fase-1"], ensure_ascii=False, indent=2))
     return report
+
+
+def _with_phase(report: list[dict]) -> dict:
+    previous = None
+    if REPORT_PATH.is_file():
+        previous = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+    if isinstance(previous, list):
+        return {"fase-0": previous, "fase-1": report}
+    if isinstance(previous, dict):
+        return {**previous, "fase-1": report}
+    return {"fase-1": report}
 
 
 def test_live_baseline_covers_five_questions(live_report):
     assert {item["id"] for item in live_report} == MEASURED_IDS
     assert all(item["engine"] == "legacy" for item in live_report)
-    assert REPORT_PATH.is_file()
+    saved = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+    assert saved["fase-1"] == live_report
+    assert "fase-0" in saved

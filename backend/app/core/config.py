@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:4321"]
     GEMINI_API_KEY: str = ""
     GRAPH_ENGINE: Literal["legacy", "langgraph"] = "legacy"
+    LLM_TIMEOUT_ROUTER_S: float = 12
+    LLM_TIMEOUT_COMPOSER_S: float = 25
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

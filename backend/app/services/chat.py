@@ -26,6 +26,8 @@ async def get_answer(
     )
     try:
         return await generate_async(prompt, system_instruction=SYSTEM_PROMPT)
+    except TimeoutError as error:
+        raise ChatServiceError("El modelo tardó demasiado.") from error
     except genai_errors.APIError as error:
         raise ChatServiceError(f"Gemini API error: {error}") from error
     except pydantic.ValidationError as error:
