@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 import logging
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from typing import Any
 
 import pydantic
@@ -19,7 +20,13 @@ from app.schemas.agent_response import AgentResponse
 
 logger = logging.getLogger(__name__)
 
-EventCallback = Callable[[dict[str, Any]], None]
+EventCallback = Callable[[dict[str, Any]], Awaitable[None] | None]
+
+
+async def _emit(callback: EventCallback, event: dict[str, Any]) -> None:
+    result = callback(event)
+    if inspect.isawaitable(result):
+        await result
 
 MAX_TOOL_TURNS = 12
 TOOL_MAP = {tool.__name__: tool for tool in TOOLS}
@@ -82,7 +89,7 @@ async def generate_with_events(
     """
 
     emit = on_event or (lambda _event: None)
-    emit({"type": "status", "phase": "thinking"})
+    await _emit(emit, {"type": "status", "phase": "thinking"})
 
     messages: list[BaseMessage] = []
     if system_instruction:
@@ -114,9 +121,9 @@ async def generate_with_events(
             for call in completion.tool_calls:
                 name = call["name"]
                 logger.info("tool_call name=%s", name)
-                emit({"type": "tool_call", "tool": name})
+                await _emit(emit, {"type": "tool_call", "tool": name})
                 result = _execute_tool(name, call["args"])
-                emit({"type": "tool_done", "tool": name})
+                await _emit(emit, {"type": "tool_done", "tool": name})
                 messages.append(_tool_message(name, call["id"], result))
             continue
 
@@ -127,12 +134,12 @@ async def generate_with_events(
                 messages.append(AIMessage(content=completion.text))
                 break
             else:
-                emit({"type": "status", "phase": "synthesizing"})
+                await _emit(emit, {"type": "status", "phase": "synthesizing"})
                 return parsed
 
         break
 
-    emit({"type": "status", "phase": "synthesizing"})
+    await _emit(emit, {"type": "status", "phase": "synthesizing"})
     _model, final = await _complete(
         model,
         messages,

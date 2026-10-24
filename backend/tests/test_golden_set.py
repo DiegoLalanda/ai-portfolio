@@ -1,11 +1,9 @@
 """Contrato del golden set y del flag GRAPH_ENGINE. No llama a Gemini."""
 
-import asyncio
 import json
 from pathlib import Path
 
 from app.core.config import Settings
-from app.services.chat_stream import GRAPH_ENGINE_UNAVAILABLE, stream_chat_events
 from app.tools import __all__ as TOOL_NAMES
 
 GOLDEN_PATH = Path(__file__).parent / "golden" / "preguntas.jsonl"
@@ -52,13 +50,3 @@ def test_golden_set_shape():
 
 def test_graph_engine_defaults_to_legacy():
     assert Settings.model_fields["GRAPH_ENGINE"].default == "legacy"
-
-
-def test_langgraph_engine_emits_error_without_calling_the_model(monkeypatch):
-    monkeypatch.setattr("app.services.chat_stream.settings.GRAPH_ENGINE", "langgraph")
-
-    async def collect():
-        return [event async for event in stream_chat_events("¿Qué skills tiene Diego?")]
-
-    events = asyncio.run(collect())
-    assert events == [{"type": "error", "message": GRAPH_ENGINE_UNAVAILABLE}]

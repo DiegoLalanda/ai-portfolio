@@ -6,6 +6,7 @@ python-dotenv>=1.0.1
 google-genai>=1.0.0
 langchain-core>=0.3,<2
 langchain-google-genai>=2,<4
+langgraph>=1.0,<2
 
 # Testing
 pytest>=9.0.0
