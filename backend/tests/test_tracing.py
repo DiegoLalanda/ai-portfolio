@@ -53,7 +53,7 @@ def test_collector_endpoint_normalizes_railway_base_url():
 def test_graph_nodes_emit_spans_with_prompt_version(monkeypatch):
     configure_tracing()
     clear_traces()
-    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda: _TraceModel())
+    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda _key="": _TraceModel())
     graph = build_portfolio_graph()
     asyncio.run(
         graph.ainvoke(

@@ -37,7 +37,7 @@ def test_generate_with_events_records_tokens_without_network(monkeypatch):
         widgets=[],
         suggested_actions=[],
     )
-    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda: _FakeModel(answer))
+    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda _key="": _FakeModel(answer))
     metrics: list[dict] = []
     seen: list[str] = []
 

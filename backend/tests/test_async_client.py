@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.ai.gemini_agent import TIMEOUT_MESSAGE, stream_answer_events
-from app.ai.gemini_client import MODEL
+from app.ai.gemini_client import chat_model_id
 from app.llm.provider import GenAIChatModel, get_chat_model
 from app.schemas.agent_response import AgentResponse
 
@@ -29,9 +29,9 @@ class _Ready:
 
 
 def test_get_chat_model_uses_langchain_wrapper():
-    model = get_chat_model()
+    model = get_chat_model("test-primary-key")
     assert isinstance(model, ChatGoogleGenerativeAI)
-    assert model.model.endswith(MODEL)
+    assert chat_model_id() in model.model.replace("models/", "")
 
 
 def test_get_chat_model_falls_back_when_the_wrapper_rejects_the_id(monkeypatch):
@@ -40,7 +40,7 @@ def test_get_chat_model_falls_back_when_the_wrapper_rejects_the_id(monkeypatch):
             raise ValueError("model gemini-3.1-flash-lite is not supported")
 
     monkeypatch.setattr("app.llm.provider.ChatGoogleGenerativeAI", Rejected)
-    assert isinstance(get_chat_model(), GenAIChatModel)
+    assert isinstance(get_chat_model("test-key"), GenAIChatModel)
 
 
 def test_timeout_becomes_sse_error(monkeypatch):
@@ -50,7 +50,7 @@ def test_timeout_becomes_sse_error(monkeypatch):
         def bind_tools(self, _tools, **_kwargs):
             return _Slow()
 
-    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda: _Model())
+    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda _key="": _Model())
 
     async def collect():
         return [event async for event in stream_answer_events("hola")]
@@ -79,7 +79,7 @@ def test_request_does_not_use_to_thread(monkeypatch):
         def bind_tools(self, _tools, **_kwargs):
             return _Ready(answer.model_dump_json())
 
-    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda: _Model())
+    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda _key="": _Model())
 
     async def collect():
         return [event async for event in stream_answer_events("hola")]
@@ -122,6 +122,6 @@ def test_generate_async_does_not_use_to_thread(monkeypatch):
         def bind_tools(self, _tools, **_kwargs):
             return _Ready(answer.model_dump_json())
 
-    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda: _Model())
+    monkeypatch.setattr("app.ai.gemini_agent.get_chat_model", lambda _key="": _Model())
     result = asyncio.run(generate_async("hola"))
     assert result.summary == "Async."

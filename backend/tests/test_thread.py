@@ -61,7 +61,7 @@ def test_without_thread_id_uses_client_prior_questions():
 
 def test_thread_id_reuses_server_session_questions(monkeypatch):
     model = _ThreadModel()
-    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda: model)
+    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda _key="": model)
     graph = build_portfolio_graph()
     set_portfolio_graph(graph)
     thread = "pytest-thread-session"

@@ -100,7 +100,7 @@ class _NarrativeModel:
 
 
 def test_narrative_route_retrieves_and_records_embedding_latency(monkeypatch):
-    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda: _NarrativeModel())
+    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda _key="": _NarrativeModel())
     graph = build_portfolio_graph()
     state = asyncio.run(
         graph.ainvoke(
