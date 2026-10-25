@@ -17,6 +17,7 @@ from app.core.config import settings
 from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
 from app.llm.provider import Completion, acomplete, get_chat_model
+from app.observability.tracing import trace_node
 from app.prompts.system import COMPOSER_PROMPT, ROUTER_PROMPT
 from app.schemas.agent_response import AgentResponse
 from app.tools import __all__ as TOOL_NAMES
@@ -106,6 +107,7 @@ def _insufficient(language: str) -> AgentResponse:
     )
 
 
+@trace_node("router")
 async def router(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
     await _emit(config, {"type": "status", "phase": "thinking"})
     messages = [
@@ -143,6 +145,7 @@ async def _run_tool(name: str, config: RunnableConfig) -> tuple[str, Any]:
     return name, result
 
 
+@trace_node("bibliotecario")
 async def bibliotecario(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
     decision = _plan(state)
     names = [] if decision.route == "direct" else decision.tools
@@ -161,6 +164,7 @@ async def bibliotecario(state: PortfolioState, config: RunnableConfig) -> dict[s
     return update
 
 
+@trace_node("investigador")
 async def investigador(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
     """Lee el corpus markdown solo en narrative o both. Los hechos no embeddean."""
 
@@ -192,6 +196,7 @@ async def investigador(state: PortfolioState, config: RunnableConfig) -> dict[st
     }
 
 
+@trace_node("evidencia")
 def evidencia(state: PortfolioState) -> dict[str, Any]:
     """Arma el paquete que ve el compositor. No llama al modelo."""
 
@@ -238,6 +243,7 @@ async def _compose(
     return parsed, _metric(completion)
 
 
+@trace_node("compositor")
 async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
     await _emit(config, {"type": "status", "phase": "synthesizing"})
     decision = _plan(state)

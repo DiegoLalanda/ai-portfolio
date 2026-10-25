@@ -92,6 +92,30 @@ Para la fase de hilo solo hace falta **persistir el checkpoint de LangGraph** (p
 
 Elegimos SQLite porque encaja con “portfolio en un backend simple”: menos moving parts, tests offline con un path temporal, y el mismo patrón que el curso pero sin acoplar el sitio público a Redis. **No descartamos Redis para siempre**: tendría sentido si desplegáramos varias instancias del API o quisiéramos hilos que sobrevivan redeploys sin depender del disco del contenedor; eso sería una decisión de infra explícita, no un requisito de la fase 5.
 
+## Trazas (OpenTelemetry)
+
+Cada nodo del grafo (`router`, `bibliotecario`, `investigador`, `evidencia`, `compositor`) abre un span con `prompt.version` (env `PROMPT_VERSION`) y `langgraph.node`. LangChain queda instrumentado con OpenInference cuando el paquete está instalado.
+
+**Local:** dejá `PHOENIX_COLLECTOR_ENDPOINT` vacío (o `TRACE_JSONL=true` en `.env`). Corré `python run.py` y hacé preguntas al chat; las líneas van a `backend/evidencia/trazas.jsonl` (gitignored). Los tests fuerzan JSONL en memoria + archivo.
+
+**Producción — Phoenix en Railway (servicio aparte):** desplegá [Arize Phoenix con el template de Railway](https://railway.com/deploy/arize-phoenix-or-just-updated-llm-tracing-evals-data-survives-redeploys--arize-phoenix-or-just-updated-llm-tracin) en el **mismo proyecto** que el API. Ese servicio trae volumen en `/root/.phoenix` (las trazas de la UI **sobreviven redeploys** de Phoenix) y un dominio HTTPS donde conviven la UI y el colector OTLP/HTTP en `/v1/traces`.
+
+Variables en el **servicio del backend** (FastAPI), no en Phoenix:
+
+| Variable | Ejemplo |
+|---|---|
+| `PHOENIX_COLLECTOR_ENDPOINT` | `https://<phoenix>.up.railway.app/v1/traces` (acepta también la base sin `/v1/traces`) |
+| `PHOENIX_PROJECT_NAME` | `ai-portfolio` |
+| `GRAPH_ENGINE` | `langgraph` |
+| `PHOENIX_API_KEY` | Solo si activaste auth en Phoenix (Bearer OTLP) |
+| `TRACE_JSONL` | `false` (default con OTLP; el JSONL del API no persiste en Railway) |
+
+En el **servicio Phoenix**, antes de tráfico real, considerá `PHOENIX_ENABLE_AUTH=true` y `PHOENIX_SECRET` (ver doc del template). El `PHOENIX_SECRET` no va en el API; si usás API keys de Phoenix, esa key sí va en `PHOENIX_API_KEY` del backend.
+
+Al arrancar el API deberías ver en logs: `Trazas OTLP hacia https://...`. Abrí la UI en `https://<phoenix>.up.railway.app` y buscá el proyecto `PHOENIX_PROJECT_NAME`.
+
+`/health` no depende de trazas ni de Phoenix.
+
 ### Request
 
 ```jsonc

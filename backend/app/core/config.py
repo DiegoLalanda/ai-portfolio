@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
     RAG_TOP_K: int = 4
     CHECKPOINT_PATH: str = "data/checkpoints.sqlite"
+    PROMPT_VERSION: str = "2026-03-29"
+    PHOENIX_COLLECTOR_ENDPOINT: str = ""
+    PHOENIX_API_KEY: str = ""
+    PHOENIX_PROJECT_NAME: str = "ai-portfolio"
+    TRACE_JSONL: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
