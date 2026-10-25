@@ -99,5 +99,14 @@ manual sobre 9 tools (`app/tools/get_*.py`), cada una leyendo un JSON de
 `app/data/`. La respuesta se valida contra el schema `AgentResponse`
 (`app/schemas/agent_response.py`).
 
-El flujo completo (loop de tools, eventos SSE, contrato de widgets) está
+El flujo completo (grafo LangGraph, RAG, trazas, eventos SSE) está
 documentado en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+
+## Rúbrica
+
+```bash
+python evaluar.py       # offline, sin GEMINI_API_KEY
+python evaluar.py --live   # medición opt-in (pytest -m live)
+```
+
+El golden set vive en `tests/golden/preguntas.jsonl`. El modelo falso está en `app/eval/golden_model.py`.

@@ -25,29 +25,37 @@ Portfolio personal **conversacional**: en lugar de secciones estáticas, el visi
 ## Arquitectura
 
 ```
-                    ┌─────────────────────────────┐
-   Visitante  ─────▶│  Frontend (Astro + React)   │
-   (browser)        │  Cloudflare Pages · estático │
-                    └──────────────┬──────────────┘
-                                   │  POST /api/v1/chat/stream (SSE)
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │   Backend (FastAPI)         │
-                    │   Railway                   │
-                    │                             │
-                    │   ┌───────────────────────┐ │
-                    │   │  Agente Gemini        │ │
-                    │   │  function calling     │ │
-                    │   └──────────┬────────────┘ │
-                    │              │ tools         │
-                    │              ▼               │
-                    │   app/data/*.json (contenido)│
-                    └─────────────────────────────┘
+   Visitante ──▶ Frontend (Astro + React, Cloudflare Pages)
+                      │  POST /api/v1/chat/stream (SSE)
+                      ▼
+                 Backend (FastAPI, Railway)
+                      │  LangGraph (GRAPH_ENGINE=langgraph)
+                      ▼
+        router ──▶ bibliotecario ──┐
+              └──▶ investigador ──┴──▶ evidencia ──▶ compositor
+                      │                    │
+              app/data/*.json         app/rag/corpus/*.md
+              (tools, hechos)         (RAG narrativo)
 ```
 
-El backend **no usa base de datos**: todo el contenido del portfolio vive en archivos JSON versionados en `backend/app/data/`. El modelo llama a las *tools* que leen esos JSON y con eso arma la respuesta.
+En **develop**, el camino por defecto es un **grafo LangGraph** con dos lectores en paralelo: el **bibliotecario** ejecuta las tools sobre JSON (milisegundos, sin embeddings) y el **investigador** busca solo en rutas `narrative`/`both` sobre markdown acotado (`backend/app/rag/corpus/`). **No** se indexan los JSON ni el HTML del sitio: los hechos van por tools; el RAG explica arquitectura cuando hace falta.
 
-Para el detalle completo del flujo del agente, mirá [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+El loop legacy (`GRAPH_ENGINE=legacy`) sigue en el código para comparar, pero el grafo es el motor principal en develop.
+
+Para hilos de conversación, trazas OpenTelemetry y despliegue de Phoenix en Railway, mirá [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+### Grafo (LangGraph)
+
+```mermaid
+flowchart LR
+  START --> router
+  router --> bibliotecario
+  router --> investigador
+  bibliotecario --> evidencia
+  investigador --> evidencia
+  evidencia --> compositor
+  compositor --> END
+```
 
 ---
 
@@ -62,9 +70,11 @@ Para el detalle completo del flujo del agente, mirá [`docs/ARCHITECTURE.md`](do
 
 ### Backend
 - [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/)
+- [LangGraph](https://langchain-ai.github.io/langgraph/) + LangChain (router / compositor)
 - [Pydantic v2](https://docs.pydantic.dev/) / `pydantic-settings` para config y contratos
-- [google-genai](https://pypi.org/project/google-genai/) (SDK oficial de Google Gemini)
-- Modelo: `gemini-3.1-flash-lite`
+- [google-genai](https://pypi.org/project/google-genai/) — chat `gemini-3.1-flash-lite`, embeddings Gemini para RAG
+- RAG híbrido: Chroma en memoria + BM25 sobre `app/rag/corpus/`
+- OpenTelemetry + OpenInference (trazas JSONL o OTLP hacia Phoenix)
 - Python 3.12+
 
 ### Infraestructura
@@ -76,10 +86,11 @@ Para el detalle completo del flujo del agente, mirá [`docs/ARCHITECTURE.md`](do
 ## Cómo funciona el asistente
 
 1. El visitante escribe una pregunta (ej. *"¿Qué proyectos de IA hiciste?"*).
-2. El frontend abre un stream **SSE** contra `POST /api/v1/chat/stream` y muestra el progreso en tiempo real (*thinking → tool_call → synthesizing*).
-3. El backend ejecuta un loop de *function calling* **manual** (hasta 12 turnos): Gemini decide qué *tools* llamar, el backend las ejecuta contra los JSON y le devuelve los resultados.
-4. Gemini produce una respuesta **estructurada** (`AgentResponse`: `title`, `summary`, `widgets[]`, `suggested_actions[]`) validada con Pydantic.
-5. El frontend mapea cada `widget.type` a un componente React (`widgetRegistry.ts`) y renderiza el dashboard. Los tipos desconocidos caen a un *fallback* genérico.
+2. El frontend abre un stream **SSE** contra `POST /api/v1/chat/stream` y envía contexto de sesión (`thread_id`, widgets ya mostrados, preguntas previas).
+3. El **router** (Gemini) elige ruta, tools e idioma sin ver el JSON crudo de las tools.
+4. El **bibliotecario** corre las tools contra `app/data/*.json`. El **investigador** recupera pasajes markdown solo si la ruta lo pide.
+5. El **compositor** (Gemini) devuelve `AgentResponse` estructurado (`title`, `summary`, `widgets[]`, `suggested_actions[]`).
+6. El frontend mapea cada `widget.type` a un componente React (`widgetRegistry.ts`).
 
 **Tools disponibles** (una por dominio, todas leen un único JSON): `get_projects`, `get_experience`, `get_skills`, `get_soft_skills`, `get_timeline`, `get_education`, `get_certifications`, `get_languages`, `get_contact`.
 
@@ -133,6 +144,20 @@ python run.py
 ```
 
 API en `http://127.0.0.1:8000` · Swagger UI en `http://127.0.0.1:8000/docs`.
+
+### Rúbrica y tests (sin API key)
+
+Desde `backend`:
+
+```bash
+python evaluar.py          # pytest offline: golden set + grafo con modelo falso
+python -m pytest -q        # equivalente
+python evaluar.py --live   # opt-in: latencia/tokens contra Gemini → evidencia/medicion.json
+```
+
+CI y `pytest` pelado usan `-m "not live"` (ver `pytest.ini`). Los endpoints HTTP en tests siguen mockeando `get_answer` donde corresponde; la rúbrica ejercita el grafo en proceso vía `app/eval/golden_model.py`.
+
+**Trazas locales:** con `PHOENIX_COLLECTOR_ENDPOINT` vacío, cada chat appendea spans en `backend/evidencia/trazas.jsonl`. **Producción:** servicio [Phoenix en Railway](https://railway.com/deploy/arize-phoenix-or-just-updated-llm-tracing-evals-data-survives-redeploys--arize-phoenix-or-just-updated-llm-tracin) aparte + `PHOENIX_COLLECTOR_ENDPOINT` en el API (ver `backend/.env.example`).
 
 ### Frontend
 

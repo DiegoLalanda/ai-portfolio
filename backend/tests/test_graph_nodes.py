@@ -2,53 +2,13 @@
 
 import asyncio
 
-from langchain_core.messages import AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 
+from app.eval.golden_model import bind_golden_row, enable_bad_first_composer, golden_eval_model
 from app.graph.builder import build_portfolio_graph
-from app.graph.decision import RouterDecision
 from app.prompts.system import COMPOSER_PROMPT, ROUTER_PROMPT, SYSTEM_PROMPT
-from app.schemas.agent_response import AgentResponse
 from app.services.chat_stream import stream_chat_events
 from tests.test_golden_set import load_questions
-
-_ROW: dict = {}
-_COMPOSER_CALLS = {"n": 0}
-_BAD_FIRST = {"on": False}
-
-
-class _NodeModel:
-    def __init__(self) -> None:
-        self.schema = None
-
-    def with_structured_output(self, schema, **_kwargs):
-        self.schema = schema
-        return self
-
-    async def ainvoke(self, _messages):
-        usage = {"input_tokens": 4, "output_tokens": 2, "total_tokens": 6}
-        raw = AIMessage(content="{}", usage_metadata=usage)
-        if self.schema is RouterDecision:
-            parsed = RouterDecision(
-                route="facts" if _ROW["expected_tools"] else "direct",
-                tools=list(_ROW["expected_tools"]),
-                language=_ROW["language"],
-                retrieval_query="",
-            )
-            return {"raw": raw, "parsed": parsed}
-        _COMPOSER_CALLS["n"] += 1
-        if _BAD_FIRST["on"] and _COMPOSER_CALLS["n"] == 1:
-            widget_id = "proj-finni"
-        else:
-            widget_id = (_ROW.get("allowed_ids") or [_ROW["id"]])[0]
-        parsed = AgentResponse(
-            language=_ROW["language"],
-            title=_ROW["id"],
-            summary="Respuesta de paridad.",
-            widgets=[{"id": widget_id, "type": "text", "data": {}}],
-            suggested_actions=[],
-        )
-        return {"raw": raw, "parsed": parsed}
 
 
 def test_prompts_are_split_between_router_and_composer():
@@ -69,15 +29,12 @@ def test_portfolio_graph_compiles_with_deferred_evidence():
 
 
 def test_langgraph_matches_the_golden_set(monkeypatch):
-    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda: _NodeModel())
+    monkeypatch.setattr("app.graph.nodes.get_chat_model", golden_eval_model)
     monkeypatch.setattr("app.services.chat_stream.settings.GRAPH_ENGINE", "langgraph")
-    _BAD_FIRST["on"] = False
 
     async def run() -> None:
         for row in load_questions():
-            _ROW.clear()
-            _ROW.update(row)
-            _COMPOSER_CALLS["n"] = 0
+            bind_golden_row(row)
             events = [event async for event in stream_chat_events(row["question"])]
             assert events[0]["type"] == "started", row["id"]
             assert events[-1]["type"] == "done", row["id"]
@@ -95,15 +52,21 @@ def test_langgraph_matches_the_golden_set(monkeypatch):
 
 
 def test_composer_retries_once_when_a_project_id_is_outside_the_pack(monkeypatch):
-    monkeypatch.setattr("app.graph.nodes.get_chat_model", lambda: _NodeModel())
-    _ROW.clear()
-    _ROW.update({"id": "repair", "language": "es", "expected_tools": ["get_skills"], "allowed_ids": ["skills-widget"]})
-    _BAD_FIRST["on"] = True
-    _COMPOSER_CALLS["n"] = 0
+    monkeypatch.setattr("app.graph.nodes.get_chat_model", golden_eval_model)
+    bind_golden_row(
+        {"id": "repair", "language": "es", "expected_tools": ["get_skills"], "allowed_ids": ["skills-widget"]}
+    )
+    enable_bad_first_composer()
     graph = build_portfolio_graph()
     state = asyncio.run(
         graph.ainvoke(
-            {"question": "skills", "attempts": 0, "passages": [], "messages": []},
+            {
+                "question": "skills",
+                "visitor_question": "skills",
+                "attempts": 0,
+                "passages": [],
+                "messages": [],
+            },
             config={"configurable": {"thread_id": "repair"}},
         )
     )
