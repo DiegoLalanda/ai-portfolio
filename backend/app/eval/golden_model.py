@@ -81,5 +81,5 @@ class GoldenEvalChatModel(BaseChatModel):
         return _COMPOSER_CALLS
 
 
-def golden_eval_model() -> GoldenEvalChatModel:
+def golden_eval_model(_api_key: str = "") -> GoldenEvalChatModel:
     return GoldenEvalChatModel()

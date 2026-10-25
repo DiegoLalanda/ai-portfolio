@@ -13,7 +13,7 @@ import pydantic
 from google.genai import errors as genai_errors
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 
-from app.ai.gemini_client import TOOLS
+from app.ai.gemini_client import TOOLS, gemini_api_keys
 from app.core.config import settings
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model, model_was_rejected
 from app.schemas.agent_response import AgentResponse
@@ -95,7 +95,8 @@ async def generate_with_events(
     if system_instruction:
         messages.append(SystemMessage(content=system_instruction))
     messages.append(HumanMessage(content=prompt))
-    model = get_chat_model()
+    keys = gemini_api_keys()
+    model = get_chat_model(keys[0]) if keys else GenAIChatModel()
 
     for turn in range(MAX_TOOL_TURNS):
         # La primera vuelta elige tools. Las siguientes ya redactan con el JSON de la tool.

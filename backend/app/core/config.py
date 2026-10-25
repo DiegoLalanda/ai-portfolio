@@ -14,9 +14,11 @@ class Settings(BaseSettings):
 
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:4321"]
     GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY_FALLBACK: str = ""
+    GEMINI_CHAT_MODEL: str = "gemini-3.5-flash-lite"
     GRAPH_ENGINE: Literal["legacy", "langgraph"] = "langgraph"
-    LLM_TIMEOUT_ROUTER_S: float = 12
-    LLM_TIMEOUT_COMPOSER_S: float = 25
+    LLM_TIMEOUT_ROUTER_S: float = 25
+    LLM_TIMEOUT_COMPOSER_S: float = 50
     EMBEDDING_PROVIDER: Literal["gemini", "hash"] = "gemini"
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
     RAG_TOP_K: int = 4

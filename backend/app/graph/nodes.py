@@ -16,7 +16,8 @@ import app.tools as tools_module
 from app.core.config import settings
 from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
-from app.llm.provider import Completion, acomplete, get_chat_model
+from app.ai.gemini_client import gemini_api_keys
+from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model
 from app.observability.tracing import trace_node
 from app.prompts.system import COMPOSER_PROMPT, ROUTER_PROMPT
 from app.schemas.agent_response import AgentResponse
@@ -114,12 +115,15 @@ async def router(state: PortfolioState, config: RunnableConfig) -> dict[str, Any
         SystemMessage(content=ROUTER_PROMPT + "\n\n" + _ROUTER_GUIDE.format(tools=", ".join(TOOL_NAMES))),
         HumanMessage(content=state["question"]),
     ]
+    keys = gemini_api_keys()
+    chat_model = get_chat_model(keys[0]) if keys else GenAIChatModel()
     completion = await acomplete(
-        get_chat_model(),
+        chat_model,
         messages,
         mode="structured",
         timeout=settings.LLM_TIMEOUT_ROUTER_S,
         schema=RouterDecision,
+        call_site="router",
     )
     decision = completion.parsed if isinstance(completion.parsed, RouterDecision) else None
     if decision is None and completion.text:
@@ -215,6 +219,7 @@ async def _compose(
     passages: list[Any],
     *,
     repair: bool,
+    call_site: str,
 ) -> tuple[AgentResponse | None, dict[str, Any]]:
     payload: dict[str, Any] = {
         "question": question,
@@ -227,8 +232,10 @@ async def _compose(
             "The previous answer was invalid or cited a project id outside allowed_project_ids. "
             "Answer again using only the evidence."
         )
+    keys = gemini_api_keys()
+    chat_model = get_chat_model(keys[0]) if keys else GenAIChatModel()
     completion = await acomplete(
-        get_chat_model(),
+        chat_model,
         [
             SystemMessage(content=COMPOSER_PROMPT),
             HumanMessage(content=json.dumps(payload, ensure_ascii=False, default=str)),
@@ -236,6 +243,7 @@ async def _compose(
         mode="structured",
         timeout=settings.LLM_TIMEOUT_COMPOSER_S,
         schema=AgentResponse,
+        call_site=call_site,
     )
     parsed = completion.parsed if isinstance(completion.parsed, AgentResponse) else None
     if parsed is not None and not _ids_allowed(parsed, pack):
@@ -249,10 +257,16 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
     decision = _plan(state)
     pack = state.get("facts") or {}
     passages = list(state.get("passages") or [])
-    parsed, first = await _compose(state["question"], pack, passages, repair=False)
+    parsed, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
     metrics = [first]
     if parsed is None:
-        parsed, second = await _compose(state["question"], pack, passages, repair=True)
+        parsed, second = await _compose(
+            state["question"],
+            pack,
+            passages,
+            repair=True,
+            call_site="compositor-repair",
+        )
         metrics.append(second)
     if parsed is None:
         parsed = _insufficient(decision.language)

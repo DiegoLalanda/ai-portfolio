@@ -14,8 +14,11 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, System
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, ValidationError
 
-from app.ai.gemini_client import MODEL, TOOLS, client
+from functools import lru_cache
+
+from app.ai.gemini_client import TOOLS, chat_model_id, gemini_api_keys, get_genai_client
 from app.core.config import settings
+from app.llm.errors import error_summary, is_retriable_capacity_error, log_llm_failure, log_llm_timeout
 from app.schemas.agent_response import AgentResponse
 
 logger = logging.getLogger(__name__)
@@ -35,7 +38,9 @@ class Completion:
 
 
 class GenAIChatModel(BaseChatModel):
-    """Llama a `client.aio` cuando ChatGoogleGenerativeAI no acepta el id del modelo."""
+    """Llama al SDK de Gemini cuando ChatGoogleGenerativeAI no acepta el id del modelo."""
+
+    api_key: str = ""
 
     @property
     def _llm_type(self) -> str:
@@ -74,10 +79,11 @@ class GenAIChatModel(BaseChatModel):
             config["response_mime_type"] = "application/json"
             config["response_json_schema"] = target.model_json_schema()
 
+        genai_client = get_genai_client(self.api_key)
         started = time.perf_counter()
         async with asyncio.timeout(timeout):
-            response = await client.aio.models.generate_content(
-                model=MODEL,
+            response = await genai_client.aio.models.generate_content(
+                model=chat_model_id(),
                 contents=contents,
                 config=config,
             )
@@ -102,18 +108,34 @@ class GenAIChatModel(BaseChatModel):
         )
 
 
-def get_chat_model() -> BaseChatModel:
-    """Devuelve el chat model. Si el wrapper rechaza el id, queda el SDK de Gemini."""
+@lru_cache(maxsize=4)
+def get_chat_model(api_key: str) -> BaseChatModel:
+    """Chat model LangChain o SDK de respaldo para una API key concreta."""
 
+    model_id = chat_model_id()
+    key = api_key.strip()
     try:
         return ChatGoogleGenerativeAI(
-            model=MODEL,
-            google_api_key=settings.GEMINI_API_KEY or None,
-            max_retries=1,
+            model=model_id,
+            google_api_key=key or None,
+            max_retries=0,
         )
     except (ImportError, ValueError, TypeError, ValidationError) as error:
-        logger.info("ChatGoogleGenerativeAI no acepta %s: %s", MODEL, error)
-        return GenAIChatModel()
+        logger.info("ChatGoogleGenerativeAI no acepta %s: %s", model_id, error)
+        return GenAIChatModel(api_key=key)
+
+
+async def _acomplete_with_model(
+    model: BaseChatModel,
+    messages: list[BaseMessage],
+    *,
+    mode: Mode,
+    timeout: float,
+    schema: type[BaseModel],
+) -> Completion:
+    if isinstance(model, GenAIChatModel):
+        return await model.acomplete(messages, mode=mode, timeout=timeout, schema=schema)
+    return await _complete_langchain(model, messages, mode=mode, timeout=timeout, schema=schema)
 
 
 async def acomplete(
@@ -123,11 +145,53 @@ async def acomplete(
     mode: Mode,
     timeout: float,
     schema: type[BaseModel] | None = None,
+    call_site: str = "",
 ) -> Completion:
     target = schema or AgentResponse
-    if isinstance(model, GenAIChatModel):
-        return await model.acomplete(messages, mode=mode, timeout=timeout, schema=target)
-    return await _complete_langchain(model, messages, mode=mode, timeout=timeout, schema=target)
+    keys = gemini_api_keys()
+    attempts: list[BaseChatModel] = [model]
+    for api_key in keys[1:]:
+        attempts.append(get_chat_model(api_key))
+
+    last_error: Exception | None = None
+    for index, attempt_model in enumerate(attempts):
+        try:
+            return await _acomplete_with_model(
+                attempt_model,
+                messages,
+                mode=mode,
+                timeout=timeout,
+                schema=target,
+            )
+        except TimeoutError as error:
+            last_error = error
+            log_llm_timeout(call_site=call_site, mode=mode, limit_s=timeout)
+            if index < len(attempts) - 1:
+                logger.warning(
+                    "Gemini intento %s/%s timeout en %s; probando API key fallback",
+                    index + 1,
+                    len(attempts),
+                    call_site or "unknown",
+                )
+                continue
+            raise
+        except Exception as error:
+            last_error = error
+            if index < len(attempts) - 1 and is_retriable_capacity_error(error):
+                logger.warning(
+                    "Gemini intento %s/%s falló en %s (%s); probando API key fallback",
+                    index + 1,
+                    len(attempts),
+                    call_site or "unknown",
+                    error_summary(error),
+                )
+                continue
+            log_llm_failure(error, call_site=call_site, mode=mode, limit_s=timeout)
+            raise
+
+    if last_error is not None:
+        raise last_error
+    raise ValueError("GEMINI_API_KEY no configurada")
 
 
 def model_was_rejected(error: Exception) -> bool:

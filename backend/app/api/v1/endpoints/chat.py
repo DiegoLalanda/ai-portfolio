@@ -33,7 +33,7 @@ async def chat(payload: ChatRequest) -> ChatResponse:
     try:
         agent_response = await get_answer(payload.question, **_context_kwargs(payload))
     except ChatServiceError as error:
-        logger.error("Error al generar respuesta con Gemini: %s", error)
+        logger.error("POST /chat falló: %s", error)
         raise HTTPException(status_code=502, detail="Failed to get a response from the AI provider.") from error
     return ChatResponse(**agent_response.model_dump())
 

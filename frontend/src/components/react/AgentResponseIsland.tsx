@@ -129,7 +129,10 @@ export default function AgentResponseIsland() {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
       
-      const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
+      const isRateLimit =
+        error.message?.includes("429") ||
+        error.message?.includes("Demasiadas preguntas") ||
+        error.message?.includes("Cuota o límite de Gemini");
       const title = isRateLimit 
         ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
         : (pageRoot?.dataset.errorTitle ?? "Connection issue");

@@ -246,7 +246,10 @@ const t = getTranslations(locale);
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
 
-        const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
+        const isRateLimit =
+          error.message?.includes("429") ||
+          error.message?.includes("Demasiadas preguntas") ||
+          error.message?.includes("Cuota o límite de Gemini");
         const title = isRateLimit
           ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
           : (pageRoot?.dataset.errorTitle ?? "Connection issue");
