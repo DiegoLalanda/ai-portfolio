@@ -1,5 +1,7 @@
 """Esquemas Pydantic para el endpoint de chat."""
 
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 from app.schemas.agent_response import AgentResponse
@@ -15,10 +17,9 @@ class ChatRequest(BaseModel):
         default_factory=list,
         description="Preguntas previas del visitante en la misma sesión.",
     )
-    thread_id: str | None = Field(
+    thread_id: UUID | None = Field(
         default=None,
-        max_length=64,
-        description="Hilo LangGraph opcional. Si viene, el servidor recuerda preguntas previas en el checkpointer.",
+        description="Hilo LangGraph opcional (UUID). Si viene, el servidor recuerda preguntas previas en el checkpointer.",
     )
 
 

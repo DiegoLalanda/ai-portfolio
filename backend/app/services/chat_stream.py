@@ -1,9 +1,14 @@
 """Servicio de chat con streaming SSE."""
 
+import logging
 from collections.abc import AsyncIterator
 
 import pydantic
 from google.genai import errors as genai_errors
+
+logger = logging.getLogger(__name__)
+
+STREAM_CLIENT_ERROR = "No pudimos generar una respuesta. Intentá de nuevo en un momento."
 
 from app.ai.gemini_agent import TIMEOUT_MESSAGE, stream_answer_events
 from app.core.config import settings
@@ -47,11 +52,14 @@ async def _stream_graph(graph_input: dict, config: dict) -> AsyncIterator[dict]:
     except TimeoutError:
         yield {"type": "error", "message": TIMEOUT_MESSAGE}
     except genai_errors.APIError as error:
-        yield {"type": "error", "message": f"Gemini API error: {error}"}
+        logger.exception("Gemini API error en stream LangGraph")
+        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
     except pydantic.ValidationError as error:
-        yield {"type": "error", "message": f"Gemini devolvió una respuesta inválida: {error}"}
-    except Exception as error:  # noqa: BLE001 — el cliente SSE recibe el mensaje
-        yield {"type": "error", "message": str(error)}
+        logger.exception("Respuesta inválida del compositor: %s", error)
+        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
+    except Exception as error:  # noqa: BLE001
+        logger.exception("Error inesperado en stream LangGraph")
+        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
 
 
 async def stream_chat_events(

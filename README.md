@@ -5,7 +5,7 @@ Portfolio personal **conversacional**: en lugar de secciones estáticas, el visi
 **Live:** [diegolalanda.pages.dev](https://diegolalanda.pages.dev/)
 
 - **Frontend** — Astro 5 + React Islands + Tailwind, sitio estático desplegado en **Cloudflare Pages**.
-- **Backend** — FastAPI + Google Gemini con *function calling*, desplegado en **Railway**.
+- **Backend** — FastAPI + LangGraph + Gemini, desplegado en **Railway** (rama `develop` = agentico).
 
 ---
 
@@ -108,17 +108,19 @@ ai-portfolio/
 │   │   ├── pages/        # Routing file-based (es + /en)
 │   │   └── types/        # Contratos compartidos con el backend
 │   └── public/           # Estáticos (imágenes, CV en PDF)
-├── backend/           # API FastAPI + agente Gemini (Railway)
+├── backend/           # API FastAPI + LangGraph (Railway)
 │   ├── app/
-│   │   ├── ai/           # Cliente y orquestador de Gemini
-│   │   ├── api/v1/        # Routers y endpoints (/chat, /chat/stream)
-│   │   ├── core/          # Config (Settings) y rate limiter
-│   │   ├── data/          # Contenido del portfolio en JSON (fuente de verdad)
-│   │   ├── prompts/       # System prompt del agente
-│   │   ├── schemas/       # Contratos Pydantic (AgentResponse, ChatRequest)
-│   │   ├── services/      # Orquestación de chat y streaming
-│   │   └── tools/         # Funciones invocables por function calling
-│   └── tests/            # Tests con pytest
+│   │   ├── graph/         # Grafo LangGraph (5 nodos)
+│   │   ├── rag/           # RAG híbrido sobre corpus markdown
+│   │   ├── observability/ # Trazas OTEL
+│   │   ├── eval/          # Rúbrica offline
+│   │   ├── ai/            # Legacy + cliente Gemini
+│   │   ├── api/v1/        # /chat, /chat/stream
+│   │   ├── data/          # JSON del portfolio
+│   │   ├── tools/         # get_* sobre data/
+│   │   └── …              # schemas, services, prompts, llm, core
+│   ├── evaluar.py
+│   └── tests/
 ├── docs/              # Documentación (arquitectura, despliegue)
 └── README.md
 ```
@@ -176,14 +178,20 @@ Sitio en `http://localhost:4321`.
 
 ### Backend (`backend/.env`)
 
+Copiá [`backend/.env.example`](backend/.env.example) y completá al menos `GEMINI_API_KEY`.
+
 | Variable | Descripción | Default |
 |---|---|---|
-| `GEMINI_API_KEY` | API key de Google Gemini | *(vacío)* |
+| `GEMINI_API_KEY` | Chat + embeddings RAG | *(vacío)* |
+| `GRAPH_ENGINE` | `langgraph` o `legacy` | `langgraph` |
+| `EMBEDDING_PROVIDER` | `gemini` / `hash` (tests) | `gemini` |
+| `CHECKPOINT_PATH` | Hilos LangGraph (SQLite) | `data/checkpoints.sqlite` |
+| `PHOENIX_COLLECTOR_ENDPOINT` | OTLP Phoenix; vacío → JSONL local | *(vacío)* |
 | `ENVIRONMENT` | `development` / `production` | `development` |
-| `HOST` | Host donde escucha Uvicorn | `127.0.0.1` |
-| `PORT` | Puerto de Uvicorn | `8000` |
-| `RELOAD` | Auto-reload en desarrollo | `true` |
-| `BACKEND_CORS_ORIGINS` | Orígenes permitidos por CORS (lista JSON) | `["http://localhost:4321"]` |
+| `HOST` / `PORT` / `RELOAD` | Uvicorn | `127.0.0.1` / `8000` / `true` |
+| `BACKEND_CORS_ORIGINS` | CORS (lista JSON) | `["http://localhost:4321"]` |
+
+Timeouts LLM, RAG, trazas y Phoenix: ver comentarios en `.env.example`.
 
 ### Frontend (`frontend/.env`)
 
@@ -198,17 +206,27 @@ Sitio en `http://localhost:4321`.
 ## Despliegue
 
 - **Frontend → Cloudflare Pages.** Build `npm run build`, directorio de salida `dist/`. Configurar `PUBLIC_API_URL` con la URL pública del backend.
-- **Backend → Railway.** Start `python run.py` (lee `HOST`/`PORT` del entorno; Railway inyecta `PORT`). Configurar `GEMINI_API_KEY` y `BACKEND_CORS_ORIGINS` con el dominio de Cloudflare Pages.
+- **Backend → Railway.** Start `python run.py`. Variables mínimas: `GEMINI_API_KEY`, `BACKEND_CORS_ORIGINS`, `GRAPH_ENGINE=langgraph` si desplegás `develop`. Phoenix opcional (segundo servicio). Ver [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 - **Health check → GitHub Actions.** El workflow `.github/workflows/backend-health.yml` consulta `GET /health` cada 10 minutos. Configurar el secreto `BACKEND_HEALTH_URL` con la URL pública del backend, sin `/health` al final.
 
 Guía paso a paso en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ---
 
+## Cómo leer este repo (reclutador / OSS)
+
+1. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — flujo end-to-end.
+2. `backend/app/graph/` — grafo LangGraph (router → lectores → compositor).
+3. `backend/evaluar.py` — rúbrica offline sin API key.
+4. Demo en [diegolalanda.pages.dev](https://diegolalanda.pages.dev/) (backend agentico en rama **`develop`**).
+
+---
+
 ## Documentación
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — flujo del agente, tools, contrato de widgets.
-- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — despliegue en Cloudflare Pages y Railway.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — LangGraph, RAG, hilo, trazas, SSE, widgets.
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — Cloudflare Pages, Railway, Phoenix.
+- [`SECURITY.md`](SECURITY.md) — secretos, API pública, reporte de vulnerabilidades.
 - [`backend/app/data/README.md`](backend/app/data/README.md) — forma de los JSON de contenido.
 - [`backend/app/schemas/README.md`](backend/app/schemas/README.md) — contrato de widgets.
 

@@ -1,30 +1,32 @@
 # Backend — AI Portfolio API
 
-API construida con **FastAPI** y **Python**.
+API construida con **FastAPI**, **LangGraph** y **Google Gemini**.
 
 ## Estructura
 
 ```
 backend/
 ├── app/
-│   ├── ai/                    # Integración con Google Gemini (cliente/orquestador)
-│   ├── prompts/                # Plantillas de prompts para la IA
-│   ├── skills/                  # Capacidades/tareas concretas que puede resolver el asistente
-│   ├── tools/                    # Definiciones de tools invocables por function calling
-│   ├── data/                      # Contenido del portfolio en JSON local
-│   ├── api/
-│   │   └── v1/
-│   │       ├── endpoints/           # Routers por recurso (chat.py: /chat y /chat/stream)
-│   │       └── router.py            # Router agregador de la v1
-│   ├── core/
-│   │   └── config.py                 # Configuración y variables de entorno (Settings)
-│   ├── models/                        # Modelos de dominio internos
-│   ├── schemas/                        # Esquemas Pydantic (request/response)
-│   ├── services/                        # Integraciones no relacionadas a IA
-│   ├── utils/                            # Utilidades compartidas
-│   └── main.py                            # Punto de entrada de la app FastAPI
-├── tests/                                  # Tests
-├── run.py                                   # Levanta uvicorn usando la configuración de .env
+│   ├── ai/                    # Cliente Gemini y loop legacy (GRAPH_ENGINE=legacy)
+│   ├── graph/                 # LangGraph: builder, nodes, state, checkpointer
+│   ├── rag/                   # Corpus markdown, BM25 + Chroma, hybrid retrieval
+│   ├── observability/         # OpenTelemetry, export JSONL / OTLP
+│   ├── eval/                  # GoldenEvalChatModel para rúbrica offline
+│   ├── prompts/               # Plantillas (router, compositor, legacy)
+│   ├── tools/                 # get_*.py — lectura de app/data/*.json
+│   ├── data/                  # Contenido del portfolio (JSON)
+│   ├── llm/                   # Provider LangChain / timeouts
+│   ├── api/v1/
+│   │   ├── endpoints/         # chat.py: /chat y /chat/stream
+│   │   └── router.py
+│   ├── core/                  # config.py, rate_limiter
+│   ├── schemas/               # AgentResponse, ChatRequest, router decisions
+│   ├── services/              # chat_stream, chat_context, graph_session
+│   └── main.py                # Lifespan: RAG, checkpointer, tracing
+├── tests/                     # pytest (offline + -m live)
+├── evidencia/                 # trazas.jsonl, medicion.json (gitignored)
+├── evaluar.py                 # Entrada rúbrica
+├── run.py
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -32,16 +34,13 @@ backend/
 
 ### Convenciones
 
-- **`ai/`**: única puerta de entrada al modelo de Gemini. Nada fuera de esta carpeta debería importar el SDK de IA directamente.
-- **`prompts/`**: texto/plantillas de prompts versionados como código, separados de la lógica en `ai/`.
-- **`skills/`**: cada skill representa una capacidad de alto nivel del asistente (compone `ai/`, `prompts/`, `tools/` y `data/`).
-- **`tools/`**: funciones que el modelo puede invocar (function calling), con su esquema de entrada/salida definido junto a la implementación.
-- **`data/`**: fuente de verdad del contenido del portfolio en JSON. No hay base de datos por el momento.
-- **`services/`**: integraciones genéricas que no sean de IA (se agregan a futuro si hacen falta).
+- **`graph/`**: motor por defecto (`GRAPH_ENGINE=langgraph`). Nodos instrumentados con `@trace_node`.
+- **`ai/`**: loop legacy y utilidades Gemini; no importar el SDK fuera de `ai/` y `llm/` salvo casos ya existentes.
+- **`tools/`**: funciones síncronas sobre JSON; el bibliotecario las invoca según la decisión del router.
+- **`rag/`**: solo markdown en `rag/corpus/`; los JSON del portfolio **no** se indexan.
+- **`data/`**: fuente de verdad del contenido; ver [`app/data/README.md`](app/data/README.md).
 
 ## Configuración
-
-### Variables de entorno
 
 Copiar `.env.example` a `.env`:
 
@@ -49,16 +48,17 @@ Copiar `.env.example` a `.env`:
 copy .env.example .env
 ```
 
-| Variable | Descripción | Default |
-|---|---|---|
-| `ENVIRONMENT` | Entorno de ejecución (`development` / `production`) | `development` |
-| `HOST` | Host donde escucha uvicorn | `127.0.0.1` |
-| `PORT` | Puerto donde escucha uvicorn | `8000` |
-| `RELOAD` | Auto-reload en desarrollo | `true` |
-| `BACKEND_CORS_ORIGINS` | Orígenes permitidos por CORS (lista JSON) | `["http://localhost:4321"]` |
-| `GEMINI_API_KEY` | API key de Google Gemini | *(vacío)* |
+Variables principales:
 
-Las variables se cargan mediante `pydantic-settings` en `app/core/config.py`.
+| Variable | Descripción |
+|---|---|
+| `GEMINI_API_KEY` | Google Gemini (chat + embeddings RAG) |
+| `GRAPH_ENGINE` | `langgraph` (default) o `legacy` |
+| `EMBEDDING_PROVIDER` | `gemini` en dev/prod; `hash` en tests |
+| `CHECKPOINT_PATH` | SQLite para hilos LangGraph |
+| `PHOENIX_COLLECTOR_ENDPOINT` | OTLP; vacío → `evidencia/trazas.jsonl` |
+
+Lista completa: [`.env.example`](.env.example). Carga vía `pydantic-settings` en `app/core/config.py`.
 
 ## Puesta en marcha
 
@@ -70,43 +70,33 @@ copy .env.example .env
 python run.py
 ```
 
-Alternativa equivalente usando la CLI de uvicorn directamente:
+Alternativa: `uvicorn app.main:app --reload`
 
-```bash
-uvicorn app.main:app --reload
-```
-
-La API queda disponible en `http://127.0.0.1:8000`:
-
-- `GET /health` → chequeo de estado
-- `GET /docs` → documentación interactiva (Swagger UI)
+- `GET /health` — sin dependencia de Gemini/RAG/Phoenix
+- `GET /docs` — Swagger
 
 ## Endpoints
 
-Bajo el prefijo `/api/v1` (ver `app/api/v1/endpoints/chat.py`):
+Prefijo `/api/v1` (`app/api/v1/endpoints/chat.py`):
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `POST` | `/api/v1/chat` | Respuesta estructurada completa (`AgentResponse`) |
-| `POST` | `/api/v1/chat/stream` | Respuesta por **SSE** con eventos de progreso (tool calls incluidos) |
+| `POST` | `/api/v1/chat` | `AgentResponse` completo |
+| `POST` | `/api/v1/chat/stream` | **SSE** (frontend) |
 
-Ambos aplican rate limiting (10 req/min por IP, `app/core/rate_limiter.py`).
+Rate limit: 10 req/min por IP (`app/core/rate_limiter.py`).
+
+Body incluye opcional `thread_id` (ver `app/schemas/chat.py`).
 
 ## Agente
 
-El asistente usa **Google Gemini** (`gemini-3.1-flash-lite`) con *function calling*
-manual sobre 9 tools (`app/tools/get_*.py`), cada una leyendo un JSON de
-`app/data/`. La respuesta se valida contra el schema `AgentResponse`
-(`app/schemas/agent_response.py`).
-
-El flujo completo (grafo LangGraph, RAG, trazas, eventos SSE) está
-documentado en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+Motor **LangGraph**: router → bibliotecario / investigador → evidencia → compositor. Modelo `gemini-3.1-flash-lite`. Detalle en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
 
 ## Rúbrica
 
 ```bash
-python evaluar.py       # offline, sin GEMINI_API_KEY
+python evaluar.py          # offline, sin GEMINI_API_KEY
 python evaluar.py --live   # medición opt-in (pytest -m live)
 ```
 
-El golden set vive en `tests/golden/preguntas.jsonl`. El modelo falso está en `app/eval/golden_model.py`.
+Golden set: `tests/golden/preguntas.jsonl`. Modelo falso: `app/eval/golden_model.py`.
