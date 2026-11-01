@@ -48,6 +48,9 @@ def test_collector_endpoint_normalizes_railway_base_url():
     assert _collector_endpoint("https://phoenix.example.up.railway.app/v1/traces") == (
         "https://phoenix.example.up.railway.app/v1/traces"
     )
+    assert _collector_endpoint('"https://phoenix.example.up.railway.app"') == (
+        "https://phoenix.example.up.railway.app/v1/traces"
+    )
 
 
 def test_graph_nodes_emit_spans_with_prompt_version(monkeypatch):

@@ -125,16 +125,14 @@ def align_response_with_evidence(
             continue
         kept.append(widget)
 
-    dashboard_widgets = [widget for widget in kept if widget.type in WIDGET_TO_TOOL]
-    if dashboard_widgets:
-        present_types = {widget.type for widget in kept}
-        for tool, wtype in TOOL_TO_WIDGET.items():
-            if tool not in tools_run or wtype in present_types:
-                continue
-            stub = widget_from_tool(tool, tools[tool])
-            if stub is not None:
-                kept.append(stub)
-                present_types.add(wtype)
+    present_types = {widget.type for widget in kept}
+    for tool, wtype in TOOL_TO_WIDGET.items():
+        if tool not in tools_run or wtype in present_types:
+            continue
+        stub = widget_from_tool(tool, tools[tool])
+        if stub is not None:
+            kept.append(stub)
+            present_types.add(wtype)
 
     return response.model_copy(update={"widgets": kept})
 

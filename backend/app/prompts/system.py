@@ -154,6 +154,9 @@ Profile / overview / full-stack descriptor (strict):
 - "label" is short chip text; "payload" is the full question sent to the agent.
 - Never suggest an ask-action for a topic whose widget type is already visible
   on the dashboard in this session (see DASHBOARD CONTEXT when present).
+- Follow-ups: when the visitor explicitly asks for experience, projects, skills,
+  contact, or another topic, you MUST include the matching widget(s) from evidence
+  even if other types are already visible elsewhere on the page.
 - Prefer topics not yet explored: if projects is visible, suggest experience,
   education, skills, or contact — not projects again.
 - Offer at most 2–3 suggested actions; omit the list if nothing fresh remains.

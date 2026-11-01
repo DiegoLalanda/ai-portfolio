@@ -174,10 +174,10 @@ export default function AgentResponseIsland() {
 
   if (responses.length === 0 && !isLoading) return null;
 
-  const shownWidgetTypes = collectShownWidgetTypes(responses);
+  const priorWidgetTypes = collectShownWidgetTypes(responses.slice(0, -1));
   const latestResponse = responses[responses.length - 1];
   const latestFilteredActions = latestResponse
-    ? withFilteredSuggestions(latestResponse, shownWidgetTypes).suggested_actions
+    ? withFilteredSuggestions(latestResponse, priorWidgetTypes).suggested_actions
     : [];
   const showAskAgain = !isLoading && latestFilteredActions.length === 0;
   const askAgainLabel =
@@ -193,8 +193,9 @@ export default function AgentResponseIsland() {
     <div className="mx-auto flex w-full max-w-container-max flex-col gap-gutter">
       {responses.map((response, index) => {
         const isLatest = index === responses.length - 1;
+        const typesBeforeThis = collectShownWidgetTypes(responses.slice(0, index));
         const displayResponse = isLatest
-          ? withFilteredSuggestions(response, shownWidgetTypes)
+          ? withFilteredSuggestions(response, typesBeforeThis)
           : { ...response, suggested_actions: [] };
 
         return (
