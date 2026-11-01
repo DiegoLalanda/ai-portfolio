@@ -157,6 +157,8 @@ Profile / overview / full-stack descriptor (strict):
 - Prefer topics not yet explored: if projects is visible, suggest experience,
   education, skills, or contact — not projects again.
 - Offer at most 2–3 suggested actions; omit the list if nothing fresh remains.
+- On first-turn questions (no DASHBOARD CONTEXT in the user payload), NEVER return
+  an empty suggested_actions list when at least one dashboard widget is present.
 - Write labels/payloads in the visitor's language. Examples:
   - ES: { "label": "Ver experiencia", "action": "ask",
     "payload": "¿Cuál es tu experiencia profesional?" }

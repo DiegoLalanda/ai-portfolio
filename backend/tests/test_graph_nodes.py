@@ -45,6 +45,8 @@ def test_langgraph_matches_the_golden_set(monkeypatch):
             assert response["language"] == row["language"], row["id"]
             ids = [widget["id"] for widget in response["widgets"]]
             assert ids == (row.get("allowed_ids") or [row["id"]]), row["id"]
+            if response["widgets"]:
+                assert len(response["suggested_actions"]) >= 2, row["id"]
             assert any(event.get("phase") == "thinking" for event in events), row["id"]
             assert any(event.get("phase") == "synthesizing" for event in events), row["id"]
 

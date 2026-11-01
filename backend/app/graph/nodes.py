@@ -16,6 +16,9 @@ import app.tools as tools_module
 from app.core.config import settings
 from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
+from app.graph.response_locale import detect_visitor_language, extract_visitor_question, harmonize_response_language
+from app.graph.suggested_actions import ensure_suggested_actions
+from app.graph.widget_evidence import align_response_with_evidence, ensure_passage_widgets, preview_response
 from app.ai.gemini_client import gemini_api_keys
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model
 from app.observability.tracing import trace_node
@@ -117,6 +120,12 @@ async def router(state: PortfolioState, config: RunnableConfig) -> dict[str, Any
     ]
     keys = gemini_api_keys()
     chat_model = get_chat_model(keys[0]) if keys else GenAIChatModel()
+    router_attempt_timeouts: list[float] | None = None
+    if len(keys) > 1:
+        router_attempt_timeouts = [
+            settings.LLM_TIMEOUT_ROUTER_FIRST_S,
+            settings.LLM_TIMEOUT_ROUTER_S,
+        ]
     completion = await acomplete(
         chat_model,
         messages,
@@ -124,6 +133,7 @@ async def router(state: PortfolioState, config: RunnableConfig) -> dict[str, Any
         timeout=settings.LLM_TIMEOUT_ROUTER_S,
         schema=RouterDecision,
         call_site="router",
+        attempt_timeouts=router_attempt_timeouts,
     )
     decision = completion.parsed if isinstance(completion.parsed, RouterDecision) else None
     if decision is None and completion.text:
@@ -221,11 +231,23 @@ async def _compose(
     repair: bool,
     call_site: str,
 ) -> tuple[AgentResponse | None, dict[str, Any]]:
+    tools_evidence = pack.get("tools") or {}
+    visitor_line = extract_visitor_question(question)
+    expected_language = detect_visitor_language(visitor_line) if visitor_line else "es"
     payload: dict[str, Any] = {
         "question": question,
-        "evidence": pack.get("tools") or {},
+        "evidence": tools_evidence,
         "passages": passages,
         "allowed_project_ids": pack.get("project_ids") or [],
+        "tools_executed": list(tools_evidence.keys()) if isinstance(tools_evidence, dict) else [],
+        "expected_language": expected_language,
+        "composer_directives": (
+            "Include 2–3 suggested_actions (action ask) unless the question block "
+            "contains DASHBOARD CONTEXT listing all topics already visible. "
+            "Every widget type must match a tool in tools_executed (or technology-cloud "
+            "when passages is non-empty). Do not add projects/skills/experience widgets "
+            "without matching evidence keys."
+        ),
     }
     if repair:
         payload["repair"] = (
@@ -234,6 +256,12 @@ async def _compose(
         )
     keys = gemini_api_keys()
     chat_model = get_chat_model(keys[0]) if keys else GenAIChatModel()
+    composer_attempt_timeouts: list[float] | None = None
+    if len(keys) > 1:
+        composer_attempt_timeouts = [
+            settings.LLM_TIMEOUT_COMPOSER_FIRST_S,
+            settings.LLM_TIMEOUT_COMPOSER_S,
+        ]
     completion = await acomplete(
         chat_model,
         [
@@ -244,6 +272,7 @@ async def _compose(
         timeout=settings.LLM_TIMEOUT_COMPOSER_S,
         schema=AgentResponse,
         call_site=call_site,
+        attempt_timeouts=composer_attempt_timeouts,
     )
     parsed = completion.parsed if isinstance(completion.parsed, AgentResponse) else None
     if parsed is not None and not _ids_allowed(parsed, pack):
@@ -253,10 +282,17 @@ async def _compose(
 
 @trace_node("compositor")
 async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str, Any]:
-    await _emit(config, {"type": "status", "phase": "synthesizing"})
     decision = _plan(state)
     pack = state.get("facts") or {}
     passages = list(state.get("passages") or [])
+    tools_pack = pack.get("tools") if isinstance(pack, dict) else {}
+    if isinstance(tools_pack, dict) and tools_pack:
+        preview = preview_response(tools_pack, passages=passages, language=decision.language)
+        await _emit(
+            config,
+            {"type": "widget_preview", "response": preview.model_dump(mode="json")},
+        )
+    await _emit(config, {"type": "status", "phase": "synthesizing"})
     parsed, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
     metrics = [first]
     if parsed is None:
@@ -270,6 +306,18 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
         metrics.append(second)
     if parsed is None:
         parsed = _insufficient(decision.language)
+    elif isinstance(tools_pack, dict) and tools_pack:
+        parsed = align_response_with_evidence(parsed, tools_pack, passages=passages)
+    if parsed is not None:
+        parsed = ensure_passage_widgets(parsed, passages)
+        visitor = (state.get("visitor_question") or "").strip()
+        parsed = harmonize_response_language(
+            parsed,
+            visitor_question=visitor,
+            question_prompt=state["question"],
+            router_language=decision.language,
+        )
+        parsed = ensure_suggested_actions(parsed, question_prompt=state["question"])
     result: dict[str, Any] = {
         "response": parsed.model_dump(),
         "attempts": len(metrics),

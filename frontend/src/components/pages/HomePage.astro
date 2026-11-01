@@ -145,12 +145,31 @@ const t = getTranslations(locale);
   }
 
   let agentResponse: AgentResponse | null = null;
+  let currentQuery = "";
+  let dashboardPreviewShown = false;
   type PendingAgentResponse = { response: AgentResponse; question: string };
   const responseBridge = window as Window & {
     __portfolioPendingAgentResponse?: PendingAgentResponse;
   };
 
   function dispatchStreamEvent(event: ChatStreamEvent) {
+    if (event.type === "widget_preview" && event.response && !dashboardPreviewShown) {
+      dashboardPreviewShown = true;
+      agentResponse = event.response;
+      responseBridge.__portfolioPendingAgentResponse = {
+        response: event.response,
+        question: currentQuery,
+      };
+      processingPhase?.classList.add("hidden");
+      pageRoot?.classList.remove("is-thinking");
+      revealDashboard();
+      window.dispatchEvent(
+        new CustomEvent("agent-response:ready", {
+          detail: { response: event.response, question: currentQuery },
+        }),
+      );
+      return;
+    }
     window.dispatchEvent(new CustomEvent("loading:stream", { detail: event }));
   }
 
@@ -207,6 +226,8 @@ const t = getTranslations(locale);
     const submittedQuestion = document.getElementById("submitted-question") as HTMLInputElement | null;
     if (submittedQuestion) submittedQuestion.value = question;
 
+    currentQuery = question;
+    dashboardPreviewShown = false;
     agentResponse = null;
     pageRoot?.classList.add("is-thinking");
     setPromptDockMode("processing");

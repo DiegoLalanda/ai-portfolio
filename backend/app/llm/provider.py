@@ -146,6 +146,7 @@ async def acomplete(
     timeout: float,
     schema: type[BaseModel] | None = None,
     call_site: str = "",
+    attempt_timeouts: list[float] | None = None,
 ) -> Completion:
     target = schema or AgentResponse
     keys = gemini_api_keys()
@@ -155,17 +156,30 @@ async def acomplete(
 
     last_error: Exception | None = None
     for index, attempt_model in enumerate(attempts):
+        limit = timeout
+        if attempt_timeouts and index < len(attempt_timeouts):
+            limit = attempt_timeouts[index]
         try:
-            return await _acomplete_with_model(
+            completion = await _acomplete_with_model(
                 attempt_model,
                 messages,
                 mode=mode,
-                timeout=timeout,
+                timeout=limit,
                 schema=target,
             )
+            logger.info(
+                "LLM ok call_site=%s mode=%s attempt=%s/%s latency_ms=%.1f tokens=%s",
+                call_site or "unknown",
+                mode,
+                index + 1,
+                len(attempts),
+                completion.latency_ms,
+                completion.total_tokens,
+            )
+            return completion
         except TimeoutError as error:
             last_error = error
-            log_llm_timeout(call_site=call_site, mode=mode, limit_s=timeout)
+            log_llm_timeout(call_site=call_site, mode=mode, limit_s=limit)
             if index < len(attempts) - 1:
                 logger.warning(
                     "Gemini intento %s/%s timeout en %s; probando API key fallback",
@@ -186,7 +200,7 @@ async def acomplete(
                     error_summary(error),
                 )
                 continue
-            log_llm_failure(error, call_site=call_site, mode=mode, limit_s=timeout)
+            log_llm_failure(error, call_site=call_site, mode=mode, limit_s=limit)
             raise
 
     if last_error is not None:
