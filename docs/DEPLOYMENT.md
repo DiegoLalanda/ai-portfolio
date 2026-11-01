@@ -7,7 +7,7 @@ El proyecto se despliega en dos plataformas:
 
 El orden recomendado es **primero el backend** (para tener su URL pública) y **después el frontend** (que necesita esa URL en `PUBLIC_API_URL`).
 
-> **Rama desplegada:** la arquitectura agentica (LangGraph, RAG, hilo, trazas) está en **`develop`**. Si Railway builda desde **`main`**, seguirás con el loop legacy hasta mergear y redeployar. Para producción agentica, desplegá **`develop`** (o merge a `main` cuando cierres el release).
+> **Motor:** producción usa **LangGraph** (`GRAPH_ENGINE=langgraph`). El loop legacy convive en el código como **respaldo** pero **no** debe configurarse en Railway. Desplegá desde la rama de release (`main` tras el merge).
 
 ---
 
@@ -29,7 +29,7 @@ El orden recomendado es **primero el backend** (para tener su URL pública) y **
 | `ENVIRONMENT` | `production` |
 | `RELOAD` | `false` |
 | `BACKEND_CORS_ORIGINS` | `["https://diegolalanda.pages.dev"]` (lista JSON con el dominio del frontend) |
-| `GRAPH_ENGINE` | `langgraph` (agentico en `develop`; omitir o `legacy` si aún no migraste) |
+| `GRAPH_ENGINE` | `langgraph` (obligatorio en prod; `legacy` solo rollback manual local, no en Railway) |
 | `EMBEDDING_PROVIDER` | `gemini` |
 | `GEMINI_EMBEDDING_MODEL` | `gemini-embedding-001` (o el id que acepte tu cuenta) |
 | `CHECKPOINT_PATH` | `data/checkpoints.sqlite` (disco efímero: redeploy borra hilos del API) |
@@ -91,9 +91,9 @@ Astro genera un sitio **estático** (`dist/`), que Cloudflare Pages sirve direct
 
 ## Checklist de un release
 
-1. Rama desplegada en Railway alineada con lo que querés (`develop` = agentico).
+1. Railway build/deploy desde la rama de release (`main`).
 2. `GEMINI_API_KEY` configurada en Railway (nunca en el repo).
-3. `GRAPH_ENGINE=langgraph` si desplegás la migración agentica.
+3. `GRAPH_ENGINE=langgraph` (no `legacy`; el loop legacy es solo respaldo en código).
 4. `BACKEND_CORS_ORIGINS` incluye el dominio de Cloudflare Pages.
 5. `PUBLIC_API_URL` en Cloudflare apunta al backend de Railway y se hizo redeploy.
 6. `/health` del backend responde OK.

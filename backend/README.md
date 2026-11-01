@@ -35,7 +35,7 @@ backend/
 ### Convenciones
 
 - **`graph/`**: motor por defecto (`GRAPH_ENGINE=langgraph`). Nodos instrumentados con `@trace_node`.
-- **`ai/`**: loop legacy y utilidades Gemini; no importar el SDK fuera de `ai/` y `llm/` salvo casos ya existentes.
+- **`ai/`**: loop **legacy de respaldo** (`GRAPH_ENGINE=legacy`; no se usa con el default LangGraph) y utilidades Gemini; no importar el SDK fuera de `ai/` y `llm/` salvo casos ya existentes.
 - **`tools/`**: funciones síncronas sobre JSON; el bibliotecario las invoca según la decisión del router.
 - **`rag/`**: solo markdown en `rag/corpus/`; los JSON del portfolio **no** se indexan.
 - **`data/`**: fuente de verdad del contenido; ver [`app/data/README.md`](app/data/README.md).
@@ -53,7 +53,7 @@ Variables principales:
 | Variable | Descripción |
 |---|---|
 | `GEMINI_API_KEY` | Google Gemini (chat + embeddings RAG) |
-| `GRAPH_ENGINE` | `langgraph` (default) o `legacy` |
+| `GRAPH_ENGINE` | `langgraph` (default y prod); `legacy` solo respaldo manual |
 | `EMBEDDING_PROVIDER` | `gemini` en dev/prod; `hash` en tests |
 | `CHECKPOINT_PATH` | SQLite para hilos LangGraph |
 | `PHOENIX_COLLECTOR_ENDPOINT` | OTLP; vacío → `evidencia/trazas.jsonl` |
@@ -90,7 +90,7 @@ Body incluye opcional `thread_id` (ver `app/schemas/chat.py`).
 
 ## Agente
 
-Motor **LangGraph**: router → bibliotecario / investigador → evidencia → compositor. Modelo `gemini-3.1-flash-lite`. Detalle en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+Motor activo **LangGraph**: router → bibliotecario / investigador → evidencia → compositor. Modelo vía `GEMINI_CHAT_MODEL`. El loop legacy en `app/ai/` convive como respaldo. Detalle en [`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
 
 ## Rúbrica
 

@@ -2,7 +2,7 @@
 
 Este documento explica cómo funciona el portfolio conversacional por dentro: el flujo de una pregunta desde el navegador hasta el dashboard renderizado.
 
-En la rama **`develop`**, el motor por defecto es **LangGraph** (`GRAPH_ENGINE=langgraph`). La rama **`main`** puede seguir desplegada con el loop legacy hasta que merges y redeploys el backend agentico.
+El motor en uso (local, producción y default del código) es **LangGraph** (`GRAPH_ENGINE=langgraph`). En el mismo repo **convive** el loop **legacy** (`backend/app/ai/gemini_agent.py`), pero **no se usa** en el flujo normal: queda solo como **respaldo** (rollback manual con `GRAPH_ENGINE=legacy`, tests de paridad o benchmarks).
 
 ## Visión general
 
@@ -130,9 +130,17 @@ Spans por nodo con `prompt.version` y `langgraph.node`. OpenInference instrument
 - **Local:** `PHOENIX_COLLECTOR_ENDPOINT` vacío → `backend/evidencia/trazas.jsonl` (gitignored).
 - **Producción:** [Phoenix en Railway](https://railway.com/deploy/arize-phoenix-or-just-updated-llm-tracing-evals-data-survives-redeploys--arize-phoenix-or-just-updated-llm-tracin) como **segundo servicio** (volumen en Phoenix; trazas de la UI sobreviven redeploys del servicio Phoenix). En el API: `PHOENIX_COLLECTOR_ENDPOINT=https://<phoenix>.up.railway.app/v1/traces`, `PHOENIX_PROJECT_NAME=ai-portfolio`, `TRACE_JSONL=false`. Ver [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
-## Motor legacy (`GRAPH_ENGINE=legacy`)
+## Motor legacy (respaldo, no usado por defecto)
 
-Respaldo del loop original en `backend/app/ai/gemini_agent.py`: *function calling* manual (hasta 12 turnos), tools vía SDK Gemini, mismo contrato `AgentResponse`. Se usa en tests de paridad y si el flag apunta a `legacy`. Producción en `main` puede seguir en legacy hasta actualizar variables y rama desplegada.
+Implementación anterior en `backend/app/ai/gemini_agent.py`: *function calling* manual (hasta 12 turnos), tools vía SDK Gemini, mismo contrato `AgentResponse`.
+
+| | LangGraph (activo) | Legacy (respaldo) |
+|---|---|---|
+| Flag | `GRAPH_ENGINE=langgraph` (default) | `GRAPH_ENGINE=legacy` |
+| Uso | Frontend, Railway, desarrollo habitual | Solo si activás el flag a propósito |
+| Producción | Sí | No — no configurar `legacy` en Railway |
+
+Se mantiene en el código para **rollback de emergencia** y **tests**; no forma parte de la arquitectura desplegada del portfolio.
 
 ## Contrato `AgentResponse`
 

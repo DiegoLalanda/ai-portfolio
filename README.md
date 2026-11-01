@@ -5,7 +5,7 @@ Portfolio personal **conversacional**: en lugar de secciones estáticas, el visi
 **Live:** [diegolalanda.pages.dev](https://diegolalanda.pages.dev/)
 
 - **Frontend** — Astro 5 + React Islands + Tailwind, sitio estático desplegado en **Cloudflare Pages**.
-- **Backend** — FastAPI + LangGraph + Gemini, desplegado en **Railway** (rama `develop` = agentico).
+- **Backend** — FastAPI + LangGraph + Gemini, desplegado en **Railway** (`GRAPH_ENGINE=langgraph`).
 
 ---
 
@@ -38,9 +38,9 @@ Portfolio personal **conversacional**: en lugar de secciones estáticas, el visi
               (tools, hechos)         (RAG narrativo)
 ```
 
-En **develop**, el camino por defecto es un **grafo LangGraph** con dos lectores en paralelo: el **bibliotecario** ejecuta las tools sobre JSON (milisegundos, sin embeddings) y el **investigador** busca solo en rutas `narrative`/`both` sobre markdown acotado (`backend/app/rag/corpus/`). **No** se indexan los JSON ni el HTML del sitio: los hechos van por tools; el RAG explica arquitectura cuando hace falta.
+El camino activo es un **grafo LangGraph** con dos lectores en paralelo: el **bibliotecario** ejecuta las tools sobre JSON (milisegundos, sin embeddings) y el **investigador** busca solo en rutas `narrative`/`both` sobre markdown acotado (`backend/app/rag/corpus/`). **No** se indexan los JSON ni el HTML del sitio: los hechos van por tools; el RAG explica arquitectura cuando hace falta.
 
-El loop legacy (`GRAPH_ENGINE=legacy`) sigue en el código para comparar, pero el grafo es el motor principal en develop.
+El loop **legacy** (`GRAPH_ENGINE=legacy` en `backend/app/ai/`) **convive en el repo pero no se usa** en producción ni en el default local: queda solo como **respaldo** (rollback manual o tests).
 
 Para hilos de conversación, trazas OpenTelemetry y despliegue de Phoenix en Railway, mirá [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
@@ -183,7 +183,7 @@ Copiá [`backend/.env.example`](backend/.env.example) y completá al menos `GEMI
 | Variable | Descripción | Default |
 |---|---|---|
 | `GEMINI_API_KEY` | Chat + embeddings RAG | *(vacío)* |
-| `GRAPH_ENGINE` | `langgraph` o `legacy` | `langgraph` |
+| `GRAPH_ENGINE` | `langgraph` (activo); `legacy` solo respaldo | `langgraph` |
 | `EMBEDDING_PROVIDER` | `gemini` / `hash` (tests) | `gemini` |
 | `CHECKPOINT_PATH` | Hilos LangGraph (SQLite) | `data/checkpoints.sqlite` |
 | `PHOENIX_COLLECTOR_ENDPOINT` | OTLP Phoenix; vacío → JSONL local | *(vacío)* |
@@ -206,8 +206,7 @@ Timeouts LLM, RAG, trazas y Phoenix: ver comentarios en `.env.example`.
 ## Despliegue
 
 - **Frontend → Cloudflare Pages.** Build `npm run build`, directorio de salida `dist/`. Configurar `PUBLIC_API_URL` con la URL pública del backend.
-- **Backend → Railway.** Start `python run.py`. Variables mínimas: `GEMINI_API_KEY`, `BACKEND_CORS_ORIGINS`, `GRAPH_ENGINE=langgraph` si desplegás `develop`. Phoenix opcional (segundo servicio). Ver [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
-- **Health check → GitHub Actions.** El workflow `.github/workflows/backend-health.yml` consulta `GET /health` cada 10 minutos. Configurar el secreto `BACKEND_HEALTH_URL` con la URL pública del backend, sin `/health` al final.
+- **Backend → Railway.** Start `python run.py`. Variables mínimas: `GEMINI_API_KEY`, `BACKEND_CORS_ORIGINS`, `GRAPH_ENGINE=langgraph` (no usar `legacy` en prod). Phoenix opcional (segundo servicio). Ver [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 Guía paso a paso en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
@@ -218,7 +217,7 @@ Guía paso a paso en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 1. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — flujo end-to-end.
 2. `backend/app/graph/` — grafo LangGraph (router → lectores → compositor).
 3. `backend/evaluar.py` — rúbrica offline sin API key.
-4. Demo en [diegolalanda.pages.dev](https://diegolalanda.pages.dev/) (backend agentico en rama **`develop`**).
+4. Demo en [diegolalanda.pages.dev](https://diegolalanda.pages.dev/) (backend LangGraph en Railway).
 
 ---
 
