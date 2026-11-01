@@ -19,8 +19,11 @@ def build_agent_prompt(
                     f"These widget types are ALREADY visible on the dashboard: {types}.",
                     "Do NOT suggest ask-actions that would revisit those topics (e.g. no "
                     '"See projects" if projects is already shown).',
-                    "Do NOT add widgets of those types in this response unless the visitor "
-                    "explicitly asks for more detail on that same topic.",
+                    "When the VISITOR QUESTION explicitly asks for a topic (experience, projects, "
+                    "skills, contact, education, etc.), you MUST call the matching tools and "
+                    "include the corresponding widget types in this response — even on follow-ups.",
+                    "Only omit widget types that are already visible when the visitor is NOT "
+                    "asking for that topic again.",
                     "Prefer suggesting topics that are NOT yet visible.",
                     "Write suggested_actions in the SAME language as the visitor question.",
                 ]

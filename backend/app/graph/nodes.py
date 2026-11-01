@@ -18,7 +18,7 @@ from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
 from app.graph.response_locale import detect_visitor_language, extract_visitor_question, harmonize_response_language
 from app.graph.suggested_actions import ensure_suggested_actions
-from app.graph.widget_evidence import align_response_with_evidence, ensure_passage_widgets, preview_response
+from app.graph.widget_evidence import align_response_with_evidence, ensure_passage_widgets
 from app.ai.gemini_client import gemini_api_keys
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model
 from app.observability.tracing import trace_node
@@ -246,7 +246,10 @@ async def _compose(
             "contains DASHBOARD CONTEXT listing all topics already visible. "
             "Every widget type must match a tool in tools_executed (or technology-cloud "
             "when passages is non-empty). Do not add projects/skills/experience widgets "
-            "without matching evidence keys."
+            "without matching evidence keys. "
+            "If tools_executed is non-empty, the response MUST include at least one matching "
+            "dashboard widget (experience, skills, projects, etc.) — never summary-only when "
+            "evidence tools ran. On follow-ups, honor explicit topic requests in VISITOR QUESTION."
         ),
     }
     if repair:
@@ -286,12 +289,6 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
     pack = state.get("facts") or {}
     passages = list(state.get("passages") or [])
     tools_pack = pack.get("tools") if isinstance(pack, dict) else {}
-    if isinstance(tools_pack, dict) and tools_pack:
-        preview = preview_response(tools_pack, passages=passages, language=decision.language)
-        await _emit(
-            config,
-            {"type": "widget_preview", "response": preview.model_dump(mode="json")},
-        )
     await _emit(config, {"type": "status", "phase": "synthesizing"})
     parsed, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
     metrics = [first]

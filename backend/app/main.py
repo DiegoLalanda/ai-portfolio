@@ -9,7 +9,7 @@ from app.api.v1.router import api_router
 from app.core.config import settings
 from app.graph.builder import build_portfolio_graph, set_portfolio_graph
 from app.graph.checkpointer import get_checkpointer, start_checkpointer, stop_checkpointer
-from app.observability.tracing import configure_tracing
+from app.observability.tracing import configure_tracing, shutdown_tracing
 from app.rag.hybrid import indice
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s: %(message)s")
@@ -26,6 +26,7 @@ async def lifespan(_app: FastAPI):
     try:
         yield
     finally:
+        shutdown_tracing()
         await stop_checkpointer()
 
 

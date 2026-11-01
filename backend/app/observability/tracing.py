@@ -26,6 +26,7 @@ R = TypeVar("R")
 _TRACE_DIR = Path(__file__).resolve().parents[2] / "evidencia"
 _memory_spans: list[Any] = []
 _configured = False
+_tracer_provider: TracerProvider | None = None
 
 
 class _MemoryExporter(SpanExporter):
@@ -67,8 +68,16 @@ class _JsonlExporter(SpanExporter):
         return True
 
 
+def _strip_wrapping_quotes(value: str) -> str:
+    """Railway a veces guarda valores con comillas literales (\"https://...\")."""
+    stripped = value.strip()
+    if len(stripped) >= 2 and stripped[0] == stripped[-1] and stripped[0] in "\"'":
+        return stripped[1:-1].strip()
+    return stripped
+
+
 def _collector_endpoint(raw: str) -> str:
-    url = raw.strip().rstrip("/")
+    url = _strip_wrapping_quotes(raw).rstrip("/")
     if not url:
         return ""
     if url.endswith("/v1/traces"):
@@ -77,14 +86,14 @@ def _collector_endpoint(raw: str) -> str:
 
 
 def _otlp_headers() -> dict[str, str] | None:
-    key = settings.PHOENIX_API_KEY.strip()
+    key = _strip_wrapping_quotes(settings.PHOENIX_API_KEY)
     if not key:
         return None
     return {"Authorization": f"Bearer {key}"}
 
 
 def configure_tracing() -> None:
-    global _configured
+    global _configured, _tracer_provider
     if _configured:
         return
     provider = TracerProvider(
@@ -110,7 +119,25 @@ def configure_tracing() -> None:
         logger.info("Trazas locales en %s/trazas.jsonl", _TRACE_DIR)
     _instrument_langchain(provider)
     trace.set_tracer_provider(provider)
+    _tracer_provider = provider
     _configured = True
+    if endpoint and not _otlp_headers():
+        logger.warning("PHOENIX_COLLECTOR_ENDPOINT definido pero PHOENIX_API_KEY vacía; OTLP puede rechazar trazas.")
+
+
+def shutdown_tracing() -> None:
+    """Fuerza export OTLP antes de apagar el contenedor (p. ej. redeploy en Railway)."""
+    global _tracer_provider
+    if _tracer_provider is None:
+        return
+    try:
+        _tracer_provider.force_flush(timeout_millis=15000)
+        _tracer_provider.shutdown()
+        logger.info("Export de trazas OTLP finalizado.")
+    except Exception:
+        logger.exception("No se pudo cerrar el exportador OTLP")
+    finally:
+        _tracer_provider = None
 
 
 def clear_traces() -> None:
