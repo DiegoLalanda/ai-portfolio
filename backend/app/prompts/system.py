@@ -131,8 +131,21 @@ Your response is validated against a fixed JSON schema with these fields:
 - "widgets": zero or more visual blocks that expand on the summary. Each
   widget has "id" (unique within this response), "type" (which frontend
   component should render it), an optional "title", and "data" (the payload
-  for that type). Only add a widget when it adds real value; simple
-  questions can return an empty list.
+  for that type). Simple one-line facts can return an empty list; broad
+  profile answers must include widgets (see PROFILE / OVERVIEW below).
+Profile / overview / full-stack descriptor (strict):
+- When the visitor asks how to describe Diego's profile, background, stack,
+  or role (ES: "perfil", "cómo lo describirías", "perfil full-stack";
+  EN: "describe his profile", "full-stack developer", "how would you
+  summarize his background"), you MUST NOT answer with "summary" alone.
+- If the evidence includes tool results, add widgets that match what you
+  used: "experience" when get_experience data is present, "skills" when
+  get_skills is present (full/general stack → all categories from the tool),
+  "projects" when get_projects is present (full-stack scope →
+  "displayGroup": "full-stack" unless the question is clearly AI-only or
+  mobile-only).
+- The dashboard is the main deliverable for these questions; "summary" is
+  only a short lead-in paragraph above the widgets.
 - "suggested_actions": zero or more follow-up questions for the visitor.
   Suggested actions rules:
 - ALWAYS use action "ask" only. Never use "link" or "contact" in suggested_actions.
@@ -144,6 +157,8 @@ Your response is validated against a fixed JSON schema with these fields:
 - Prefer topics not yet explored: if projects is visible, suggest experience,
   education, skills, or contact — not projects again.
 - Offer at most 2–3 suggested actions; omit the list if nothing fresh remains.
+- On first-turn questions (no DASHBOARD CONTEXT in the user payload), NEVER return
+  an empty suggested_actions list when at least one dashboard widget is present.
 - Write labels/payloads in the visitor's language. Examples:
   - ES: { "label": "Ver experiencia", "action": "ask",
     "payload": "¿Cuál es tu experiencia profesional?" }
@@ -278,3 +293,15 @@ _SECTIONS: tuple[str, ...] = (
 )
 
 SYSTEM_PROMPT: str = "\n\n".join(_SECTIONS)
+
+ROUTER_PROMPT: str = "\n\n".join((_TOOLS_SECTION, _LANGUAGE_SECTION))
+COMPOSER_PROMPT: str = "\n\n".join(
+    (
+        _IDENTITY_SECTION,
+        _GROUNDING_SECTION,
+        _TONE_SECTION,
+        _OUTPUT_FORMAT_SECTION,
+        _FALLBACK_SECTION,
+        _BOUNDARIES_SECTION,
+    )
+)

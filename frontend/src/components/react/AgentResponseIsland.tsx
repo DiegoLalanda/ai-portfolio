@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { MessageCircleQuestion } from "lucide-react";
 import { streamChatMessage } from "@/lib/api";
+import { resetChatThreadId } from "@/lib/chat-thread";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
 import {
   collectShownWidgetTypes,
@@ -64,6 +65,7 @@ export default function AgentResponseIsland() {
     }
 
     function handleReset() {
+      resetChatThreadId();
       delete responseBridge.__portfolioPendingAgentResponse;
       setResponses([]);
       setAskedQuestions([]);
@@ -127,7 +129,10 @@ export default function AgentResponseIsland() {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
       
-      const isRateLimit = error.message?.includes("429") || error.message?.includes("Demasiadas preguntas");
+      const isRateLimit =
+        error.message?.includes("429") ||
+        error.message?.includes("Demasiadas preguntas") ||
+        error.message?.includes("Cuota o límite de Gemini");
       const title = isRateLimit 
         ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
         : (pageRoot?.dataset.errorTitle ?? "Connection issue");

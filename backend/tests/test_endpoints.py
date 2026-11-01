@@ -46,7 +46,8 @@ def test_chat_endpoint_success(mock_get_answer):
     mock_get_answer.assert_called_once_with(
         "¿Cuáles son las habilidades de Diego?",
         shown_widget_types=[],
-        prior_questions=[]
+        prior_questions=[],
+        thread_id=None,
     )
 
 
