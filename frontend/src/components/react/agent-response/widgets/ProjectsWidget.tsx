@@ -97,7 +97,7 @@ export function ProjectsWidget({ widget }: { widget: Widget }) {
                 <span className="h-px min-w-8 flex-1 bg-white/5" aria-hidden="true" />
               </div>
 
-              <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 snap-x snap-mandatory">
+              <div className="scrollbar-galactic-h -mx-1 flex gap-3 overflow-x-auto px-1 pb-1 snap-x snap-mandatory">
                 {section.items.map((project) => (
                   <ProjectCard
                     key={project.id}

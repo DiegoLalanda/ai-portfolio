@@ -24,6 +24,8 @@ def build_agent_prompt(
                     "include the corresponding widget types in this response — even on follow-ups.",
                     "Only omit widget types that are already visible when the visitor is NOT "
                     "asking for that topic again.",
+                    "Set widget_types to the blocks that answer THIS question. "
+                    "Do not repeat projects or skills just because their tools ran.",
                     "Prefer suggesting topics that are NOT yet visible.",
                     "Write suggested_actions in the SAME language as the visitor question.",
                 ]

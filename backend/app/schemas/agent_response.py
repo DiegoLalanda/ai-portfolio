@@ -96,12 +96,42 @@ class SuggestedAction(BaseModel):
     )
 
 
+ProjectGroup = Literal["full-stack", "ia", "otras"]
+SkillCategory = Literal["ai", "frontend", "backend-data", "cloud-devops", "design-cms-other", "gamedev"]
+
+
 class ComposerCopy(BaseModel):
-    """Texto del compositor. Los widgets los arma el backend desde las tools."""
+    """Texto del compositor y qué bloques visualizar. El payload lo arma el backend."""
 
     language: Literal["es", "en"]
     title: str
     summary: str
+    widget_types: list[WidgetType] = Field(
+        default_factory=list,
+        description=(
+            "Widget types that answer THIS question. Omit types the visitor did not ask for. "
+            "Empty when the summary is enough."
+        ),
+    )
+    project_groups: list[ProjectGroup] = Field(
+        default_factory=list,
+        description="Only when widget_types includes projects. Empty means all groups. One group when the ask is scoped.",
+    )
+    skill_categories: list[SkillCategory] = Field(
+        default_factory=list,
+        description="Only when widget_types includes skills. Empty means every category returned by the tool.",
+    )
+    skill_names: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Exact skill names copied from the evidence brief. Required for a scoped skills question "
+            "(databases, frontend, cloud). Empty only when the visitor asked for the full stack."
+        ),
+    )
+    cv_download: bool = Field(
+        default=False,
+        description="True only when the visitor asks to download or read the full CV.",
+    )
     suggested_actions: list[SuggestedAction] = Field(default_factory=list)
 
 

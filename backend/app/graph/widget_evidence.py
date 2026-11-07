@@ -63,6 +63,71 @@ def widget_from_tool(tool: str, raw: Any) -> Widget | None:
     return Widget(id=f"{slug}-evidence", type=wtype, title=None, data=_widget_data(tool, raw))
 
 
+def widgets_for_selection(
+    tools: dict[str, Any],
+    *,
+    passages: list[Any],
+    widget_types: list[str],
+    project_groups: list[str] | None = None,
+    skill_categories: list[str] | None = None,
+    skill_names: list[str] | None = None,
+    cv_download: bool = False,
+) -> list[Widget]:
+    """Arma solo los widgets que el compositor eligió y que tienen evidencia."""
+
+    widgets: list[Widget] = []
+    seen: set[str] = set()
+    groups = [group for group in (project_groups or []) if group in {"full-stack", "ia", "otras"}]
+    categories = list(skill_categories or [])
+    wanted_names = {name.casefold() for name in (skill_names or []) if name.strip()}
+
+    for wtype in widget_types:
+        if wtype in seen:
+            continue
+        seen.add(wtype)
+        if wtype == "technology-cloud":
+            if passages:
+                widgets.append(
+                    Widget(id="architecture-notes", type="technology-cloud", title=None, data={"items": []})
+                )
+            continue
+        if wtype == "text":
+            continue
+        tool = WIDGET_TO_TOOL.get(wtype)  # type: ignore[arg-type]
+        if tool is None or tool not in tools:
+            continue
+        built = widget_from_tool(tool, tools[tool])
+        if built is None:
+            continue
+        if wtype == "projects" and groups:
+            built = built.model_copy(update={"data": {"displayGroups": groups}})
+        if wtype == "skills" and (categories or wanted_names):
+            raw_categories = built.data.get("categories") if isinstance(built.data, dict) else {}
+            if not isinstance(raw_categories, dict):
+                continue
+            filtered: dict[str, list[str]] = {}
+            for key, values in raw_categories.items():
+                if categories and key not in categories:
+                    continue
+                if not isinstance(values, list):
+                    continue
+                kept = [
+                    skill
+                    for skill in values
+                    if isinstance(skill, str) and (not wanted_names or skill.casefold() in wanted_names)
+                ]
+                if kept:
+                    filtered[str(key)] = kept
+            if not filtered:
+                continue
+            built = built.model_copy(update={"data": {"categories": filtered}})
+        widgets.append(built)
+
+    if cv_download and "text" not in seen:
+        widgets.append(Widget(id="cv-download", type="text", title=None, data={}))
+    return widgets
+
+
 def build_fact_widgets(tools: dict[str, Any], *, passages: list[Any]) -> list[Widget]:
     widgets: list[Widget] = []
     for name in TOOL_TO_WIDGET:

@@ -7,6 +7,7 @@ from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 
 from app.graph.decision import RouterDecision
+from app.graph.widget_evidence import TOOL_TO_WIDGET
 from app.schemas.agent_response import AgentResponse, ComposerCopy
 
 _ROW: dict = {}
@@ -63,10 +64,16 @@ class GoldenEvalChatModel(BaseChatModel):
         if schema is ComposerCopy:
             if _BAD_FIRST and _COMPOSER_CALLS == 1:
                 return {"raw": raw, "parsed": None}
+            widget_types = [
+                TOOL_TO_WIDGET[name]
+                for name in (_ROW.get("expected_tools") or [])
+                if name in TOOL_TO_WIDGET
+            ]
             parsed = ComposerCopy(
                 language=_ROW["language"],
                 title=_ROW["id"],
                 summary="Respuesta de rúbrica.",
+                widget_types=widget_types,
                 suggested_actions=[],
             )
             return {"raw": raw, "parsed": parsed}

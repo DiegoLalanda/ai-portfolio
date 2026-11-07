@@ -51,6 +51,140 @@
   }
 }
 
+/* --- Galactic scrollbars (global, no estilos default del navegador) --- */
+
+:root {
+  --galaxy-scroll-track: rgba(12, 10, 20, 0.94);
+  --galaxy-scroll-track-edge: rgba(208, 188, 255, 0.06);
+  --galaxy-scroll-thumb-mid: #6d3bd7;
+  --galaxy-scroll-thumb-edge: #3d2d5c;
+  --galaxy-scroll-glow: rgba(76, 215, 246, 0.4);
+}
+
+@supports (scrollbar-color: auto) {
+  html,
+  body,
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--galaxy-scroll-thumb-mid) var(--galaxy-scroll-track);
+  }
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background:
+    linear-gradient(180deg, rgba(76, 215, 246, 0.04) 0%, transparent 35%, transparent 65%, rgba(208, 188, 255, 0.05) 100%),
+    var(--galaxy-scroll-track);
+  border-radius: 9999px;
+  margin: 3px;
+  box-shadow:
+    inset 0 0 14px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px var(--galaxy-scroll-track-edge);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background: linear-gradient(
+    165deg,
+    rgba(76, 215, 246, 0.95) 0%,
+    rgba(109, 59, 215, 0.92) 45%,
+    rgba(208, 188, 255, 0.88) 100%
+  );
+  background-clip: padding-box;
+  box-shadow:
+    0 0 10px var(--galaxy-scroll-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    165deg,
+    rgba(140, 240, 255, 1) 0%,
+    rgba(150, 100, 255, 1) 48%,
+    rgba(233, 221, 255, 1) 100%
+  );
+  background-clip: padding-box;
+  box-shadow:
+    0 0 16px rgba(208, 188, 255, 0.55),
+    0 0 8px rgba(76, 215, 246, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(165deg, #4cd7f6 0%, #5516be 55%, #d0bcff 100%);
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: var(--galaxy-scroll-track);
+}
+
+/* Scroll principal del dashboard: reserva espacio y rail un poco más ancho */
+#parallax-container,
+.scrollbar-galactic {
+  scrollbar-gutter: stable both-edges;
+}
+
+#parallax-container::-webkit-scrollbar,
+.scrollbar-galactic::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Carouseles horizontales: rail fino, gradiente en el eje X */
+.scrollbar-galactic-h {
+  scrollbar-width: thin;
+  scrollbar-color: #9b7fe8 var(--galaxy-scroll-track);
+}
+
+.scrollbar-galactic-h::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.scrollbar-galactic-h::-webkit-scrollbar-track {
+  margin: 0 6px;
+  border-radius: 9999px;
+}
+
+.scrollbar-galactic-h::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    90deg,
+    rgba(76, 215, 246, 0.92) 0%,
+    rgba(109, 59, 215, 0.95) 50%,
+    rgba(208, 188, 255, 0.9) 100%
+  );
+  background-clip: padding-box;
+  border-width: 1px;
+}
+
+.scrollbar-galactic-h::-webkit-scrollbar-thumb:hover {
+  box-shadow:
+    0 0 12px rgba(208, 188, 255, 0.45),
+    0 0 6px rgba(76, 215, 246, 0.35);
+}
+
+/* Modales de scroll completo */
+.scrollbar-galactic-overlay {
+  scrollbar-gutter: stable;
+}
+
 /* Mobile landing: footer pegado abajo, sin scroll fantasma del documento */
 @media (max-width: 767px) {
   body.portfolio-landing-lock {
@@ -109,6 +243,247 @@
   box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.37),
     0 0 40px rgba(208, 188, 255, 0.05);
+}
+
+/* --- Agent mascot + speech bubble (viñeta) --- */
+
+.mascot-speech-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .mascot-speech-row {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1.75rem;
+  }
+}
+
+.mascot-speech-row__mascot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mascot-speech-badge {
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(15, 13, 21, 0.85);
+  border: 1px solid rgba(208, 188, 255, 0.35);
+  font-family: "Geist", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d0bcff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+.mascot-speech-badge__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: #4cd7f6;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.mascot-speech-bubble {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(33, 30, 39, 0.92) 0%,
+    rgba(21, 18, 27, 0.88) 55%,
+    rgba(28, 24, 36, 0.9) 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(208, 188, 255, 0.22);
+  border-radius: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow:
+    0 12px 40px -12px rgba(0, 0, 0, 0.55),
+    0 0 32px rgba(208, 188, 255, 0.06);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .mascot-speech-bubble::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 42px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 14px solid rgba(208, 188, 255, 0.35);
+  }
+
+  .mascot-speech-bubble::after {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 42px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 13px solid rgba(21, 18, 27, 0.92);
+  }
+}
+
+@keyframes astro-mascot-float-keyframes {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1.25deg);
+  }
+}
+
+@keyframes astro-mascot-glow-keyframes {
+  0%,
+  100% {
+    opacity: 0.45;
+    filter: blur(20px);
+  }
+  50% {
+    opacity: 0.75;
+    filter: blur(26px);
+  }
+}
+
+@keyframes astro-mascot-jet-keyframes {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.2, 1.35) translateY(3px);
+    opacity: 1;
+  }
+}
+
+@keyframes astro-mascot-head-tilt-keyframes {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes astro-mascot-blink-keyframes {
+  0%,
+  45%,
+  48%,
+  90%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  46.5%,
+  91.5% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes astro-mascot-wave-keyframes {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+  70% {
+    transform: rotate(-10deg);
+  }
+}
+
+@keyframes astro-mascot-arm-left-keyframes {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes astro-mascot-antenna-keyframes {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.astro-mascot-float {
+  animation: astro-mascot-float-keyframes 4s ease-in-out infinite;
+}
+
+.astro-mascot-glow {
+  animation: astro-mascot-glow-keyframes 3s ease-in-out infinite;
+}
+
+.astro-mascot-jet {
+  transform-origin: 160px 240px;
+  animation: astro-mascot-jet-keyframes 1.6s ease-in-out infinite;
+}
+
+.astro-mascot-head {
+  transform-origin: 160px 145px;
+  animation: astro-mascot-head-tilt-keyframes 5s ease-in-out infinite;
+}
+
+.astro-mascot-blink {
+  transform-origin: 160px 128px;
+  animation: astro-mascot-blink-keyframes 4.5s ease-in-out infinite;
+}
+
+.astro-mascot-arm-wave {
+  transform-origin: 215px 175px;
+  animation: astro-mascot-wave-keyframes 3.5s ease-in-out infinite;
+}
+
+.astro-mascot-arm-left {
+  transform-origin: 105px 175px;
+  animation: astro-mascot-arm-left-keyframes 4s ease-in-out infinite;
+}
+
+.astro-mascot-antenna {
+  animation: astro-mascot-antenna-keyframes 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-mascot-float,
+  .astro-mascot-glow,
+  .astro-mascot-jet,
+  .astro-mascot-head,
+  .astro-mascot-blink,
+  .astro-mascot-arm-wave,
+  .astro-mascot-arm-left,
+  .astro-mascot-antenna,
+  .mascot-speech-badge__dot {
+    animation: none !important;
+  }
 }
 
 .glass-input-container {
@@ -810,6 +1185,13 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb,
+  *::-webkit-scrollbar-thumb,
+  .scrollbar-galactic-h::-webkit-scrollbar-thumb {
+    box-shadow: none;
   }
 
   .floating-capsule.is-hidden {
