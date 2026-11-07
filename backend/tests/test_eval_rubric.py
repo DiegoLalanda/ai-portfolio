@@ -3,6 +3,7 @@
 import asyncio
 
 from app.eval.golden_model import bind_golden_row, enable_bad_first_composer, golden_eval_model
+from app.graph.widget_evidence import TOOL_TO_WIDGET
 from app.graph.builder import build_portfolio_graph
 from app.services.chat_stream import stream_chat_events
 from tests.test_golden_set import load_questions
@@ -23,8 +24,9 @@ def test_rubric_runs_graph_for_every_golden_row(monkeypatch):
             assert tools == row["expected_tools"], row["id"]
             response = events[-1]["response"]
             assert response["language"] == row["language"], row["id"]
-            ids = [widget["id"] for widget in response["widgets"]]
-            assert ids == (row.get("allowed_ids") or [row["id"]]), row["id"]
+            types = [widget["type"] for widget in response["widgets"]]
+            expected = [TOOL_TO_WIDGET[name] for name in row["expected_tools"] if name in TOOL_TO_WIDGET]
+            assert expected == [item for item in types if item in expected], row["id"]
 
     asyncio.run(run())
 
@@ -75,4 +77,4 @@ def test_rubric_repair_path_still_passes(monkeypatch):
     )
     chat_calls = [item for item in state["metrics"] if item["total_tokens"] >= 1]
     assert len(chat_calls) == 3
-    assert state["response"]["widgets"][0]["id"] == "skills-widget"
+    assert state["response"]["widgets"][0]["id"] == "skills-evidence"

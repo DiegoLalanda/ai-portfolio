@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 
 from app.graph.decision import RouterDecision
-from app.schemas.agent_response import AgentResponse
+from app.schemas.agent_response import AgentResponse, ComposerCopy
 
 _ROW: dict = {}
 _COMPOSER_CALLS = 0
@@ -60,10 +60,17 @@ class GoldenEvalChatModel(BaseChatModel):
             return {"raw": raw, "parsed": parsed}
         global _COMPOSER_CALLS
         _COMPOSER_CALLS += 1
-        if _BAD_FIRST and _COMPOSER_CALLS == 1:
-            widget_id = "proj-finni"
-        else:
-            widget_id = (_ROW.get("allowed_ids") or [_ROW["id"]])[0]
+        if schema is ComposerCopy:
+            if _BAD_FIRST and _COMPOSER_CALLS == 1:
+                return {"raw": raw, "parsed": None}
+            parsed = ComposerCopy(
+                language=_ROW["language"],
+                title=_ROW["id"],
+                summary="Respuesta de rúbrica.",
+                suggested_actions=[],
+            )
+            return {"raw": raw, "parsed": parsed}
+        widget_id = (_ROW.get("allowed_ids") or [_ROW["id"]])[0]
         parsed = AgentResponse(
             language=_ROW["language"],
             title=_ROW["id"],

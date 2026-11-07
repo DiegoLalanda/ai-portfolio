@@ -18,12 +18,16 @@ from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
 from app.graph.response_locale import detect_visitor_language, extract_visitor_question, harmonize_response_language
 from app.graph.suggested_actions import ensure_suggested_actions
-from app.graph.widget_evidence import align_response_with_evidence, ensure_passage_widgets
+from app.graph.widget_evidence import (
+    align_response_with_evidence,
+    build_fact_widgets,
+    ensure_passage_widgets,
+)
 from app.ai.gemini_client import gemini_api_keys
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model
 from app.observability.tracing import trace_node
-from app.prompts.system import COMPOSER_PROMPT, ROUTER_PROMPT
-from app.schemas.agent_response import AgentResponse
+from app.prompts.system import COMPOSER_COPY_PROMPT, ROUTER_PROMPT
+from app.schemas.agent_response import AgentResponse, ComposerCopy
 from app.tools import __all__ as TOOL_NAMES
 from app.utils.json_loader import load_visible_items
 
@@ -223,6 +227,29 @@ def evidencia(state: PortfolioState) -> dict[str, Any]:
     }
 
 
+def _brief_item(item: dict[str, Any]) -> str:
+    for key in ("name", "title", "role", "institution", "company"):
+        value = item.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()[:80]
+    return ""
+
+
+def _evidence_brief(tools: dict[str, Any]) -> dict[str, Any]:
+    """Resumen corto para el compositor. Los widgets usan el JSON completo aparte."""
+
+    brief: dict[str, Any] = {}
+    for name, raw in tools.items():
+        if isinstance(raw, list):
+            sample = [_brief_item(item) for item in raw[:5] if isinstance(item, dict)]
+            brief[name] = {"count": len(raw), "sample": [item for item in sample if item]}
+        elif isinstance(raw, dict):
+            brief[name] = {"fields": sorted(str(key) for key in list(raw)[:8])}
+        else:
+            brief[name] = {"present": raw is not None}
+    return brief
+
+
 async def _compose(
     question: str,
     pack: dict[str, Any],
@@ -230,33 +257,19 @@ async def _compose(
     *,
     repair: bool,
     call_site: str,
-) -> tuple[AgentResponse | None, dict[str, Any]]:
-    tools_evidence = pack.get("tools") or {}
+) -> tuple[ComposerCopy | None, dict[str, Any]]:
+    tools_evidence = pack.get("tools") if isinstance(pack.get("tools"), dict) else {}
     visitor_line = extract_visitor_question(question)
     expected_language = detect_visitor_language(visitor_line) if visitor_line else "es"
     payload: dict[str, Any] = {
         "question": question,
-        "evidence": tools_evidence,
-        "passages": passages,
-        "allowed_project_ids": pack.get("project_ids") or [],
-        "tools_executed": list(tools_evidence.keys()) if isinstance(tools_evidence, dict) else [],
+        "evidence_brief": _evidence_brief(tools_evidence),
+        "passage_count": len(passages),
+        "tools_executed": list(tools_evidence),
         "expected_language": expected_language,
-        "composer_directives": (
-            "Include 2–3 suggested_actions (action ask) unless the question block "
-            "contains DASHBOARD CONTEXT listing all topics already visible. "
-            "Every widget type must match a tool in tools_executed (or technology-cloud "
-            "when passages is non-empty). Do not add projects/skills/experience widgets "
-            "without matching evidence keys. "
-            "If tools_executed is non-empty, the response MUST include at least one matching "
-            "dashboard widget (experience, skills, projects, etc.) — never summary-only when "
-            "evidence tools ran. On follow-ups, honor explicit topic requests in VISITOR QUESTION."
-        ),
     }
     if repair:
-        payload["repair"] = (
-            "The previous answer was invalid or cited a project id outside allowed_project_ids. "
-            "Answer again using only the evidence."
-        )
+        payload["repair"] = "The previous copy was empty or invalid. Answer again from the brief only."
     keys = gemini_api_keys()
     chat_model = get_chat_model(keys[0]) if keys else GenAIChatModel()
     composer_attempt_timeouts: list[float] | None = None
@@ -268,17 +281,17 @@ async def _compose(
     completion = await acomplete(
         chat_model,
         [
-            SystemMessage(content=COMPOSER_PROMPT),
-            HumanMessage(content=json.dumps(payload, ensure_ascii=False, default=str)),
+            SystemMessage(content=COMPOSER_COPY_PROMPT),
+            HumanMessage(content=json.dumps(payload, ensure_ascii=False)),
         ],
         mode="structured",
         timeout=settings.LLM_TIMEOUT_COMPOSER_S,
-        schema=AgentResponse,
+        schema=ComposerCopy,
         call_site=call_site,
         attempt_timeouts=composer_attempt_timeouts,
     )
-    parsed = completion.parsed if isinstance(completion.parsed, AgentResponse) else None
-    if parsed is not None and not _ids_allowed(parsed, pack):
+    parsed = completion.parsed if isinstance(completion.parsed, ComposerCopy) else None
+    if parsed is not None and not parsed.title.strip():
         parsed = None
     return parsed, _metric(completion)
 
@@ -290,10 +303,10 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
     passages = list(state.get("passages") or [])
     tools_pack = pack.get("tools") if isinstance(pack, dict) else {}
     await _emit(config, {"type": "status", "phase": "synthesizing"})
-    parsed, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
+    copy, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
     metrics = [first]
-    if parsed is None:
-        parsed, second = await _compose(
+    if copy is None:
+        copy, second = await _compose(
             state["question"],
             pack,
             passages,
@@ -301,9 +314,18 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
             call_site="compositor-repair",
         )
         metrics.append(second)
-    if parsed is None:
-        parsed = _insufficient(decision.language)
-    elif isinstance(tools_pack, dict) and tools_pack:
+    widgets = build_fact_widgets(tools_pack if isinstance(tools_pack, dict) else {}, passages=passages)
+    if copy is None:
+        parsed = _insufficient(decision.language).model_copy(update={"widgets": widgets})
+    else:
+        parsed = AgentResponse(
+            language=copy.language,
+            title=copy.title,
+            summary=copy.summary,
+            widgets=widgets,
+            suggested_actions=copy.suggested_actions,
+        )
+    if isinstance(tools_pack, dict) and tools_pack:
         parsed = align_response_with_evidence(parsed, tools_pack, passages=passages)
     if parsed is not None:
         parsed = ensure_passage_widgets(parsed, passages)

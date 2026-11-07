@@ -5,6 +5,7 @@ import asyncio
 from langgraph.checkpoint.memory import MemorySaver
 
 from app.eval.golden_model import bind_golden_row, enable_bad_first_composer, golden_eval_model
+from app.graph.widget_evidence import TOOL_TO_WIDGET
 from app.graph.builder import build_portfolio_graph
 from app.prompts.system import COMPOSER_PROMPT, ROUTER_PROMPT, SYSTEM_PROMPT
 from app.services.chat_stream import stream_chat_events
@@ -43,8 +44,9 @@ def test_langgraph_matches_the_golden_set(monkeypatch):
             assert tools == row["expected_tools"], row["id"]
             response = events[-1]["response"]
             assert response["language"] == row["language"], row["id"]
-            ids = [widget["id"] for widget in response["widgets"]]
-            assert ids == (row.get("allowed_ids") or [row["id"]]), row["id"]
+            types = [widget["type"] for widget in response["widgets"]]
+            expected = [TOOL_TO_WIDGET[name] for name in row["expected_tools"] if name in TOOL_TO_WIDGET]
+            assert expected == [item for item in types if item in expected], row["id"]
             if response["widgets"]:
                 assert len(response["suggested_actions"]) >= 2, row["id"]
             assert any(event.get("phase") == "thinking" for event in events), row["id"]
@@ -74,6 +76,6 @@ def test_composer_retries_once_when_a_project_id_is_outside_the_pack(monkeypatch
     )
     chat_calls = [item for item in state["metrics"] if item["total_tokens"] >= 1]
     assert len(chat_calls) == 3
-    assert state["response"]["widgets"][0]["id"] == "skills-widget"
+    assert state["response"]["widgets"][0]["id"] == "skills-evidence"
     assert state["passages"] == []
     assert "get_projects" not in state["facts"]["tools"]

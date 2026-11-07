@@ -96,6 +96,15 @@ class SuggestedAction(BaseModel):
     )
 
 
+class ComposerCopy(BaseModel):
+    """Texto del compositor. Los widgets los arma el backend desde las tools."""
+
+    language: Literal["es", "en"]
+    title: str
+    summary: str
+    suggested_actions: list[SuggestedAction] = Field(default_factory=list)
+
+
 class AgentResponse(BaseModel):
     """Respuesta estructurada del agente. Es el contrato completo entre backend y frontend."""
 
