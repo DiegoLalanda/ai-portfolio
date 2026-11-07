@@ -12,6 +12,7 @@ import {
 } from "@/lib/dashboard-context";
 import { normalizeResponseLanguage } from "@/lib/responseLanguage";
 import { AgentResponseView } from "@/components/react/agent-response/AgentResponseView";
+import { MascotSpeechBubble } from "@/components/react/agent-response/MascotSpeechBubble";
 
 type PendingAgentResponse = { response: AgentResponse; question: string };
 
@@ -164,6 +165,12 @@ export default function AgentResponseIsland() {
     typeof document !== "undefined"
       ? (document.getElementById("agent-response-container")?.dataset.askAgainAriaLabel ?? askAgainLabel)
       : askAgainLabel;
+  const pageLocale: Locale =
+    typeof document !== "undefined" && document.getElementById("page-root")?.dataset.locale === "en"
+      ? "en"
+      : "es";
+  const thinkingBubbleTitle =
+    pageLocale === "en" ? "Architecting insights" : "Arquitectando insights";
 
   return (
     <div className="mx-auto flex w-full max-w-container-max flex-col gap-gutter">
@@ -189,18 +196,26 @@ export default function AgentResponseIsland() {
       {isLoading && (
         <div
           ref={loaderRef}
-          className="dashboard-followup-loader glass-panel flex flex-col items-center justify-center gap-4 rounded-xl px-6 py-10"
+          className="dashboard-followup-loader relative"
           role="status"
           aria-live="polite"
           aria-busy="true"
         >
-          <div className="dashboard-followup-spinner" aria-hidden="true" />
-          <p className="font-label-md text-label-md uppercase tracking-widest text-primary">{followUpLabel}</p>
-          {pendingQuestion && (
-            <p className="max-w-md text-center font-body-md text-body-md text-on-surface-variant">
-              {pendingQuestion}
-            </p>
-          )}
+          <MascotSpeechBubble
+            title={thinkingBubbleTitle}
+            locale={pageLocale}
+            thinking
+            mascotSize="sm"
+          >
+            <span className="sr-only">{followUpLabel}</span>
+            <div className="flex flex-col gap-3">
+              <div className="dashboard-followup-spinner mx-0 self-start" aria-hidden="true" />
+              <p className="font-label-md text-label-md uppercase tracking-widest text-primary">{followUpLabel}</p>
+              {pendingQuestion ? (
+                <p className="font-body-md text-body-md text-on-surface italic">&ldquo;{pendingQuestion}&rdquo;</p>
+              ) : null}
+            </div>
+          </MascotSpeechBubble>
         </div>
       )}
 

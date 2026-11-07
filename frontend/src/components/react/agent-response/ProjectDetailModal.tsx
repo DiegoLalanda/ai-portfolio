@@ -78,7 +78,7 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
       aria-modal="true"
       aria-label={project.name}
       aria-hidden="false"
-      className="modal-open fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background/90 opacity-100 backdrop-blur-xl"
+      className="scrollbar-galactic scrollbar-galactic-overlay modal-open fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background/90 opacity-100 backdrop-blur-xl"
     >
       <div className="sticky top-0 z-10 flex justify-end px-margin-edge py-6">
         <button
@@ -132,7 +132,7 @@ export function ProjectDetailModal({ project, labels, onClose }: ProjectDetailMo
         <section className="fade-in-up mb-section-gap-desktop overflow-hidden rounded-3xl border border-white/10">
           <ProjectVisual media={media} name={project.name} variant="split" />
           {allMedia.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto bg-surface-container-highest/50 p-4 border-t border-white/10 scrollbar-thin">
+            <div className="scrollbar-galactic-h flex gap-2 overflow-x-auto bg-surface-container-highest/50 p-4 border-t border-white/10">
               {allMedia.map((m, index) => (
                 <button
                   key={index}
