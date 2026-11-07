@@ -8,6 +8,21 @@ logger = logging.getLogger(__name__)
 
 RATE_LIMIT_HINT = "Cuota o límite de Gemini alcanzado. Reintentá en unos segundos."
 
+LLM_TIMEOUT_CLIENT_MESSAGE = "El modelo tardó demasiado en responder."
+STREAM_CLIENT_ERROR = "No pudimos generar una respuesta. Intentá de nuevo en un momento."
+
+
+def stream_error_event(
+    *,
+    code: str,
+    message: str,
+    detail: str | None = None,
+) -> dict[str, str]:
+    event: dict[str, str] = {"type": "error", "code": code, "message": message}
+    if detail:
+        event["detail"] = detail
+    return event
+
 
 def error_summary(error: BaseException, *, max_len: int = 240) -> str:
     text = str(error).replace("\n", " ").strip()

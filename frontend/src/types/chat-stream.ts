@@ -9,4 +9,4 @@ export type ChatStreamEvent =
       response: import("@/types/agent-response").AgentResponse;
     }
   | { type: "done"; response: import("@/types/agent-response").AgentResponse }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string; code?: string; detail?: string };

@@ -23,6 +23,13 @@ const t = getTranslations(locale);
     data-locale={locale}
     data-error-title={t.errors.connectionTitle}
     data-error-summary={t.errors.connectionSummary}
+    data-timeout-title={t.errors.timeoutTitle}
+    data-timeout-summary={t.errors.timeoutSummary}
+    data-gemini-title={t.errors.geminiTitle}
+    data-gemini-summary={t.errors.geminiSummary}
+    data-gemini-detail-label={t.errors.geminiDetailLabel}
+    data-generic-title={t.errors.genericTitle}
+    data-generic-summary={t.errors.genericSummary}
     data-ratelimit-title={t.errors.rateLimitTitle}
     data-ratelimit-summary={t.errors.rateLimitSummary}
   >
@@ -82,9 +89,11 @@ const t = getTranslations(locale);
 
 <script>
   import { streamChatMessage } from "@/lib/api";
+  import { buildChatErrorResponse, readChatErrorLabelsFromDom } from "@/lib/chat-errors";
   import { absorbIntoBlackHole, BLACK_HOLE_LANDING_EXIT_MS, clearAbsorbHiddenElements } from "@/lib/black-hole-absorb";
   import type { AgentResponse } from "@/types/agent-response";
   import type { ChatStreamEvent } from "@/types/chat-stream";
+  import type { Locale } from "@/i18n/types";
 
   const pageRoot = document.getElementById("page-root");
   const main = document.getElementById("parallax-container");
@@ -248,35 +257,8 @@ const t = getTranslations(locale);
       .catch((error) => {
         console.error("Error al llamar al backend:", error);
 
-        const isRateLimit =
-          error.message?.includes("429") ||
-          error.message?.includes("Demasiadas preguntas") ||
-          error.message?.includes("Cuota o límite de Gemini");
-        const title = isRateLimit
-          ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
-          : (pageRoot?.dataset.errorTitle ?? "Connection issue");
-        const summary = isRateLimit
-          ? (pageRoot?.dataset.ratelimitSummary ?? "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.")
-          : (pageRoot?.dataset.errorSummary ?? "Couldn't reach the backend right now. Please make sure the API is running.");
-
-        const fallback: AgentResponse = {
-          language: pageRoot?.dataset.locale === "en" ? "en" : "es",
-          title,
-          summary,
-          widgets: isRateLimit
-            ? [
-                {
-                  id: "rate-limit-cv-download",
-                  type: "text" as any,
-                  title: null,
-                  data: {
-                    text: "",
-                  },
-                },
-              ]
-            : [],
-          suggested_actions: [],
-        };
+        const locale = (pageRoot?.dataset.locale === "en" ? "en" : "es") satisfies Locale;
+        const fallback = buildChatErrorResponse(locale, error, readChatErrorLabelsFromDom(locale));
         agentResponse = fallback;
         responseBridge.__portfolioPendingAgentResponse = { response: fallback, question };
         window.dispatchEvent(new CustomEvent("loading:finish"));

@@ -149,9 +149,19 @@ export const es: Translations = {
   errors: {
     connectionTitle: "Problema de conexión",
     connectionSummary:
-      "No pudimos conectar con el backend en este momento. Verificá que la API esté en ejecución.",
+      "No pudimos contactar la API en este momento. Revisá tu conexión o intentá de nuevo.",
+    timeoutTitle: "El modelo tardó demasiado",
+    timeoutSummary:
+      "Gemini no respondió dentro del tiempo esperado. Podés reintentar en unos segundos.",
+    geminiTitle: "Gemini no respondió",
+    geminiSummary:
+      "El proveedor del modelo rechazó o no pudo completar la solicitud.",
+    geminiDetailLabel: "Detalle de Gemini",
+    genericTitle: "No pudimos generar una respuesta",
+    genericSummary: "Ocurrió un error inesperado. Intentá de nuevo en un momento.",
     rateLimitTitle: "Límite de preguntas superado",
-    rateLimitSummary: "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.",
+    rateLimitSummary:
+      "Superaste el límite de 10 preguntas por minuto. Esperá un momento antes de reintentar.",
     downloadCV: "Descargar CV Completo",
   },
   dashboard: {
