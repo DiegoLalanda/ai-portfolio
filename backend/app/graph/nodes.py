@@ -17,12 +17,9 @@ from app.core.config import settings
 from app.graph.decision import RouterDecision
 from app.graph.state import PortfolioState
 from app.graph.response_locale import detect_visitor_language, extract_visitor_question, harmonize_response_language
+from app.graph.skill_focus import focus_skill_names, focus_summary, summary_mentions_any
 from app.graph.suggested_actions import ensure_suggested_actions
-from app.graph.widget_evidence import (
-    align_response_with_evidence,
-    build_fact_widgets,
-    ensure_passage_widgets,
-)
+from app.graph.widget_evidence import widgets_for_selection
 from app.ai.gemini_client import gemini_api_keys
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model
 from app.observability.tracing import trace_node
@@ -36,6 +33,7 @@ logger = logging.getLogger(__name__)
 _ROUTER_GUIDE = """
 Choose the route and the tool names. Do not answer the visitor and do not include portfolio JSON.
 Dates, roles, skills, contact and project lists are facts: leave retrieval_query empty.
+Questions about databases, SQL, ORMs, data platforms or data tools use get_skills.
 Use narrative or both only when the visitor asks how or why something was built beyond the JSON record.
 A question about a project still needs get_projects when the route is narrative or both.
 retrieval_query is the visitor question when the route is narrative or both, otherwise an empty string.
@@ -235,16 +233,39 @@ def _brief_item(item: dict[str, Any]) -> str:
     return ""
 
 
+def _skills_by_category(raw: Any) -> dict[str, list[str]]:
+    if isinstance(raw, dict) and isinstance(raw.get("categories"), dict):
+        grouped: dict[str, list[str]] = {}
+        for key, values in raw["categories"].items():
+            if isinstance(values, list):
+                grouped[str(key)] = [name for name in values if isinstance(name, str)]
+        return grouped
+    grouped = {}
+    if isinstance(raw, list):
+        for item in raw:
+            if not isinstance(item, dict) or not isinstance(item.get("name"), str):
+                continue
+            category = str(item.get("category") or "other")
+            grouped.setdefault(category, []).append(item["name"])
+    return grouped
+
+
 def _evidence_brief(tools: dict[str, Any]) -> dict[str, Any]:
-    """Resumen corto para el compositor. Los widgets usan el JSON completo aparte."""
+    """Nombres reales para el compositor. El orden del catálogo no es relevancia."""
 
     brief: dict[str, Any] = {}
     for name, raw in tools.items():
+        if name == "get_skills" or (isinstance(raw, dict) and "categories" in raw):
+            by_category = _skills_by_category(raw)
+            if by_category:
+                brief[name] = {"by_category": by_category}
+                continue
         if isinstance(raw, list):
-            sample = [_brief_item(item) for item in raw[:5] if isinstance(item, dict)]
-            brief[name] = {"count": len(raw), "sample": [item for item in sample if item]}
+            names = [_brief_item(item) if isinstance(item, dict) else "" for item in raw]
+            names = [item for item in names if item]
+            brief[name] = {"count": len(raw), "names": names[:80]}
         elif isinstance(raw, dict):
-            brief[name] = {"fields": sorted(str(key) for key in list(raw)[:8])}
+            brief[name] = {"fields": sorted(str(key) for key in list(raw)[:12])}
         else:
             brief[name] = {"present": raw is not None}
     return brief
@@ -257,17 +278,26 @@ async def _compose(
     *,
     repair: bool,
     call_site: str,
+    focus_names: list[str] | None = None,
 ) -> tuple[ComposerCopy | None, dict[str, Any]]:
     tools_evidence = pack.get("tools") if isinstance(pack.get("tools"), dict) else {}
     visitor_line = extract_visitor_question(question)
     expected_language = detect_visitor_language(visitor_line) if visitor_line else "es"
+    brief = _evidence_brief(tools_evidence if isinstance(tools_evidence, dict) else {})
+    if focus_names:
+        brief["get_skills"] = {"names": focus_names}
     payload: dict[str, Any] = {
         "question": question,
-        "evidence_brief": _evidence_brief(tools_evidence),
+        "evidence_brief": brief,
         "passage_count": len(passages),
-        "tools_executed": list(tools_evidence),
+        "tools_executed": list(tools_evidence) if isinstance(tools_evidence, dict) else [],
         "expected_language": expected_language,
     }
+    if focus_names:
+        payload["required_focus"] = {
+            "names": focus_names,
+            "rule": "Answer only about these names. Do not mention other skills.",
+        }
     if repair:
         payload["repair"] = "The previous copy was empty or invalid. Answer again from the brief only."
     keys = gemini_api_keys()
@@ -302,8 +332,18 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
     pack = state.get("facts") or {}
     passages = list(state.get("passages") or [])
     tools_pack = pack.get("tools") if isinstance(pack, dict) else {}
+    tools_dict = tools_pack if isinstance(tools_pack, dict) else {}
+    visitor_line = extract_visitor_question(state["question"])
+    focus_names = focus_skill_names(visitor_line, tools_dict.get("get_skills"))
     await _emit(config, {"type": "status", "phase": "synthesizing"})
-    copy, first = await _compose(state["question"], pack, passages, repair=False, call_site="compositor")
+    copy, first = await _compose(
+        state["question"],
+        pack,
+        passages,
+        repair=False,
+        call_site="compositor",
+        focus_names=focus_names,
+    )
     metrics = [first]
     if copy is None:
         copy, second = await _compose(
@@ -312,12 +352,21 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
             passages,
             repair=True,
             call_site="compositor-repair",
+            focus_names=focus_names,
         )
         metrics.append(second)
-    widgets = build_fact_widgets(tools_pack if isinstance(tools_pack, dict) else {}, passages=passages)
     if copy is None:
-        parsed = _insufficient(decision.language).model_copy(update={"widgets": widgets})
+        parsed = _insufficient(decision.language)
     else:
+        widgets = widgets_for_selection(
+            tools_dict,
+            passages=passages,
+            widget_types=list(copy.widget_types),
+            project_groups=list(copy.project_groups),
+            skill_categories=list(copy.skill_categories),
+            skill_names=list(copy.skill_names),
+            cv_download=copy.cv_download,
+        )
         parsed = AgentResponse(
             language=copy.language,
             title=copy.title,
@@ -325,10 +374,21 @@ async def compositor(state: PortfolioState, config: RunnableConfig) -> dict[str,
             widgets=widgets,
             suggested_actions=copy.suggested_actions,
         )
-    if isinstance(tools_pack, dict) and tools_pack:
-        parsed = align_response_with_evidence(parsed, tools_pack, passages=passages)
+        if focus_names:
+            parsed = parsed.model_copy(
+                update={
+                    "widgets": widgets_for_selection(
+                        tools_dict,
+                        passages=passages,
+                        widget_types=["skills"],
+                        skill_names=focus_names,
+                    ),
+                    "summary": parsed.summary
+                    if summary_mentions_any(parsed.summary, focus_names)
+                    else focus_summary(parsed.language, focus_names),
+                }
+            )
     if parsed is not None:
-        parsed = ensure_passage_widgets(parsed, passages)
         visitor = (state.get("visitor_question") or "").strip()
         parsed = harmonize_response_language(
             parsed,
