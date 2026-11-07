@@ -58,7 +58,12 @@ def test_timeout_becomes_sse_error(monkeypatch):
     events = asyncio.run(collect())
     assert events[0] == {"type": "started"}
     assert events[1] == {"type": "status", "phase": "thinking"}
-    assert {"type": "error", "message": TIMEOUT_MESSAGE} in events
+    assert any(
+        event.get("type") == "error"
+        and event.get("message") == TIMEOUT_MESSAGE
+        and event.get("code") == "llm_timeout"
+        for event in events
+    )
 
 
 def test_request_does_not_use_to_thread(monkeypatch):

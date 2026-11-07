@@ -9,15 +9,18 @@ from google.genai import errors as genai_errors
 from app.ai.gemini_agent import TIMEOUT_MESSAGE, stream_answer_events
 from app.core.config import settings
 from app.graph.builder import NODE_NAME, get_portfolio_graph
-from app.llm.errors import RATE_LIMIT_HINT, error_summary, is_retriable_capacity_error
+from app.llm.errors import (
+    RATE_LIMIT_HINT,
+    STREAM_CLIENT_ERROR,
+    error_summary,
+    is_retriable_capacity_error,
+    stream_error_event,
+)
 from app.prompts import SYSTEM_PROMPT
 from app.services.chat_context import build_agent_prompt
 from app.services.graph_session import prepare_graph_turn
 
 logger = logging.getLogger(__name__)
-
-STREAM_CLIENT_ERROR = "No pudimos generar una respuesta. Intentá de nuevo en un momento."
-
 
 def _agent_output(event: dict) -> dict | None:
     if event.get("event") != "on_chain_end":
@@ -65,7 +68,7 @@ async def _stream_graph(graph_input: dict, config: dict, *, question: str) -> As
             settings.LLM_TIMEOUT_ROUTER_S,
             settings.LLM_TIMEOUT_COMPOSER_S,
         )
-        yield {"type": "error", "message": TIMEOUT_MESSAGE}
+        yield stream_error_event(code="llm_timeout", message=TIMEOUT_MESSAGE)
     except genai_errors.APIError as error:
         logger.error(
             "Gemini API error en stream LangGraph thread_id=%s detail=%s",
@@ -73,14 +76,22 @@ async def _stream_graph(graph_input: dict, config: dict, *, question: str) -> As
             error_summary(error),
             exc_info=True,
         )
-        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
+        yield stream_error_event(
+            code="gemini_api",
+            message="Gemini no pudo completar la solicitud.",
+            detail=error_summary(error, max_len=480),
+        )
     except pydantic.ValidationError as error:
         logger.error(
             "Respuesta inválida del compositor thread_id=%s detail=%s",
             thread_id,
             error_summary(error),
         )
-        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
+        yield stream_error_event(
+            code="invalid_response",
+            message="La respuesta del modelo no cumplió el formato esperado.",
+            detail=error_summary(error, max_len=480),
+        )
     except Exception as error:
         if is_retriable_capacity_error(error):
             logger.warning(
@@ -88,7 +99,11 @@ async def _stream_graph(graph_input: dict, config: dict, *, question: str) -> As
                 thread_id,
                 error_summary(error),
             )
-            yield {"type": "error", "message": RATE_LIMIT_HINT}
+            yield stream_error_event(
+                code="gemini_capacity",
+                message=RATE_LIMIT_HINT,
+                detail=error_summary(error, max_len=480),
+            )
             return
         logger.error(
             "Error inesperado en stream LangGraph thread_id=%s detail=%s",
@@ -96,7 +111,11 @@ async def _stream_graph(graph_input: dict, config: dict, *, question: str) -> As
             error_summary(error),
             exc_info=True,
         )
-        yield {"type": "error", "message": STREAM_CLIENT_ERROR}
+        yield stream_error_event(
+            code="generation_failed",
+            message=STREAM_CLIENT_ERROR,
+            detail=error_summary(error, max_len=480),
+        )
 
 
 async def stream_chat_events(

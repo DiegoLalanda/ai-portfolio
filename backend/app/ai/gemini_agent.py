@@ -15,6 +15,7 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, System
 
 from app.ai.gemini_client import TOOLS, gemini_api_keys
 from app.core.config import settings
+from app.llm.errors import LLM_TIMEOUT_CLIENT_MESSAGE, error_summary, stream_error_event
 from app.llm.provider import Completion, GenAIChatModel, acomplete, get_chat_model, model_was_rejected
 from app.schemas.agent_response import AgentResponse
 
@@ -30,7 +31,8 @@ async def _emit(callback: EventCallback, event: dict[str, Any]) -> None:
 
 MAX_TOOL_TURNS = 12
 TOOL_MAP = {tool.__name__: tool for tool in TOOLS}
-TIMEOUT_MESSAGE = "El modelo tardó demasiado."
+
+TIMEOUT_MESSAGE = LLM_TIMEOUT_CLIENT_MESSAGE
 
 
 def _execute_tool(name: str, args: dict[str, Any] | None) -> Any:
@@ -169,18 +171,33 @@ async def stream_answer_events(
             result = await generate_with_events(prompt, system_instruction, on_event)
             await queue.put({"type": "done", "response": result.model_dump()})
         except TimeoutError:
-            await queue.put({"type": "error", "message": TIMEOUT_MESSAGE})
+            await queue.put(
+                stream_error_event(code="llm_timeout", message=TIMEOUT_MESSAGE),
+            )
         except genai_errors.APIError as error:
-            await queue.put({"type": "error", "message": f"Gemini API error: {error}"})
+            await queue.put(
+                stream_error_event(
+                    code="gemini_api",
+                    message="Gemini no pudo completar la solicitud.",
+                    detail=error_summary(error, max_len=480),
+                )
+            )
         except pydantic.ValidationError as error:
             await queue.put(
-                {
-                    "type": "error",
-                    "message": f"Gemini devolvió una respuesta inválida: {error}",
-                }
+                stream_error_event(
+                    code="invalid_response",
+                    message="Gemini devolvió una respuesta inválida.",
+                    detail=error_summary(error, max_len=480),
+                )
             )
         except Exception as error:  # noqa: BLE001 — propagar mensaje al cliente SSE
-            await queue.put({"type": "error", "message": str(error)})
+            await queue.put(
+                stream_error_event(
+                    code="generation_failed",
+                    message=str(error),
+                    detail=error_summary(error, max_len=480),
+                )
+            )
         finally:
             await queue.put(None)
 

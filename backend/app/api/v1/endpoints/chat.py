@@ -10,7 +10,8 @@ from fastapi.responses import StreamingResponse
 
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.chat import ChatServiceError, get_answer
-from app.services.chat_stream import STREAM_CLIENT_ERROR, stream_chat_events
+from app.llm.errors import STREAM_CLIENT_ERROR, error_summary, stream_error_event
+from app.services.chat_stream import stream_chat_events
 from app.core.rate_limiter import rate_limiter
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
                 yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
         except Exception as error:  # noqa: BLE001 — informar al cliente SSE
             logger.exception("Error en stream de chat")
-            yield f"data: {json.dumps({'type': 'error', 'message': STREAM_CLIENT_ERROR}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps(stream_error_event(code='stream_failed', message=STREAM_CLIENT_ERROR, detail=error_summary(error)), ensure_ascii=False)}\n\n"
 
     return StreamingResponse(
         event_generator(),

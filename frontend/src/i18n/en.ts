@@ -148,9 +148,17 @@ export const en: Translations = {
   },
   errors: {
     connectionTitle: "Connection issue",
-    connectionSummary: "Couldn't reach the backend right now. Please make sure the API is running.",
+    connectionSummary: "Could not reach the API. Check your connection or try again.",
+    timeoutTitle: "The model took too long",
+    timeoutSummary: "Gemini did not respond in time. Try again in a few seconds.",
+    geminiTitle: "Gemini unavailable",
+    geminiSummary: "The model provider rejected or could not complete the request.",
+    geminiDetailLabel: "Gemini detail",
+    genericTitle: "Could not generate a response",
+    genericSummary: "An unexpected error occurred. Please try again shortly.",
     rateLimitTitle: "Rate limit exceeded",
-    rateLimitSummary: "You have exceeded the limit of 10 questions per minute. Please wait a moment before asking again.",
+    rateLimitSummary:
+      "You exceeded the limit of 10 questions per minute. Wait a moment before trying again.",
     downloadCV: "Download Full CV",
   },
   dashboard: {

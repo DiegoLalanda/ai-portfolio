@@ -7,6 +7,7 @@ import type { AgentResponse } from "@/types/agent-response";
 import type { ChatStreamEvent } from "@/types/chat-stream";
 import type { DashboardSessionContext } from "@/lib/dashboard-context";
 import { getChatThreadId } from "@/lib/chat-thread";
+import { ChatRequestError } from "@/lib/chat-errors";
 
 const API_BASE_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -61,7 +62,20 @@ export async function streamChatMessage(
   });
 
   if (!response.ok) {
-    throw new Error(`Chat stream failed with status ${response.status}`);
+    let detail: string | undefined;
+    try {
+      const body = (await response.json()) as { detail?: unknown };
+      if (typeof body.detail === "string") detail = body.detail;
+      else if (body.detail != null) detail = JSON.stringify(body.detail);
+    } catch {
+      /* cuerpo vacío o no JSON */
+    }
+    const kind =
+      response.status === 429 ? "rate_limit" : response.status >= 500 ? "gemini" : "connection";
+    throw new ChatRequestError(`Chat stream failed with status ${response.status}`, kind, {
+      detail,
+      code: `http_${response.status}`,
+    });
   }
 
   if (!response.body) {
@@ -95,7 +109,7 @@ export async function streamChatMessage(
       }
 
       if (event.type === "error") {
-        throw new Error(event.message);
+        throw ChatRequestError.fromStreamEvent(event);
       }
     }
   }

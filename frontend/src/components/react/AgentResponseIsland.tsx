@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { MessageCircleQuestion } from "lucide-react";
 import { streamChatMessage } from "@/lib/api";
+import { buildChatErrorResponse, readChatErrorLabelsFromDom } from "@/lib/chat-errors";
+import type { Locale } from "@/i18n/types";
 import { resetChatThreadId } from "@/lib/chat-thread";
 import type { AgentResponse, SuggestedAction } from "@/types/agent-response";
 import {
@@ -125,37 +127,11 @@ export default function AgentResponseIsland() {
         shownWidgetTypes,
       );
       setResponses((prev) => [...prev, filtered]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error en follow-up:", error);
       const pageRoot = document.getElementById("page-root");
-      
-      const isRateLimit =
-        error.message?.includes("429") ||
-        error.message?.includes("Demasiadas preguntas") ||
-        error.message?.includes("Cuota o límite de Gemini");
-      const title = isRateLimit 
-        ? (pageRoot?.dataset.ratelimitTitle ?? "Límite de preguntas superado")
-        : (pageRoot?.dataset.errorTitle ?? "Connection issue");
-      const summary = isRateLimit
-        ? (pageRoot?.dataset.ratelimitSummary ?? "Has superado el límite de 10 preguntas por minuto. Por favor, espera un momento antes de volver a preguntar.")
-        : (pageRoot?.dataset.errorSummary ?? "Couldn't reach the backend right now. Please make sure the API is running.");
-
-      const fallback: AgentResponse = {
-        language: (pageRoot?.dataset.locale as any) === "en" ? "en" : "es",
-        title,
-        summary,
-        widgets: isRateLimit ? [
-          {
-            id: "rate-limit-cv-download",
-            type: "text" as any,
-            title: null,
-            data: {
-              text: "",
-            }
-          }
-        ] : [],
-        suggested_actions: [],
-      };
+      const locale: Locale = pageRoot?.dataset.locale === "en" ? "en" : "es";
+      const fallback = buildChatErrorResponse(locale, error, readChatErrorLabelsFromDom(locale));
       setResponses((prev) => [...prev, fallback]);
     } finally {
       setIsLoading(false);

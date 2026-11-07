@@ -37,6 +37,13 @@ export interface Translations {
   errors: {
     connectionTitle: string;
     connectionSummary: string;
+    timeoutTitle: string;
+    timeoutSummary: string;
+    geminiTitle: string;
+    geminiSummary: string;
+    geminiDetailLabel: string;
+    genericTitle: string;
+    genericSummary: string;
     rateLimitTitle?: string;
     rateLimitSummary?: string;
     downloadCV?: string;
